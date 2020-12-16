@@ -1,3 +1,6 @@
 [submodule "pybmix/src/bayesmix"]
 	path = pybmix/src/bayesmix
 	url = git@github.com:bayesmix-dev/bayesmix.git
+[submodule "lib/pybind11"]
+	path = lib/pybind11
+	url = git@github.com:pybind/pybind11.git
