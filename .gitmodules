@@ -1,0 +1,3 @@
+[submodule "pybmix/src/bayesmix"]
+	path = pybmix/src/bayesmix
+	url = git@github.com:bayesmix-dev/bayesmix.git
