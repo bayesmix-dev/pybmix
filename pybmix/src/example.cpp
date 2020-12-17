@@ -4,6 +4,7 @@
 
 #include "bayesmix/src/utils/distributions.hpp"
 #include "bayesmix/src/utils/rng.hpp"
+#include "algorithm_wrapper.hpp"
 
 namespace py = pybind11;
 
@@ -22,4 +23,8 @@ PYBIND11_MODULE(pybmix, m) {
   m.def("add", &add);
   m.def("subtract", &subtract);
   m.def("draw_uniform", &draw_uniform);
+
+  py::class_<AlgorithmWrapper>(m, "AlgorithmWrapper")
+      .def(py::init<>())
+      .def("say_hello", &AlgorithmWrapper::say_hello);
 }
