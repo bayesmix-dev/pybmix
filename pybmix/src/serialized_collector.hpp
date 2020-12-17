@@ -34,7 +34,7 @@ class SerializedCollector : public BaseCollector<bayesmix::MarginalState> {
   void finish() override { return; }
 
   //! Writes the given state to the collector
-  void collect(const google::protobuf::Message& iter_state) override {
+  void collect(bayesmix::MarginalState iter_state) override {
     std::string s;
     iter_state.SerializeToString(&s);
     chain.push_back(s);
@@ -60,8 +60,8 @@ class SerializedCollector : public BaseCollector<bayesmix::MarginalState> {
    pybind11::bytes get_serialized_state(unsigned int i) {
        return chain[i];
    }
-   
-   std::deque<pybind11::bytes> get_serialized_chain() override {
+
+   std::deque<pybind11::bytes> get_serialized_chain() {
      return chain;
    }
 };
