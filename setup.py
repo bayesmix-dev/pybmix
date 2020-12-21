@@ -1,9 +1,17 @@
+import glob
 import os
 import sys
 import subprocess
 
 from setuptools import setup, Extension, find_packages
 from setuptools.command.build_ext import build_ext
+from distutils.command.build_py import build_py as _build_py
+from distutils.command.clean import clean as _clean
+from distutils.spawn import find_executable
+from setuptools.command.develop import develop as _develop
+from setuptools.command.egg_info import egg_info as _egg_info
+from distutils.command.install import install as _install
+
 
 # Convert distutils Windows platform specifiers to CMake -A arguments
 PLAT_TO_CMAKE = {
@@ -12,6 +20,102 @@ PLAT_TO_CMAKE = {
     "win-arm32": "ARM",
     "win-arm64": "ARM64",
 }
+
+PROTO_IN_DIR = os.path.join("pybmix", "src", "bayesmix", "proto")
+PROTO_OUT_DIR = os.path.join("pybmix", "proto/")
+
+# Find the Protocol Compiler.
+if 'PROTOC' in os.environ and os.path.exists(os.environ['PROTOC']):
+  protoc = os.environ['PROTOC']
+else:
+  protoc = find_executable("protoc")
+
+py2to3 = find_executable("2to3")
+
+
+def generate_proto(source, require = True):
+  """Invokes the Protocol Compiler to generate a _pb2.py from the given
+  .proto file.  Does nothing if the output already exists and is newer than
+  the input."""
+
+  print("Generating Proto: ", source)
+
+  if not require and not os.path.exists(source):
+    return
+  
+  filename = os.path.split(source)[1]
+  output = os.path.join(PROTO_OUT_DIR, filename.replace(".proto", "_pb2.py"))
+
+  if (not os.path.exists(output) or
+      (os.path.exists(source) and
+       os.path.getmtime(source) > os.path.getmtime(output))):
+    print("Generating %s..." % output)
+
+    if not os.path.exists(source):
+      sys.stderr.write("Can't find required file: %s\n" % source)
+      sys.exit(-1)
+
+    if protoc is None:
+      sys.stderr.write(
+          "protoc is not installed nor found in ../src.  Please compile it "
+          "or install the binary package.\n")
+      sys.exit(-1)
+
+    protoc_command = [protoc, "--proto_path={0}".format(PROTO_IN_DIR), 
+                      "--python_out={0}".format(PROTO_OUT_DIR), source]
+    print(" ".join(protoc_command))
+    if subprocess.call(protoc_command) != 0:
+      sys.exit(-1)
+
+
+# class clean(_clean):
+#   def run(self):
+#     # Delete generated files in the code tree.
+#     for (dirpath, dirnames, filenames) in os.walk("."):
+#       for filename in filenames:
+#         filepath = os.path.join(dirpath, filename)
+#         if filepath.endswith("_pb2.py") or filepath.endswith(".pyc") or \
+#           filepath.endswith(".so") or filepath.endswith(".o"):
+#           os.remove(filepath)
+#     # _clean is an old-style class, so super() doesn't work.
+#     _clean.run(self)
+
+def generate_all_protos():
+    proto_files = glob.glob(os.path.join(PROTO_IN_DIR, "*.proto"))
+    for file in proto_files:
+        generate_proto(file)
+    
+    two_to_three_command = [
+        py2to3, "--output-dir={0}".format(PROTO_OUT_DIR), "-W", "-n", PROTO_OUT_DIR]
+    print(" ".join(two_to_three_command))
+    if subprocess.call(two_to_three_command) != 0:
+      sys.exit(-1)
+
+class build_py(_build_py):
+  def run(self):
+    print("RUNNING build_py.run()")
+    # Generate necessary .proto file if it doesn't exist.
+    generate_all_protos()
+    # _build_py is an old-style class, so super() doesn't work.
+    _build_py.run(self)
+
+
+class install(_install):
+    def run(self):
+        generate_all_protos()
+        _install.run(self)
+
+
+class develop(_develop):
+    def run(self):
+        generate_all_protos()
+        _develop.run(self)
+
+
+class egg_info(_egg_info):
+    def run(self):
+        generate_all_protos()
+        _egg_info.run(self)
 
 
 # A CMakeExtension needs a sourcedir instead of a file list.
@@ -117,16 +221,33 @@ class CMakeBuild(build_ext):
         )
 
 
-setup(
-    name="pybmix",
-    version="0.0.1",
-    author="Dean Moldovan",
-    author_email="dean0x7d@gmail.com",
-    description="A test project using pybind11 and CMake",
-    long_description="",
-    packages=find_packages('pybmix'),
-    package_dir={'':'pybmix'},
-    ext_modules=[CMakeExtension("pybmix")],
-    cmdclass={"build_ext": CMakeBuild},
-    zip_safe=False,
-)
+if __name__ == "__main__":
+    print("FIND_PACKAGES: ", find_packages("pybmixcpp"))
+
+    setup(
+        name="pybmixcpp",
+        version="0.0.1",
+        author="Mario Beraha",
+        author_email="berahamario@gmail.com",
+        description="Python Bayesian Mixtures",
+        long_description="",
+        packages=find_packages('pybmixcpp'),
+        package_dir={'':'pybmixcpp'},
+        ext_modules=[CMakeExtension("pybmixcpp")],
+        cmdclass={"build_ext": CMakeBuild},
+        zip_safe=False,
+    )
+
+    setup(
+        name="pybmix",
+        version="0.0.1",
+        author="Mario Beraha",
+        author_email="berahamario@gmail.com",
+        description="Python Bayesian Mixtures",
+        long_description="",
+        packages=find_packages(),
+        cmdclass={
+            "egg_info": egg_info,
+            },
+        zip_safe=False,
+    )

@@ -19,7 +19,7 @@ int draw_uniform(int start, int end) {
                                    start);
 }
 
-PYBIND11_MODULE(pybmix, m) {
+PYBIND11_MODULE(pybmixcpp, m) {
   m.def("add", &add);
   m.def("subtract", &subtract);
   m.def("draw_uniform", &draw_uniform);
