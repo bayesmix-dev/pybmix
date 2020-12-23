@@ -21,7 +21,7 @@ PLAT_TO_CMAKE = {
     "win-arm64": "ARM64",
 }
 
-PROTO_IN_DIR = os.path.join("pybmix", "src", "bayesmix", "proto")
+PROTO_IN_DIR = os.path.join("pybmixcpp", "src", "bayesmix", "proto")
 PROTO_OUT_DIR = os.path.join("pybmix", "proto/")
 
 # Find the Protocol Compiler.
@@ -68,17 +68,17 @@ def generate_proto(source, require = True):
       sys.exit(-1)
 
 
-# class clean(_clean):
-#   def run(self):
-#     # Delete generated files in the code tree.
-#     for (dirpath, dirnames, filenames) in os.walk("."):
-#       for filename in filenames:
-#         filepath = os.path.join(dirpath, filename)
-#         if filepath.endswith("_pb2.py") or filepath.endswith(".pyc") or \
-#           filepath.endswith(".so") or filepath.endswith(".o"):
-#           os.remove(filepath)
-#     # _clean is an old-style class, so super() doesn't work.
-#     _clean.run(self)
+class clean(_clean):
+  def run(self):
+    # Delete generated files in the code tree.
+    for (dirpath, dirnames, filenames) in os.walk("."):
+      for filename in filenames:
+        filepath = os.path.join(dirpath, filename)
+        if filepath.endswith("_pb2.py") or filepath.endswith(".pyc") or \
+          filepath.endswith(".so") or filepath.endswith(".o"):
+          os.remove(filepath)
+    # _clean is an old-style class, so super() doesn't work.
+    _clean.run(self)
 
 def generate_all_protos():
     proto_files = glob.glob(os.path.join(PROTO_IN_DIR, "*.proto"))
@@ -93,10 +93,7 @@ def generate_all_protos():
 
 class build_py(_build_py):
   def run(self):
-    print("RUNNING build_py.run()")
-    # Generate necessary .proto file if it doesn't exist.
     generate_all_protos()
-    # _build_py is an old-style class, so super() doesn't work.
     _build_py.run(self)
 
 
@@ -207,15 +204,10 @@ class CMakeBuild(build_ext):
         if not os.path.exists(self.build_temp):
             os.makedirs(self.build_temp)
 
-        print("***************")
-        print(" ".join(["cmake", ext.sourcedir] + cmake_args))
-        print("build_temp: ", self.build_temp)
         subprocess.check_call(
             ["cmake", ext.sourcedir] + cmake_args, cwd=self.build_temp
         )
-        print("***************")
-        print(" ".join(["cmake", "--build", "."] + build_args))
-        print("build_temp: ", self.build_temp)
+
         subprocess.check_call(
             ["cmake", "--build", "."] + build_args, cwd=self.build_temp
         )
@@ -248,6 +240,8 @@ if __name__ == "__main__":
         packages=find_packages(),
         cmdclass={
             "egg_info": egg_info,
+            "build_py": build_py,
+            "clean": clean
             },
         zip_safe=False,
     )
