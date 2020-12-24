@@ -2,6 +2,12 @@ import numpy as np
 
 
 class _stirling_memoizer(object):
+    """ Computes the Stirling Numbers of the first kind and stores the 
+    result in a customly defined memoizer. Stirling numbers of the first
+    kind are defined by the recurrence relation
+    s(0, 0) = s(1, 1) = 0, s(a, 0) = 0 for a > 0, s(a, b) = 0 for b > a,
+    s(a + 1, b) = s(a, b - 1) + a * s(a, b)
+    """
     def __init__(self):
         self.memo = [np.array([0])]
         self.max_a = 0
