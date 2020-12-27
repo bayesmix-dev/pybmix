@@ -15,12 +15,12 @@ class MixtureModel(object):
         self.mixing = mixing
         self.hierarchy = hierarchy
 
-    def run_mcmc(self, y, algorithm="N2", niter=1000, nburn=500):
+    def run_mcmc(self, y, algorithm="N2", niter=1000, nburn=500, rng_seed=-1):
         self._algo = AlgorithmWrapper(
             algorithm, self.hierarchy.NAME, 
-            self.hierarchy.prior_params.DESCRIPTOR.name,
-            self.mixing.NAME, self.mixing.prior_proto.DESCRIPTOR.name,
+            self.hierarchy.prior_params.DESCRIPTOR.full_name,
+            self.mixing.NAME, self.mixing.prior_proto.DESCRIPTOR.full_name,
             self.hierarchy.prior_params.SerializeToString(),
             self.mixing.prior_proto.SerializeToString())
 
-        self._algo.run(y, niter, nburn)
+        self._algo.run(y, niter, nburn, rng_seed)

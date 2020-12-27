@@ -21,7 +21,7 @@ class UnivariateNormal(BaseHierarchy):
             self.prior_params.normal_mean_prior.CopyFrom(prior_params)
         elif isinstance(prior_params, hprior.NNIGPrior.NGGPrior):
             self.prior_params.ngg_prior.CopyFrom(prior_params)
-        else:
+        elif prior_params is not None:
             raise ValueError(
                 "expected 'prior_params' to be of instance "
                 "FixedValues, NormalMeanPrior or NGGPrior, "
@@ -46,7 +46,7 @@ class UnivariateNormal(BaseHierarchy):
         self.prior_params.fixed_values.mean = np.mean(y)
         self.prior_params.fixed_values.shape = 3
         self.prior_params.fixed_values.scale = np.var(y) / exp_num_clusters
-        self.prior_params.var_scaling = 0.01
+        self.prior_params.fixed_values.var_scaling = 0.01
 
 
 class MultivariateNormal(BaseHierarchy):

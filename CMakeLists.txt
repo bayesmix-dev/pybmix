@@ -7,6 +7,7 @@ add_subdirectory(${SOURCE_DIR}/bayesmix)
 add_subdirectory(${SOURCE_DIR})
 include_directories(${SOURCE_DIR})
 set(COMPILE_OPTIONS -D_REENTRANT -fPIC)
+SET_SOURCE_FILES_PROPERTIES(${PROTO_HEADERS} ${PROTO_SOURCES} PROPERTIES GENERATED TRUE)
 
 message("**** BAYESMIX_INCLUDE_PATHS ${BAYESMIX_INCLUDE_PATHS}")
 
@@ -14,12 +15,9 @@ message("**** BAYESMIX_INCLUDE_PATHS ${BAYESMIX_INCLUDE_PATHS}")
 add_subdirectory(lib/pybind11)
 pybind11_add_module(pybmixcpp ${SOURCES} 
     "${SOURCE_DIR}/example.cpp" 
-    "${SOURCE_DIR}/algorithm_wrapper.cpp")
+    "${SOURCE_DIR}/algorithm_wrapper.cpp"
+    ${PROTO_HEADERS} ${PROTO_SOURCES})
 target_include_directories(pybmixcpp PUBLIC ${BAYESMIX_INCLUDE_PATHS})
 target_compile_definitions(pybmixcpp PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
 target_link_libraries(pybmixcpp PUBLIC bayesmixlib tbb pthread protobuf)
 target_compile_options(pybmixcpp PUBLIC ${COMPILE_OPTIONS})
-
-
-# target_link_libraries(pybmix PRIVATE bayesmixlib tbb pthread protobuf)
-# target_compile_options(pybmix PUBLIC -D_REENTRANT -fPIC)
