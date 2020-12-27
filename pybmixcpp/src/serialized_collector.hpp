@@ -37,7 +37,7 @@ class SerializedCollector : public BaseCollector<bayesmix::MarginalState> {
   void collect(bayesmix::MarginalState iter_state) override {
     std::string s;
     iter_state.SerializeToString(&s);
-    chain.push_back(s);
+    chain.push_back((pybind11::bytes)s);
     size++;
   }
 

@@ -1,10 +1,12 @@
+#include <pybind11/eigen.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 #include <Eigen/Dense>
 
+#include "algorithm_wrapper.hpp"
 #include "bayesmix/src/utils/distributions.hpp"
 #include "bayesmix/src/utils/rng.hpp"
-#include "algorithm_wrapper.hpp"
 
 namespace py = pybind11;
 
@@ -26,5 +28,10 @@ PYBIND11_MODULE(pybmixcpp, m) {
 
   py::class_<AlgorithmWrapper>(m, "AlgorithmWrapper")
       .def(py::init<>())
-      .def("say_hello", &AlgorithmWrapper::say_hello);
+      .def(py::init<const std::string&, const std::string&, const std::string&,
+                    const std::string&, const std::string&, const std::string&,
+                    const std::string&>())
+      .def("say_hello", &AlgorithmWrapper::say_hello)
+      .def("run", &AlgorithmWrapper::run)
+      .def("get_collector", &AlgorithmWrapper::get_collector);
 }
