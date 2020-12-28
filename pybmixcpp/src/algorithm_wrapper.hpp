@@ -17,16 +17,13 @@ class AlgorithmWrapper {
   std::shared_ptr<BaseHierarchy> hier;
   std::shared_ptr<BaseMixing> mixing;
 
-  google::protobuf::Message* mix_prior;
-  google::protobuf::Message* hier_prior;
+  std::shared_ptr<google::protobuf::Message> mix_prior;
+  std::shared_ptr<google::protobuf::Message> hier_prior;
 
  public:
   AlgorithmWrapper() {}
 
-  ~AlgorithmWrapper() {
-    delete mix_prior;
-    delete hier_prior;
-  }
+  ~AlgorithmWrapper() {}
 
   AlgorithmWrapper(const std::string& algo_type, const std::string& hier_type,
                    const std::string& hier_prior_type,

@@ -1,4 +1,5 @@
 #include "algorithm_wrapper.hpp"
+
 #include "hierarchy_prior.pb.h"
 
 AlgorithmWrapper::AlgorithmWrapper(const std::string& algo_type,
@@ -16,12 +17,13 @@ AlgorithmWrapper::AlgorithmWrapper(const std::string& algo_type,
       google::protobuf::DescriptorPool::generated_pool()->FindMessageTypeByName(
           mix_prior_type);
   if (mix_prior_desc == nullptr) {
-    throw std::invalid_argument(
-      "mix_prior_type (" + mix_prior_type + ") not in DescriptorPool");
+    throw std::invalid_argument("mix_prior_type (" + mix_prior_type +
+                                ") not in DescriptorPool");
   }
-  mix_prior = google::protobuf::MessageFactory::generated_factory()
-                  ->GetPrototype(mix_prior_desc)
-                  ->New();
+  mix_prior = std::shared_ptr<google::protobuf::Message>(
+      google::protobuf::MessageFactory::generated_factory()
+          ->GetPrototype(mix_prior_desc)
+          ->New());
   mix_prior->ParseFromString(serialized_mix_prior);
 
   auto hier_prior_desc =
@@ -32,9 +34,10 @@ AlgorithmWrapper::AlgorithmWrapper(const std::string& algo_type,
                                 ") not in DescriptorPool");
   }
 
-  hier_prior = google::protobuf::MessageFactory::generated_factory()
-                   ->GetPrototype(hier_prior_desc)
-                   ->New();
+  hier_prior = std::shared_ptr<google::protobuf::Message>(
+      google::protobuf::MessageFactory::generated_factory()
+          ->GetPrototype(hier_prior_desc)
+          ->New());
   hier_prior->ParseFromString(serialized_hier_prior);
 
   if (algo_type == "N8") {
@@ -50,7 +53,7 @@ void AlgorithmWrapper::run(Eigen::MatrixXd data, int niter, int burnin,
   hier->initialize();
   std::cout << "set and initialized" << std::endl;
   if (rng_seed > 0) {
-    auto &rng = bayesmix::Rng::Instance().get();
+    auto& rng = bayesmix::Rng::Instance().get();
     rng.seed(rng_seed);
   }
 
