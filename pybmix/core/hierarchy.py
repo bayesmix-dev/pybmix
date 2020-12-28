@@ -26,21 +26,20 @@ class UnivariateNormal(BaseHierarchy):
                 "expected 'prior_params' to be of instance "
                 "FixedValues, NormalMeanPrior or NGGPrior, "
                 "found {0} instead".format(type(prior_params)))
-         
 
     def make_default_fixed_params(self, y, exp_num_clusters=5):
-        """ 
+        """
         Follow the approach in [1] to define a weakly informative prior
 
         Parameters
         ----------
-        y : array_like of shape (n, ) 
+        y : array_like of shape (n, )
             The observed data
         exp_num_clusters : int
             An "a priori" guess of th number of clusters in the data
 
-        [1] Fraley, C., & Raftery, A. E. (2007). 
-            Bayesian regularization for normal mixture estimation and 
+        [1] Fraley, C., & Raftery, A. E. (2007).
+            Bayesian regularization for normal mixture estimation and
             model-based clustering. Journal of classification, 24(2), 155-181.
         """
         self.prior_params.fixed_values.mean = np.mean(y)
