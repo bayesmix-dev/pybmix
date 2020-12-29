@@ -1,3 +1,7 @@
+pybmix/proto/*_pb2.py
+.ninja_deps
+.ninja_log
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
