@@ -2,6 +2,7 @@ import abc
 import numpy as np
 
 import pybmix.proto.hierarchy_prior_pb2 as hprior
+from pybmix.utils.proto_utils import get_oneof_types, set_oneof_field
 
 
 class BaseHierarchy(metaclass=abc.ABCMeta):
@@ -15,17 +16,14 @@ class UnivariateNormal(BaseHierarchy):
 
     def __init__(self, prior_params=None):
         self.prior_params = hprior.NNIGPrior()
-        if isinstance(prior_params, hprior.NNIGPrior.FixedValues):
-            self.prior_params.fixed_values.CopyFrom(prior_params)
-        elif isinstance(prior_params, hprior.NNIGPrior.NormalMeanPrior):
-            self.prior_params.normal_mean_prior.CopyFrom(prior_params)
-        elif isinstance(prior_params, hprior.NNIGPrior.NGGPrior):
-            self.prior_params.ngg_prior.CopyFrom(prior_params)
-        elif prior_params is not None:
+
+        success = set_oneof_field("prior", self.prior_params, prior_params)
+        if not success:
             raise ValueError(
-                "expected 'prior_params' to be of instance "
-                "FixedValues, NormalMeanPrior or NGGPrior, "
-                "found {0} instead".format(type(prior_params)))
+                "expected 'prior_params' to be of instance [{0}]"
+                "found {1} instead".format(
+                    " ".join(get_oneof_types("prior", self.prior_params)), 
+                    type(prior_params)))
 
     def make_default_fixed_params(self, y, exp_num_clusters=5):
         """
