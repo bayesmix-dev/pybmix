@@ -45,7 +45,7 @@ AlgorithmWrapper::AlgorithmWrapper(const std::string& algo_type,
   }
 }
 
-void AlgorithmWrapper::run(Eigen::MatrixXd data, int niter, int burnin,
+void AlgorithmWrapper::run(const Eigen::MatrixXd& data, int niter, int burnin,
                            int rng_seed) {
   std::cout << "AlgorithmWrapper::run" << std::endl;
   mixing->set_prior(*mix_prior);

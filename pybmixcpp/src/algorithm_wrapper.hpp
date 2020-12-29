@@ -32,7 +32,8 @@ class AlgorithmWrapper {
                    const std::string& serialized_hier_prior,
                    const std::string& serialized_mix_prior);
 
-  void run(Eigen::MatrixXd data, int niter, int burnin, int rng_seed = -1);
+  void run(const Eigen::MatrixXd& data, int niter, int burnin,
+           int rng_seed = -1);
 
   void say_hello();
 
