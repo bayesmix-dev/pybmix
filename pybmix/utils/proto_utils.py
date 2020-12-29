@@ -29,14 +29,7 @@ def set_oneof_field(fieldname, msg, val):
             fieldname, msg.DESCRIPTOR.name))
         return
 
-    oneof_types = get_oneof_types(fieldname, msg)
     onoef_names = get_oneof_names(fieldname, msg)
-
-    if val.DESCRIPTOR.name not in oneof_types:
-        logging.error("val is of type {0} which is not a 'oneof' field of {1}".format(
-            val.DESCRIPTOR.name, fieldname))
-        return
-
     for name in onoef_names:
         try:
             success = set_shallow_field(name, msg, val)
