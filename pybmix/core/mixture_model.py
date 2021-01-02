@@ -1,8 +1,16 @@
+import logging
+import numpy as np
+
 import pybmix.core.mixing as mix
 from pybmix.core.hierarchy import BaseHierarchy
+from pybmix.core.chain import MmcmChain
+from pybmix.proto.marginal_state_pb2 import MarginalState
 from pybmixcpp import AlgorithmWrapper
 
 # TODO: algo_type, hier_type, hier_prior_type, mix_type, mix_prior_tye -> Enums
+
+MARGINAL_ALGORITHMS = ["N2", "N8"] 
+CONDITIONAL_ALGORITHMS = []
 
 
 class MixtureModel(object):
@@ -18,6 +26,7 @@ class MixtureModel(object):
         self.hierarchy = hierarchy
 
     def run_mcmc(self, y, algorithm="N2", niter=1000, nburn=500, rng_seed=-1):
+        self.algo_name = algorithm
         self._algo = AlgorithmWrapper(
             algorithm, self.hierarchy.NAME,
             self.hierarchy.prior_params.DESCRIPTOR.full_name,
@@ -26,3 +35,22 @@ class MixtureModel(object):
             self.mixing.prior_proto.SerializeToString())
 
         self._algo.run(y, niter, nburn, rng_seed)
+
+    def estimate_density(self, grid, mean=False):
+        dens = self._algo.eval_density(grid)
+        if mean:
+            dens = np.mean(dens, axis=0)
+        
+        return dens
+
+    def get_chain(self, optimize_memory=False):
+        deserialize = not optimize_memory
+        if self.algo_name in MARGINAL_ALGORITHMS:
+            objtype = MarginalState
+        else:
+            objtype = None
+            logging.error("Algorithm is not marginal")
+        
+        return MmcmChain(
+            self._algo.get_collector().get_serialized_chain(),
+            objtype, deserialize)
