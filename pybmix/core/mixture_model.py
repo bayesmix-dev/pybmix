@@ -5,7 +5,7 @@ import pybmix.core.mixing as mix
 from pybmix.core.hierarchy import BaseHierarchy
 from pybmix.core.chain import MmcmChain
 from pybmix.proto.marginal_state_pb2 import MarginalState
-from pybmixcpp import AlgorithmWrapper
+from pybmixcpp.pybmixcpp import AlgorithmWrapper
 import pybmixcpp
 
 # TODO: algo_type, hier_type, hier_prior_type, mix_type, mix_prior_tye -> Enums

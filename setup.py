@@ -214,21 +214,6 @@ class CMakeBuild(build_ext):
 
 
 if __name__ == "__main__":
-    print("FIND_PACKAGES: ", find_packages("pybmixcpp"))
-
-    setup(
-        name="pybmixcpp",
-        version="0.0.1",
-        author="Mario Beraha",
-        author_email="berahamario@gmail.com",
-        description="Python Bayesian Mixtures",
-        long_description="",
-        packages=find_packages('pybmixcpp'),
-        package_dir={'':'pybmixcpp'},
-        ext_modules=[CMakeExtension("pybmixcpp")],
-        cmdclass={"build_ext": CMakeBuild},
-        zip_safe=False,
-    )
 
     setup(
         name="pybmix",
@@ -238,10 +223,12 @@ if __name__ == "__main__":
         description="Python Bayesian Mixtures",
         long_description="",
         packages=find_packages(),
+        ext_modules=[CMakeExtension('pybmixcpp.pybmixcpp')],
         cmdclass={
             "egg_info": egg_info,
             "build_py": build_py,
-            "clean": clean
+            "clean": clean,
+            "build_ext": CMakeBuild,
             },
         zip_safe=False,
     )
