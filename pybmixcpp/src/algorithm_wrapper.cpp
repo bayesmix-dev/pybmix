@@ -47,11 +47,9 @@ AlgorithmWrapper::AlgorithmWrapper(const std::string& algo_type,
 
 void AlgorithmWrapper::run(const Eigen::MatrixXd& data, int niter, int burnin,
                            int rng_seed) {
-  std::cout << "AlgorithmWrapper::run" << std::endl;
   mixing->set_prior(*mix_prior);
   hier->set_prior(*hier_prior);
   hier->initialize();
-  std::cout << "set and initialized" << std::endl;
   if (rng_seed > 0) {
     auto& rng = bayesmix::Rng::Instance().get();
     rng.seed(rng_seed);
@@ -62,12 +60,22 @@ void AlgorithmWrapper::run(const Eigen::MatrixXd& data, int niter, int burnin,
   algo->set_mixing(mixing);
   algo->set_data(data);
   algo->set_initial_clusters(hier, 5);
-  std::cout << "set initial clusters" << std::endl;
-
   algo->run(&collector);
-  std::cout << "finished run" << std::endl;
 }
 
 void AlgorithmWrapper::say_hello() {
   std::cout << "Hello from AlgorithmWrapper" << std::endl;
+}
+
+void add_algorithm_wrapper(pybind11::module& m) {
+  namespace py = pybind11;
+  py::class_<AlgorithmWrapper>(m, "AlgorithmWrapper")
+      .def(py::init<>())
+      .def(py::init<const std::string&, const std::string&, const std::string&,
+                    const std::string&, const std::string&, const std::string&,
+                    const std::string&>())
+      .def("say_hello", &AlgorithmWrapper::say_hello)
+      .def("run", &AlgorithmWrapper::run)
+      .def("eval_density", &AlgorithmWrapper::eval_density)
+      .def("get_collector", &AlgorithmWrapper::get_collector);
 }
