@@ -1,7 +1,9 @@
 #ifndef PYBMIX_ALGORITHM_WRAPPER_
 #define PYBMIX_ALGORITHM_WRAPPER_
 
+#include <pybind11/eigen.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 #include "bayesmix/src/includes.hpp"
 #include "serialized_collector.hpp"
@@ -35,9 +37,16 @@ class AlgorithmWrapper {
   void run(const Eigen::MatrixXd& data, int niter, int burnin,
            int rng_seed = -1);
 
+  Eigen::MatrixXd eval_density(const Eigen::MatrixXd grid) {
+    Eigen::MatrixXd out = algo->eval_lpdf(grid, &collector).array().exp();
+    return out;
+  } 
+
   void say_hello();
 
-  const SerializedCollector& get_collector() { return collector; }
+  const SerializedCollector& get_collector() const { return collector; }
 };
+
+void add_algorithm_wrapper(pybind11::module& m);
 
 #endif
