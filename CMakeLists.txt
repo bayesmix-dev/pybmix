@@ -27,5 +27,5 @@ pybind11_add_module(pybmixcpp ${SOURCES}
 
 target_include_directories(pybmixcpp PUBLIC ${BAYESMIX_INCLUDE_PATHS})
 target_compile_definitions(pybmixcpp PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
-target_link_libraries(pybmixcpp PUBLIC bayesmixlib tbb pthread protobuf)
+target_link_libraries(pybmixcpp PUBLIC bayesmixlib pthread protobuf)
 target_compile_options(pybmixcpp PUBLIC ${COMPILE_OPTIONS})
