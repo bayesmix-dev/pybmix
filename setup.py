@@ -205,6 +205,7 @@ class CMakeBuild(build_ext):
         # EXAMPLE_VERSION_INFO shows you how to pass a value into the C++ code
         # from Python.
         cmake_args = [
+            "-DDISABLE_TESTS=ON",
             "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={}".format(extdir),
             "-DPYTHON_EXECUTABLE={}".format(sys.executable),
             "-DEXAMPLE_VERSION_INFO={}".format(self.distribution.get_version()),
@@ -288,5 +289,12 @@ if __name__ == "__main__":
             "clean": clean,
             "build_ext": CMakeBuild,
             },
+        install_requires=[
+            "cmake",
+            "ninja",
+            "numpy",
+            "scipy",
+            "protobuf==3.14.0"
+        ],
         zip_safe=False,
     )
