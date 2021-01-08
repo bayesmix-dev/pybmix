@@ -1,5 +1,7 @@
 import glob
 import os
+import platform
+import shutil
 import sys
 import subprocess
 
@@ -91,6 +93,54 @@ def generate_all_protos():
     if subprocess.call(two_to_three_command) != 0:
       sys.exit(-1)
 
+
+def build_tbb():
+    """Build tbb. This function is taken from
+    https://github.com/stan-dev/pystan/blob/develop/setup.py"""
+   
+    stan_math_lib = os.path.abspath(os.path.join(os.path.dirname(
+        __file__), 'pybmixcpp', 'src', 'bayesmix', 'lib', 'math', 'lib'))
+
+    make = 'make' if platform.system() != 'Windows' else 'mingw32-make'
+    cmd = [make]
+
+    tbb_root = os.path.join(stan_math_lib, 'tbb_2019_U8').replace("\\", "/")
+
+    cmd.extend(['-C', tbb_root])
+    cmd.append('tbb_build_dir={}'.format(stan_math_lib))
+    cmd.append('tbb_build_prefix=tbb')
+    cmd.append('tbb_root={}'.format(tbb_root))
+
+    cmd.append('stdver=c++14')
+
+    cmd.append('compiler=gcc')
+
+    cwd = os.path.abspath(os.path.dirname(__file__))
+
+    subprocess.check_call(cmd, cwd=cwd)
+
+    tbb_debug = os.path.join(stan_math_lib, "tbb_debug")
+    tbb_release = os.path.join(stan_math_lib, "tbb_release")
+    tbb_dir = os.path.join(stan_math_lib, "tbb")
+
+    if not os.path.exists(tbb_dir):
+        os.makedirs(tbb_dir)
+
+    if os.path.exists(tbb_debug):
+        shutil.rmtree(tbb_debug)
+
+    shutil.move(os.path.join(tbb_root, 'include'), tbb_dir)
+    shutil.rmtree(tbb_root)
+
+    for name in os.listdir(tbb_release):
+        srcname = os.path.join(tbb_release, name)
+        dstname = os.path.join(tbb_dir, name)
+        shutil.move(srcname, dstname)
+
+    if os.path.exists(tbb_release):
+        shutil.rmtree(tbb_release)
+
+
 class build_py(_build_py):
   def run(self):
     generate_all_protos()
@@ -155,6 +205,7 @@ class CMakeBuild(build_ext):
         # EXAMPLE_VERSION_INFO shows you how to pass a value into the C++ code
         # from Python.
         cmake_args = [
+            "-DDISABLE_TESTS=ON",
             "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={}".format(extdir),
             "-DPYTHON_EXECUTABLE={}".format(sys.executable),
             "-DEXAMPLE_VERSION_INFO={}".format(self.distribution.get_version()),
@@ -215,6 +266,14 @@ class CMakeBuild(build_ext):
 
 if __name__ == "__main__":
 
+    # Build tbb before setup if needed
+    tbb_dir = os.path.join(
+        os.path.dirname(__file__), 'pybmixcpp', 'src', 'bayesmix', 'lib',
+        'math', 'lib', 'tbb')
+    tbb_dir = os.path.abspath(tbb_dir)
+    if not os.path.exists(tbb_dir):
+        build_tbb()
+
     setup(
         name="pybmix",
         version="0.0.1",
@@ -230,5 +289,12 @@ if __name__ == "__main__":
             "clean": clean,
             "build_ext": CMakeBuild,
             },
+        install_requires=[
+            "cmake",
+            "ninja",
+            "numpy",
+            "scipy",
+            "protobuf==3.14.0"
+        ],
         zip_safe=False,
     )

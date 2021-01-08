@@ -4,7 +4,6 @@
 ## Prerequisites
 
 - Protocol buffers
-- pybind11
 - cmake
 
 
