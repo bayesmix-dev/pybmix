@@ -267,7 +267,7 @@ class CMakeBuild(build_ext):
 if __name__ == "__main__":
 
     # Build tbb before setup if needed
-    tbb_dir = os.path.joinU(
+    tbb_dir = os.path.join(
         os.path.dirname(__file__), 'pybmixcpp', 'src', 'bayesmix', 'lib',
         'math', 'lib', 'tbb')
     tbb_dir = os.path.abspath(tbb_dir)
