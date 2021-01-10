@@ -14,6 +14,10 @@ from setuptools.command.develop import develop as _develop
 from setuptools.command.egg_info import egg_info as _egg_info
 from distutils.command.install import install as _install
 
+PYBMIXCPP_PATH = os.path.join("pybmix", "core", "pybmixcpp")
+BAYEXMIX_PATH = os.path.join(PYBMIXCPP_PATH , "bayesmix")
+PROTO_IN_DIR = os.path.join(BAYEXMIX_PATH, "proto")
+PROTO_OUT_DIR = os.path.join("pybmix", "proto/")
 
 # Convert distutils Windows platform specifiers to CMake -A arguments
 PLAT_TO_CMAKE = {
@@ -23,8 +27,7 @@ PLAT_TO_CMAKE = {
     "win-arm64": "ARM64",
 }
 
-PROTO_IN_DIR = os.path.join("pybmixcpp", "src", "bayesmix", "proto")
-PROTO_OUT_DIR = os.path.join("pybmix", "proto/")
+
 
 # Find the Protocol Compiler.
 if 'PROTOC' in os.environ and os.path.exists(os.environ['PROTOC']):
@@ -99,7 +102,7 @@ def build_tbb():
     https://github.com/stan-dev/pystan/blob/develop/setup.py"""
    
     stan_math_lib = os.path.abspath(os.path.join(os.path.dirname(
-        __file__), 'pybmixcpp', 'src', 'bayesmix', 'lib', 'math', 'lib'))
+        __file__), BAYEXMIX_PATH, 'lib', 'math', 'lib'))
 
     make = 'make' if platform.system() != 'Windows' else 'mingw32-make'
     cmd = [make]
@@ -267,10 +270,9 @@ class CMakeBuild(build_ext):
 if __name__ == "__main__":
 
     # Build tbb before setup if needed
-    tbb_dir = os.path.join(
-        os.path.dirname(__file__), 'pybmixcpp', 'src', 'bayesmix', 'lib',
-        'math', 'lib', 'tbb')
+    tbb_dir = os.path.join(BAYEXMIX_PATH, 'lib', 'math', 'lib', 'tbb')
     tbb_dir = os.path.abspath(tbb_dir)
+    print("tbb_dir: ", tbb_dir)
     if not os.path.exists(tbb_dir):
         build_tbb()
 
@@ -282,7 +284,7 @@ if __name__ == "__main__":
         description="Python Bayesian Mixtures",
         long_description="",
         packages=find_packages(),
-        ext_modules=[CMakeExtension('pybmixcpp.pybmixcpp')],
+        ext_modules=[CMakeExtension('pybmix.core.pybmixcpp')],
         cmdclass={
             "egg_info": egg_info,
             "build_py": build_py,
