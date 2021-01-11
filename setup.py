@@ -12,6 +12,13 @@ from setuptools.command.develop import develop as _develop
 from setuptools.command.egg_info import egg_info as _egg_info
 from distutils.command.install import install as _install
 
+from pybmix.core.pybmixcpp.bayesmix.build_tbb import maybe_build_tbb
+
+
+PYBMIXCPP_PATH = os.path.join("pybmix", "core", "pybmixcpp")
+BAYEXMIX_PATH = os.path.join(PYBMIXCPP_PATH , "bayesmix")
+PROTO_IN_DIR = os.path.join(BAYEXMIX_PATH, "proto")
+PROTO_OUT_DIR = os.path.join("pybmix", "proto/")
 
 # Convert distutils Windows platform specifiers to CMake -A arguments
 PLAT_TO_CMAKE = {
@@ -21,8 +28,6 @@ PLAT_TO_CMAKE = {
     "win-arm64": "ARM64",
 }
 
-PROTO_IN_DIR = os.path.join("pybmixcpp", "src", "bayesmix", "proto")
-PROTO_OUT_DIR = os.path.join("pybmix", "proto/")
 
 # Find the Protocol Compiler.
 if 'PROTOC' in os.environ and os.path.exists(os.environ['PROTOC']):
@@ -91,6 +96,7 @@ def generate_all_protos():
     if subprocess.call(two_to_three_command) != 0:
       sys.exit(-1)
 
+
 class build_py(_build_py):
   def run(self):
     generate_all_protos()
@@ -155,6 +161,7 @@ class CMakeBuild(build_ext):
         # EXAMPLE_VERSION_INFO shows you how to pass a value into the C++ code
         # from Python.
         cmake_args = [
+            "-DDISABLE_TESTS=ON",
             "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={}".format(extdir),
             "-DPYTHON_EXECUTABLE={}".format(sys.executable),
             "-DEXAMPLE_VERSION_INFO={}".format(self.distribution.get_version()),
@@ -215,6 +222,9 @@ class CMakeBuild(build_ext):
 
 if __name__ == "__main__":
 
+    # Build tbb before setup if needed
+    maybe_build_tbb()
+
     setup(
         name="pybmix",
         version="0.0.1",
@@ -223,12 +233,19 @@ if __name__ == "__main__":
         description="Python Bayesian Mixtures",
         long_description="",
         packages=find_packages(),
-        ext_modules=[CMakeExtension('pybmixcpp.pybmixcpp')],
+        ext_modules=[CMakeExtension('pybmix.core.pybmixcpp')],
         cmdclass={
             "egg_info": egg_info,
             "build_py": build_py,
             "clean": clean,
             "build_ext": CMakeBuild,
             },
+        install_requires=[
+            "cmake",
+            "ninja",
+            "numpy",
+            "scipy",
+            "protobuf==3.14.0"
+        ],
         zip_safe=False,
     )

@@ -7,9 +7,8 @@ set(COMPILE_OPTIONS -D_REENTRANT -fPIC)
 set(CMAKE_BUILD_TYPE Release)
 
 
-SET(SOURCE_DIR "pybmixcpp/src")
+SET(SOURCE_DIR "./pybmix/core/pybmixcpp")
 add_subdirectory(${SOURCE_DIR}/bayesmix)
-add_subdirectory(${SOURCE_DIR})
 include_directories(${SOURCE_DIR})
 SET_SOURCE_FILES_PROPERTIES(${PROTO_HEADERS} ${PROTO_SOURCES} PROPERTIES GENERATED TRUE)
 
@@ -27,5 +26,5 @@ pybind11_add_module(pybmixcpp ${SOURCES}
 
 target_include_directories(pybmixcpp PUBLIC ${BAYESMIX_INCLUDE_PATHS})
 target_compile_definitions(pybmixcpp PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
-target_link_libraries(pybmixcpp PUBLIC bayesmixlib tbb pthread protobuf)
+target_link_libraries(pybmixcpp PUBLIC bayesmixlib pthread protobuf)
 target_compile_options(pybmixcpp PUBLIC ${COMPILE_OPTIONS})
