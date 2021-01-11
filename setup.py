@@ -1,7 +1,5 @@
 import glob
 import os
-import platform
-import shutil
 import sys
 import subprocess
 
@@ -13,6 +11,9 @@ from distutils.spawn import find_executable
 from setuptools.command.develop import develop as _develop
 from setuptools.command.egg_info import egg_info as _egg_info
 from distutils.command.install import install as _install
+
+from pybmix.core.pybmixcpp.bayesmix.build_tbb import maybe_build_tbb
+
 
 PYBMIXCPP_PATH = os.path.join("pybmix", "core", "pybmixcpp")
 BAYEXMIX_PATH = os.path.join(PYBMIXCPP_PATH , "bayesmix")
@@ -26,7 +27,6 @@ PLAT_TO_CMAKE = {
     "win-arm32": "ARM",
     "win-arm64": "ARM64",
 }
-
 
 
 # Find the Protocol Compiler.
@@ -97,51 +97,51 @@ def generate_all_protos():
       sys.exit(-1)
 
 
-def build_tbb():
-    """Build tbb. This function is taken from
-    https://github.com/stan-dev/pystan/blob/develop/setup.py"""
+# def build_tbb():
+#     """Build tbb. This function is taken from
+#     https://github.com/stan-dev/pystan/blob/develop/setup.py"""
    
-    stan_math_lib = os.path.abspath(os.path.join(os.path.dirname(
-        __file__), BAYEXMIX_PATH, 'lib', 'math', 'lib'))
+#     stan_math_lib = os.path.abspath(os.path.join(os.path.dirname(
+#         __file__), BAYEXMIX_PATH, 'lib', 'math', 'lib'))
 
-    make = 'make' if platform.system() != 'Windows' else 'mingw32-make'
-    cmd = [make]
+#     make = 'make' if platform.system() != 'Windows' else 'mingw32-make'
+#     cmd = [make]
 
-    tbb_root = os.path.join(stan_math_lib, 'tbb_2019_U8').replace("\\", "/")
+#     tbb_root = os.path.join(stan_math_lib, 'tbb_2019_U8').replace("\\", "/")
 
-    cmd.extend(['-C', tbb_root])
-    cmd.append('tbb_build_dir={}'.format(stan_math_lib))
-    cmd.append('tbb_build_prefix=tbb')
-    cmd.append('tbb_root={}'.format(tbb_root))
+#     cmd.extend(['-C', tbb_root])
+#     cmd.append('tbb_build_dir={}'.format(stan_math_lib))
+#     cmd.append('tbb_build_prefix=tbb')
+#     cmd.append('tbb_root={}'.format(tbb_root))
 
-    cmd.append('stdver=c++14')
+#     cmd.append('stdver=c++14')
 
-    cmd.append('compiler=gcc')
+#     cmd.append('compiler=gcc')
 
-    cwd = os.path.abspath(os.path.dirname(__file__))
+#     cwd = os.path.abspath(os.path.dirname(__file__))
 
-    subprocess.check_call(cmd, cwd=cwd)
+#     subprocess.check_call(cmd, cwd=cwd)
 
-    tbb_debug = os.path.join(stan_math_lib, "tbb_debug")
-    tbb_release = os.path.join(stan_math_lib, "tbb_release")
-    tbb_dir = os.path.join(stan_math_lib, "tbb")
+#     tbb_debug = os.path.join(stan_math_lib, "tbb_debug")
+#     tbb_release = os.path.join(stan_math_lib, "tbb_release")
+#     tbb_dir = os.path.join(stan_math_lib, "tbb")
 
-    if not os.path.exists(tbb_dir):
-        os.makedirs(tbb_dir)
+#     if not os.path.exists(tbb_dir):
+#         os.makedirs(tbb_dir)
 
-    if os.path.exists(tbb_debug):
-        shutil.rmtree(tbb_debug)
+#     if os.path.exists(tbb_debug):
+#         shutil.rmtree(tbb_debug)
 
-    shutil.move(os.path.join(tbb_root, 'include'), tbb_dir)
-    shutil.rmtree(tbb_root)
+#     shutil.move(os.path.join(tbb_root, 'include'), tbb_dir)
+#     shutil.rmtree(tbb_root)
 
-    for name in os.listdir(tbb_release):
-        srcname = os.path.join(tbb_release, name)
-        dstname = os.path.join(tbb_dir, name)
-        shutil.move(srcname, dstname)
+#     for name in os.listdir(tbb_release):
+#         srcname = os.path.join(tbb_release, name)
+#         dstname = os.path.join(tbb_dir, name)
+#         shutil.move(srcname, dstname)
 
-    if os.path.exists(tbb_release):
-        shutil.rmtree(tbb_release)
+#     if os.path.exists(tbb_release):
+#         shutil.rmtree(tbb_release)
 
 
 class build_py(_build_py):
@@ -270,11 +270,7 @@ class CMakeBuild(build_ext):
 if __name__ == "__main__":
 
     # Build tbb before setup if needed
-    tbb_dir = os.path.join(BAYEXMIX_PATH, 'lib', 'math', 'lib', 'tbb')
-    tbb_dir = os.path.abspath(tbb_dir)
-    print("tbb_dir: ", tbb_dir)
-    if not os.path.exists(tbb_dir):
-        build_tbb()
+    maybe_build_tbb()
 
     setup(
         name="pybmix",
