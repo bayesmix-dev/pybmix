@@ -5,8 +5,7 @@ import pybmix.core.mixing as mix
 from pybmix.core.hierarchy import BaseHierarchy
 from pybmix.core.chain import MmcmChain
 from pybmix.proto.marginal_state_pb2 import MarginalState
-from pybmixcpp.pybmixcpp import AlgorithmWrapper
-import pybmixcpp
+from pybmix.core.pybmixcpp import AlgorithmWrapper, ostream_redirect
 
 # TODO: algo_type, hier_type, hier_prior_type, mix_type, mix_prior_tye -> Enums
 
@@ -35,7 +34,7 @@ class MixtureModel(object):
             self.hierarchy.prior_params.SerializeToString(),
             self.mixing.prior_proto.SerializeToString())
         
-        with pybmixcpp.ostream_redirect(stdout=True, stderr=True):
+        with ostream_redirect(stdout=True, stderr=True):
             self._algo.run(y, niter, nburn, rng_seed)
 
     def estimate_density(self, grid, mean=False):
