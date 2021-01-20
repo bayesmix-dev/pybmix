@@ -1,12 +1,13 @@
 import abc
 import logging
+import math
 import numpy as np
 
-from scipy.special import gamma
+from scipy.special import binom, loggamma, gamma, poch
 
 from pybmix.proto.distribution_pb2 import GammaDistribution
-from pybmix.proto.mixing_prior_pb2 import DPPrior
-from pybmix.utils.combinatorials import stirling
+from pybmix.proto.mixing_prior_pb2 import DPPrior, PYPrior
+from pybmix.utils.combinatorials import stirling, generalized_factorial_memoizer
 
 
 class BaseMixing(metaclass=abc.ABCMeta):
@@ -18,13 +19,6 @@ class BaseMixing(metaclass=abc.ABCMeta):
         """
         Evaluates the prior probability of the number of clusters on a
         grid
-
-        Parameters
-        ----------
-        grid : array-like of shape (n,)
-               Points where to evaluate the probability mass function
-        nsamples : int
-                   Number of samples
         """
         pass
 
@@ -112,13 +106,75 @@ class DirichletProcessMixing(BaseMixing):
             error_msg = "parameter 'total_mass_prior.shape' must be strictly " + \
                         "greater than 0, found {0} instead".format(
                             total_mass_prior.shape)
+            raise ValueError(error_msg)
 
         if total_mass_prior is not None and total_mass_prior.rate <= 0:
             error_msg = "parameter 'total_mass_prior.rate' must be strictly " + \
                         "greater than 0, found {0} instead".format(
                             total_mass_prior.rate)
+            raise ValueError(error_msg)
+
+
 
 
 class PitmanYorMixing(BaseMixing):
+    """ This class represents a Pitman-Yor process used for mixing in a mixture
+    model. The Pitman-Yor process depends on a 'strength' parameter and on 
+    a 'discout' parameter.
+    We consider only the case of scrictly positive total_mass.
+
+    Parameters
+    ----------
+    strength : float greater than 0
+                strength (or concentration) parameter of the Pitman-Yor
+                Process
+    discount : float, in the range (0, 1). If discount == 0, PitmanYorMixing
+               is the same of DirichletProcessMixing
+    """
+
     NAME = "PY"
-    pass
+
+    def __init__(self, strength, discount):
+        self._check_args(strength, discount)
+        self._build_prior_proto(strength, discount)
+        self.generalized_factorial = generalized_factorial_memoizer(discount)
+
+    def prior_cluster_distribution(self, grid, nsamples):
+        """
+        Evaluates the prior probability of the number of clusters on a
+        grid
+
+        Parameters
+        ----------
+        grid : array-like of shape (n,)
+               Points where to evaluate the probability mass function
+        nsamples : int
+                   Number of samples
+        """
+        strength = self.prior_proto.fixed_values.strength
+        discount = self.prior_proto.fixed_values.discount
+        out = np.zeros_like(grid, dtype=np.float)
+        
+        vnk_den = loggamma(strength + nsamples) - loggamma(strength)
+        for i, k in enumerate(grid):
+            vnk_num = np.sum(
+                [np.log(strength + l * discount) for l in range(k)])
+            vnk = vnk_num - vnk_den
+            out_logscale = vnk + np.log(self.generalized_factorial(nsamples, k)) - \
+                k * np.log(discount)
+            out[i] = np.exp(out_logscale)
+        return out
+
+    def _build_prior_proto(self, strength, discount):
+        self.prior_proto = PYPrior()
+        self.prior_proto.fixed_values.strength = strength
+        self.prior_proto.fixed_values.discount = discount
+
+    def _check_args(self, strength, discount):
+        if strength <= 0:
+            raise ValueError(
+                "Parameter 'strength' must be strictly greater than zero")
+
+        if discount >= 1 or discount <= 0:
+            raise ValueError(
+                "Parameter 'discount' must be in the range (0, 1")
