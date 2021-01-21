@@ -3,7 +3,7 @@ import logging
 import math
 import numpy as np
 
-from scipy.special import binom, loggamma, gamma, poch
+from scipy.special import loggamma, gamma
 
 from pybmix.proto.distribution_pb2 import GammaDistribution
 from pybmix.proto.mixing_prior_pb2 import DPPrior, PYPrior
