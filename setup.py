@@ -12,7 +12,8 @@ from setuptools.command.develop import develop as _develop
 from setuptools.command.egg_info import egg_info as _egg_info
 from distutils.command.install import install as _install
 
-from pybmix.core.pybmixcpp.bayesmix.build_tbb import maybe_build_tbb
+sys.path.append("pybmix/core/pybmixcpp/bayesmix")
+from build_tbb import maybe_build_tbb
 
 
 PYBMIXCPP_PATH = os.path.join("pybmix", "core", "pybmixcpp")
