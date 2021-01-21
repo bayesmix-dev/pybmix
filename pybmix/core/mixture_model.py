@@ -37,13 +37,6 @@ class MixtureModel(object):
         with ostream_redirect(stdout=True, stderr=True):
             self._algo.run(y, niter, nburn, rng_seed)
 
-    def estimate_density(self, grid, mean=False):
-        dens = self._algo.eval_density(grid)
-        if mean:
-            dens = np.mean(dens, axis=0)
-        
-        return dens
-
     def get_chain(self, optimize_memory=False):
         deserialize = not optimize_memory
         if self.algo_name in MARGINAL_ALGORITHMS:
