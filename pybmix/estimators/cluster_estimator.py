@@ -1,5 +1,7 @@
+import numpy as np
+
 from pybmix.core.mixture_model import MixtureModel
-from pybmix.core.pybmixcpp import _minbinder_cluster_estimate
+from pybmix.core.pybmixcpp import _minbinder_cluster_estimate, ostream_redirect
 
 class ClusterEstimator(object):
     """
@@ -26,11 +28,22 @@ class ClusterEstimator(object):
 
     def get_point_estimate(self):
         if self.method == "samples" and self.loss == "binder_equal":
-            return _minbinder_cluster_estimate(
-                self.chain.extract("cluster_allocs"))
+            with ostream_redirect(stdout=True, stderr=True):
+                return _minbinder_cluster_estimate(
+                    self.chain.extract("cluster_allocs"))
         
         else:
             raise ValueError(
                 "cluster point estimate only supports method='samples' and "
                 "loss='binder_equal' for the moment")
+
+    @staticmethod
+    def group_by_cluster(partition):
+        """Returns a list of indices, one for each cluster"""
+        labels = np.unique(partition)
+        out = []
+        for l in labels:
+            out.append(np.where(partition == l)[0])
+        
+        return out
     
