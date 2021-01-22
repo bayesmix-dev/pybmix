@@ -7,7 +7,7 @@ set(COMPILE_OPTIONS -D_REENTRANT -fPIC)
 set(CMAKE_BUILD_TYPE Release)
 
 
-SET(SOURCE_DIR "./pybmix/core/pybmixcpp")
+SET(SOURCE_DIR "pybmix/core/pybmixcpp")
 add_subdirectory(${SOURCE_DIR}/bayesmix)
 include_directories(${SOURCE_DIR})
 SET_SOURCE_FILES_PROPERTIES(${PROTO_HEADERS} ${PROTO_SOURCES} PROPERTIES GENERATED TRUE)
