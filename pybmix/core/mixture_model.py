@@ -3,7 +3,7 @@ import numpy as np
 
 import pybmix.core.mixing as mix
 from pybmix.core.hierarchy import BaseHierarchy
-from pybmix.core.chain import MmcmChain
+from pybmix.core.chain import MCMCchain
 from pybmix.proto.marginal_state_pb2 import MarginalState
 from pybmix.core.pybmixcpp import AlgorithmWrapper, ostream_redirect
 
@@ -45,6 +45,6 @@ class MixtureModel(object):
             objtype = None
             logging.error("Algorithm is not marginal")
         
-        return MmcmChain(
+        return MCMCchain(
             self._algo.get_collector().get_serialized_chain(),
             objtype, deserialize)

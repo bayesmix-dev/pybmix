@@ -177,4 +177,4 @@ class PitmanYorMixing(BaseMixing):
 
         if discount >= 1 or discount <= 0:
             raise ValueError(
-                "Parameter 'discount' must be in the range (0, 1")
+                "Parameter 'discount' must be in the range (0, 1)")

@@ -6,7 +6,7 @@ from pybmix.utils.proto_utils import get_field
 import pybmix.proto.matrix_pb2 as matrix_pb2
 
 
-class MmcmChain(object):
+class MCMCchain(object):
     """This class represents an MCMC chain obtained by running the algorithm
     for a MixtureModel. It saves the visited states during the MCMC iterations
     and has a useful 'extract' method to get the chain of one (possibly
@@ -19,6 +19,10 @@ class MmcmChain(object):
     objtype: 
     """
     def __init__(self, serialized_chain, objtype, deserialize=True):
+        if len(serialized_chain) == 0: 
+            logging.error("Supplied empty 'serialized_chain', aborting")
+            return
+
         self.objtype = objtype
         self.serialized_chain = serialized_chain
         self.chain = None
