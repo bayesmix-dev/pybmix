@@ -67,11 +67,11 @@ def generate_proto(source, require = True):
           "or install the binary package.\n")
       sys.exit(-1)
 
-    protoc_command = [protoc, "--proto_path={0}".format(PROTO_IN_DIR), 
-                      "--python_out={0}".format(PROTO_OUT_DIR), source]
-    print(" ".join(protoc_command))
-    if subprocess.call(protoc_command) != 0:
-      sys.exit(-1)
+#    protoc_command = [protoc, "--proto_path={0}".format(PROTO_IN_DIR), 
+#                      "--python_out={0}".format(PROTO_OUT_DIR), source]
+#    print(" ".join(protoc_command))
+#    if subprocess.call(protoc_command) != 0:
+#      sys.exit(-1)
 
 
 class clean(_clean):
@@ -89,13 +89,14 @@ class clean(_clean):
 def generate_all_protos():
     proto_files = glob.glob(os.path.join(PROTO_IN_DIR, "*.proto"))
     for file in proto_files:
-        generate_proto(file)
+        continue
+        # generate_proto(file)
     
-    two_to_three_command = [
-        py2to3, "--output-dir={0}".format(PROTO_OUT_DIR), "-W", "-n", PROTO_OUT_DIR]
-    print(" ".join(two_to_three_command))
-    if subprocess.call(two_to_three_command) != 0:
-      sys.exit(-1)
+    #two_to_three_command = [
+    #    py2to3, "--output-dir={0}".format(PROTO_OUT_DIR), "-W", "-n", PROTO_OUT_DIR]
+    #print(" ".join(two_to_three_command))
+    #if subprocess.call(two_to_three_command) != 0:
+    #  sys.exit(-1)
 
 
 class build_py(_build_py):
@@ -162,6 +163,7 @@ class CMakeBuild(build_ext):
         # EXAMPLE_VERSION_INFO shows you how to pass a value into the C++ code
         # from Python.
         cmake_args = [
+            "-DBUILD_RUN=OFF",
             "-DDISABLE_TESTS=ON",
             "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={}".format(extdir),
             "-DPYTHON_EXECUTABLE={}".format(sys.executable),
@@ -220,6 +222,12 @@ class CMakeBuild(build_ext):
             ["cmake", "--build", "."] + build_args, cwd=self.build_temp
         )
 
+        two_to_three_command = [
+            py2to3, "--output-dir={0}".format(PROTO_OUT_DIR), "-W", "-n", PROTO_OUT_DIR]
+        print(" ".join(two_to_three_command))
+        if subprocess.call(two_to_three_command) != 0:
+            sys.exit(-1)
+
 
 if __name__ == "__main__":
 
@@ -242,6 +250,7 @@ if __name__ == "__main__":
             "build_ext": CMakeBuild,
             },
         install_requires=[
+            "2to3",
             "cmake",
             "ninja",
             "numpy",
