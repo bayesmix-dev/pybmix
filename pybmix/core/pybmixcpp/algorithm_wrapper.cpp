@@ -40,26 +40,29 @@ AlgorithmWrapper::AlgorithmWrapper(const std::string& algo_type,
           ->New());
   hier_prior->ParseFromString(serialized_hier_prior);
 
-  if (algo_type == "N8") {
-    algo->set_n_aux(3);
+   if (algo_type == "N8") {
+    algo_params.set_neal8_n_aux(3);
   }
 }
 
 void AlgorithmWrapper::run(const Eigen::MatrixXd& data, int niter, int burnin,
                            int rng_seed) {
-  mixing->set_prior(*mix_prior);
-  hier->set_prior(*hier_prior);
+  mixing->get_mutable_prior()->CopyFrom(*mix_prior);
+  hier->get_mutable_prior()->CopyFrom(*hier_prior);
   hier->initialize();
   if (rng_seed > 0) {
     auto& rng = bayesmix::Rng::Instance().get();
     rng.seed(rng_seed);
   }
 
-  algo->set_maxiter(niter);
-  algo->set_burnin(burnin);
+  algo_params.set_iterations(niter);
+  algo_params.set_burnin(burnin);
+  algo->read_params_from_proto(algo_params);
+
   algo->set_mixing(mixing);
   algo->set_data(data);
-  algo->set_initial_clusters(hier, 5);
+  algo->set_hierarchy(hier);
+
   algo->run(&collector);
 }
 

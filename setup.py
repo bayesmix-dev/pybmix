@@ -163,6 +163,7 @@ class CMakeBuild(build_ext):
         # from Python.
         cmake_args = [
             "-DDISABLE_TESTS=ON",
+            "-DDISABLE_BENCHMARKS=ON",
             "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={}".format(extdir),
             "-DPYTHON_EXECUTABLE={}".format(sys.executable),
             "-DEXAMPLE_VERSION_INFO={}".format(self.distribution.get_version()),

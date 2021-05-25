@@ -5,22 +5,23 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include "bayesmix/src/includes.hpp"
+#include "bayesmix/src/includes.h"
 #include "serialized_collector.hpp"
 
 class AlgorithmWrapper {
  protected:
   SerializedCollector collector;
-  Factory<BaseAlgorithm>& factory_algo = Factory<BaseAlgorithm>::Instance();
-  Factory<BaseHierarchy>& factory_hier = Factory<BaseHierarchy>::Instance();
-  Factory<BaseMixing>& factory_mixing = Factory<BaseMixing>::Instance();
+  AlgorithmFactory& factory_algo = AlgorithmFactory::Instance();
+  HierarchyFactory& factory_hier = HierarchyFactory::Instance();
+  MixingFactory& factory_mixing = MixingFactory::Instance();
 
   std::shared_ptr<BaseAlgorithm> algo;
-  std::shared_ptr<BaseHierarchy> hier;
-  std::shared_ptr<BaseMixing> mixing;
+  std::shared_ptr<AbstractHierarchy> hier;
+  std::shared_ptr<AbstractMixing> mixing;
 
   std::shared_ptr<google::protobuf::Message> mix_prior;
   std::shared_ptr<google::protobuf::Message> hier_prior;
+  bayesmix::AlgorithmParams algo_params;
 
  public:
   AlgorithmWrapper() {}
@@ -38,9 +39,9 @@ class AlgorithmWrapper {
            int rng_seed = -1);
 
   Eigen::MatrixXd eval_density(const Eigen::MatrixXd grid) {
-    Eigen::MatrixXd out = algo->eval_lpdf(grid, &collector).array().exp();
+    Eigen::MatrixXd out = algo->eval_lpdf(&collector, grid).array().exp();
     return out;
-  } 
+  }
 
   void say_hello();
 

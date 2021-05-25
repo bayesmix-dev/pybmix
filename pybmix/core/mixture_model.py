@@ -4,7 +4,7 @@ import numpy as np
 import pybmix.core.mixing as mix
 from pybmix.core.hierarchy import BaseHierarchy
 from pybmix.core.chain import MCMCchain
-from pybmix.proto.marginal_state_pb2 import MarginalState
+from pybmix.proto.algorithm_state_pb2 import AlgorithmState
 from pybmix.core.pybmixcpp import AlgorithmWrapper, ostream_redirect
 
 # TODO: algo_type, hier_type, hier_prior_type, mix_type, mix_prior_tye -> Enums
@@ -25,7 +25,7 @@ class MixtureModel(object):
         self.mixing = mixing
         self.hierarchy = hierarchy
 
-    def run_mcmc(self, y, algorithm="N2", niter=1000, nburn=500, rng_seed=-1):
+    def run_mcmc(self, y, algorithm="Neal2", niter=1000, nburn=500, rng_seed=-1):
         self.algo_name = algorithm
         self._algo = AlgorithmWrapper(
             algorithm, self.hierarchy.NAME,
@@ -39,12 +39,7 @@ class MixtureModel(object):
 
     def get_chain(self, optimize_memory=False):
         deserialize = not optimize_memory
-        if self.algo_name in MARGINAL_ALGORITHMS:
-            objtype = MarginalState
-        else:
-            objtype = None
-            logging.error("Algorithm is not marginal")
         
         return MCMCchain(
             self._algo.get_collector().get_serialized_chain(),
-            objtype, deserialize)
+            AlgorithmState, deserialize)
