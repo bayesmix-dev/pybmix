@@ -1,12 +1,12 @@
 import abc
 import logging
-import math
 import numpy as np
 
+from joblib import Parallel, delayed
 from scipy.special import loggamma, gamma
 
-from pybmix.proto.distribution_pb2 import GammaDistribution
-from pybmix.proto.mixing_prior_pb2 import DPPrior, PYPrior
+from pybmix.proto.distribution_pb2 import BetaDistribution, GammaDistribution
+from pybmix.proto.mixing_prior_pb2 import DPPrior, PYPrior, TruncSBPrior
 from pybmix.utils.combinatorials import stirling, generalized_factorial_memoizer
 
 
@@ -115,8 +115,6 @@ class DirichletProcessMixing(BaseMixing):
             raise ValueError(error_msg)
 
 
-
-
 class PitmanYorMixing(BaseMixing):
     """ This class represents a Pitman-Yor process used for mixing in a mixture
     model. The Pitman-Yor process depends on a 'strength' parameter and on 
@@ -154,7 +152,7 @@ class PitmanYorMixing(BaseMixing):
         strength = self.prior_proto.fixed_values.strength
         discount = self.prior_proto.fixed_values.discount
         out = np.zeros_like(grid, dtype=np.float)
-        
+
         vnk_den = loggamma(strength + nsamples) - loggamma(strength)
         for i, k in enumerate(grid):
             vnk_num = np.sum(
@@ -178,3 +176,112 @@ class PitmanYorMixing(BaseMixing):
         if discount >= 1 or discount <= 0:
             raise ValueError(
                 "Parameter 'discount' must be in the range (0, 1)")
+
+
+class StickBreakMixing(BaseMixing):
+    """ 
+    """
+
+    NAME = "TruncSB"
+
+    def __init__(self, n_comp, strength=None, discount=None, beta_params=None):
+        self._check_args(n_comp, strength, discount, beta_params)
+        self._build_prior_proto(n_comp, strength, discount, beta_params)
+
+    def prior_cluster_distribution(self, grid, nsamples, mc_iter=2000):
+        """
+        Evaluates the prior probability of the number of clusters on a
+        grid
+
+        Parameters
+        ----------
+        grid : array-like of shape (n,)
+               Points where to evaluate the probability mass function
+        nsamples : int
+                   Number of samples
+        """
+
+        niter = int(mc_iter)
+        nus = self._simulate_weights(niter)
+        weights = self._break_sticks(nus)
+        # simulate from the categorical distribution in a smart way
+        cum_prob = np.cumsum(weights, axis=-1)
+        r = np.random.uniform(size=(nsamples, niter, 1))
+        clus_allocs = np.argmax(cum_prob > r, axis=-1)
+        mc_samples = np.apply_along_axis(lambda x: len(np.unique(x)), axis=0,
+                                   arr=clus_allocs)
+        out = np.zeros_like(grid, dtype=np.float)
+        for i, k in enumerate(grid):
+            out[i] = np.sum(mc_samples == k)
+        return out
+
+    def _simulate_weights(self, n):
+        return np.random.beta(
+            np.vstack([self._a_coeffs] * n),
+            np.vstack([self._b_coeffs] * n))
+
+    def _break_sticks(self, nus):
+        out = np.zeros((nus.shape[0], self.n_comp))
+        nus = np.hstack([nus, np.ones(nus.shape[0]).reshape(-1, 1)])
+        out[:, 0] = nus[:, 0]
+        out[:, 1:] = nus[:, 1:] * np.cumprod(1 - nus[:, :-1], axis=1)
+        return out
+
+    def _build_prior_proto(self, n_comp, strength, discount, beta_params):
+        self.prior_proto = TruncSBPrior()
+        self.prior_proto.num_components = n_comp
+        if self._type == "general":
+            for bp in beta_params:
+                param = BetaDistribution(shape_a=bp[0], shape_b=bp[1])
+                self.prior_proto.beta_priors.append(param)
+        elif self._type == "DP":
+            self.prior_proto.dp_prior.totalmass = strength
+        elif self._type == "PY":
+            self.prior_proto.py_prior.strength = strength
+            self.prior_proto.py_prior.discount = discount
+        else:
+            raise ValueError("Internal Error")
+
+    def _check_args(self, n_comp, strength=None, discount=None, beta_params=None):
+        self.n_comp = n_comp
+        if beta_params is not None:
+            if (strength, discount) != (None, None):
+                raise ValueError(
+                    "Only one between '(strength, discount)' and "
+                    "'beta_params' must be specified")
+
+            if len(beta_params) != n_comp - 1:
+                raise ValueError(
+                    "incompatible 'n_comp' and 'beta_params': "
+                    "ncomp - 1={0} != 'len(beta_params)={1}'".format(
+                        n_comp - 1, len(beta_params)))
+            
+            self._a_coeffs = np.array([x[0] for x in beta_params])
+            self._b_coeffs = np.array([x[1] for x in beta_params])
+
+            if not (np.all(self._a_coeffs > 0) and np.all(self._b_coeffs > 0)):
+                raise ValueError("Found negative or zero values in 'beta_params'")
+
+            self._type = "general"
+
+        elif strength is not None:
+            if strength <= 0:
+                raise ValueError(
+                    "Parameter 'strength' must be strictly greater than zero")
+            
+            if discount is not None:
+                if discount >= 1 or discount <= 0:
+                    raise ValueError(
+                        "Parameter 'discount' must be in the range (0, 1)")
+                self._type = "PY"
+            else:
+                discount = 0
+                self._type = "DP"
+
+            self._a_coeffs = np.ones(n_comp - 1) * (1 - discount)
+            self._b_coeffs = np.array(
+                [strength + (h+1) * discount for h in range(n_comp - 1)])
+
+        else:
+            raise ValueError("Not enough parameters provided")
+            

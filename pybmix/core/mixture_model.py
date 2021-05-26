@@ -9,8 +9,8 @@ from pybmix.core.pybmixcpp import AlgorithmWrapper, ostream_redirect
 
 # TODO: algo_type, hier_type, hier_prior_type, mix_type, mix_prior_tye -> Enums
 
-MARGINAL_ALGORITHMS = ["N2", "N8"] 
-CONDITIONAL_ALGORITHMS = []
+MARGINAL_ALGORITHMS = ["Neal2", "Neal3", "Neal8"] 
+CONDITIONAL_ALGORITHMS = ["BlockedGibbs"]
 
 
 class MixtureModel(object):
@@ -26,6 +26,12 @@ class MixtureModel(object):
         self.hierarchy = hierarchy
 
     def run_mcmc(self, y, algorithm="Neal2", niter=1000, nburn=500, rng_seed=-1):
+        if algorithm not in (MARGINAL_ALGORITHMS + CONDITIONAL_ALGORITHMS):
+            raise ValueError(
+                "'algorithm' parameter must be one of [{0}], found {1} instead".format(
+                    ", ".join(MARGINAL_ALGORITHMS + CONDITIONAL_ALGORITHMS),
+                    algorithm))
+
         self.algo_name = algorithm
         self._algo = AlgorithmWrapper(
             algorithm, self.hierarchy.NAME,
