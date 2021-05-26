@@ -2,12 +2,11 @@ import logging
 import numpy as np
 
 import pybmix.core.mixing as mix
+import pybmix.proto.algorithm_id_pb2 as algorithm_id
 from pybmix.core.hierarchy import BaseHierarchy
 from pybmix.core.chain import MCMCchain
 from pybmix.proto.algorithm_state_pb2 import AlgorithmState
 from pybmix.core.pybmixcpp import AlgorithmWrapper, ostream_redirect
-
-# TODO: algo_type, hier_type, hier_prior_type, mix_type, mix_prior_tye -> Enums
 
 MARGINAL_ALGORITHMS = ["Neal2", "Neal3", "Neal8"] 
 CONDITIONAL_ALGORITHMS = ["BlockedGibbs"]
@@ -33,10 +32,9 @@ class MixtureModel(object):
                     algorithm))
 
         self.algo_name = algorithm
+        self.algo_id = algorithm_id.AlgorithmId.Value(self.algo_name)
         self._algo = AlgorithmWrapper(
-            algorithm, self.hierarchy.NAME,
-            self.hierarchy.prior_params.DESCRIPTOR.full_name,
-            self.mixing.NAME, self.mixing.prior_proto.DESCRIPTOR.full_name,
+            self.algo_name, self.hierarchy.NAME, self.mixing.NAME,
             self.hierarchy.prior_params.SerializeToString(),
             self.mixing.prior_proto.SerializeToString())
         

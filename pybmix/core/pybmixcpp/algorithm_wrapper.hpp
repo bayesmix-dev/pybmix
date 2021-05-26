@@ -29,9 +29,7 @@ class AlgorithmWrapper {
   ~AlgorithmWrapper() {}
 
   AlgorithmWrapper(const std::string& algo_type, const std::string& hier_type,
-                   const std::string& hier_prior_type,
                    const std::string& mix_type,
-                   const std::string& mix_prior_type,
                    const std::string& serialized_hier_prior,
                    const std::string& serialized_mix_prior);
 

@@ -1,6 +1,7 @@
 import abc
 import numpy as np
 
+import pybmix.proto.hierarchy_id_pb2 as hierarchy_id
 import pybmix.proto.hierarchy_prior_pb2 as hprior
 from pybmix.utils.proto_utils import get_oneof_types, set_oneof_field
 
@@ -12,7 +13,8 @@ class BaseHierarchy(metaclass=abc.ABCMeta):
 
 
 class UnivariateNormal(BaseHierarchy):
-    NAME = "NNIG"
+    ID = hierarchy_id.NNIG
+    NAME = hierarchy_id.HierarchyId.Name(ID)
 
     def __init__(self, prior_params=None):
         self.prior_params = hprior.NNIGPrior()
@@ -47,9 +49,12 @@ class UnivariateNormal(BaseHierarchy):
 
 
 class MultivariateNormal(BaseHierarchy):
-    NAME = "NNW"
+    ID = hierarchy_id.NNW
+    NAME = hierarchy_id.HierarchyId.Name(ID)
     pass
 
 
 class LinearModel(BaseHierarchy):
+    ID = hierarchy_id.LinRegUni
+    NAME = hierarchy_id.HierarchyId.Name(ID)
     pass

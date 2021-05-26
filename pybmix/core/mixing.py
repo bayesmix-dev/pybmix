@@ -5,6 +5,7 @@ import numpy as np
 from joblib import Parallel, delayed
 from scipy.special import loggamma, gamma
 
+import pybmix.proto.mixing_id_pb2 as mixing_id
 from pybmix.proto.distribution_pb2 import BetaDistribution, GammaDistribution
 from pybmix.proto.mixing_prior_pb2 import DPPrior, PYPrior, TruncSBPrior
 from pybmix.utils.combinatorials import stirling, generalized_factorial_memoizer
@@ -36,8 +37,8 @@ class DirichletProcessMixing(BaseMixing):
     total_mass_prior : pybmix.proto.distribution_pb2.GammaDistribution or None
                        parameters for the prior distribution of 'total_mass'
     """
-
-    NAME = "DP"
+    ID = mixing_id.DP
+    NAME = mixing_id.MixingId.Name(ID)
 
     def __init__(self, total_mass=None, total_mass_prior=None):
         self._check_args(total_mass, total_mass_prior)
@@ -130,7 +131,8 @@ class PitmanYorMixing(BaseMixing):
                is the same of DirichletProcessMixing
     """
 
-    NAME = "PY"
+    ID = mixing_id.PY
+    NAME = mixing_id.MixingId.Name(ID)
 
     def __init__(self, strength, discount):
         self._check_args(strength, discount)
@@ -182,7 +184,8 @@ class StickBreakMixing(BaseMixing):
     """ 
     """
 
-    NAME = "TruncSB"
+    ID = mixing_id.TruncSB
+    NAME = mixing_id.MixingId.Name(ID)
 
     def __init__(self, n_comp, strength=None, discount=None, beta_params=None):
         self._check_args(n_comp, strength, discount, beta_params)
