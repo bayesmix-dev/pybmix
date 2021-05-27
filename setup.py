@@ -29,49 +29,7 @@ PLAT_TO_CMAKE = {
     "win-arm64": "ARM64",
 }
 
-
-# Find the Protocol Compiler.
-if 'PROTOC' in os.environ and os.path.exists(os.environ['PROTOC']):
-  protoc = os.environ['PROTOC']
-else:
-  protoc = find_executable("protoc")
-
 py2to3 = find_executable("2to3")
-
-
-def generate_proto(source, require = True):
-  """Invokes the Protocol Compiler to generate a _pb2.py from the given
-  .proto file.  Does nothing if the output already exists and is newer than
-  the input."""
-
-  print("Generating Proto: ", source)
-
-  if not require and not os.path.exists(source):
-    return
-  
-  filename = os.path.split(source)[1]
-  output = os.path.join(PROTO_OUT_DIR, filename.replace(".proto", "_pb2.py"))
-
-  if (not os.path.exists(output) or
-      (os.path.exists(source) and
-       os.path.getmtime(source) > os.path.getmtime(output))):
-    print("Generating %s..." % output)
-
-    if not os.path.exists(source):
-      sys.stderr.write("Can't find required file: %s\n" % source)
-      sys.exit(-1)
-
-    if protoc is None:
-      sys.stderr.write(
-          "protoc is not installed nor found in ../src.  Please compile it "
-          "or install the binary package.\n")
-      sys.exit(-1)
-
-    protoc_command = [protoc, "--proto_path={0}".format(PROTO_IN_DIR), 
-                      "--python_out={0}".format(PROTO_OUT_DIR), source]
-    print(" ".join(protoc_command))
-    if subprocess.call(protoc_command) != 0:
-      sys.exit(-1)
 
 
 class clean(_clean):
@@ -86,40 +44,6 @@ class clean(_clean):
     # _clean is an old-style class, so super() doesn't work.
     _clean.run(self)
 
-def generate_all_protos():
-    proto_files = glob.glob(os.path.join(PROTO_IN_DIR, "*.proto"))
-    for file in proto_files:
-        generate_proto(file)
-    
-    two_to_three_command = [
-        py2to3, "--output-dir={0}".format(PROTO_OUT_DIR), "-W", "-n", PROTO_OUT_DIR]
-    print(" ".join(two_to_three_command))
-    if subprocess.call(two_to_three_command) != 0:
-      sys.exit(-1)
-
-
-class build_py(_build_py):
-  def run(self):
-    generate_all_protos()
-    _build_py.run(self)
-
-
-class install(_install):
-    def run(self):
-        generate_all_protos()
-        _install.run(self)
-
-
-class develop(_develop):
-    def run(self):
-        generate_all_protos()
-        _develop.run(self)
-
-
-class egg_info(_egg_info):
-    def run(self):
-        generate_all_protos()
-        _egg_info.run(self)
 
 
 # A CMakeExtension needs a sourcedir instead of a file list.
@@ -162,6 +86,7 @@ class CMakeBuild(build_ext):
         # EXAMPLE_VERSION_INFO shows you how to pass a value into the C++ code
         # from Python.
         cmake_args = [
+            "-DBUILD_RUN=OFF",
             "-DDISABLE_TESTS=ON",
             "-DCMAKE_LIBRARY_OUTPUT_DIRECTORY={}".format(extdir),
             "-DPYTHON_EXECUTABLE={}".format(sys.executable),
@@ -220,6 +145,12 @@ class CMakeBuild(build_ext):
             ["cmake", "--build", "."] + build_args, cwd=self.build_temp
         )
 
+        two_to_three_command = [
+            py2to3, "--output-dir={0}".format(PROTO_OUT_DIR), "-W", "-n", PROTO_OUT_DIR]
+        print(" ".join(two_to_three_command))
+        if subprocess.call(two_to_three_command) != 0:
+            sys.exit(-1)
+
 
 if __name__ == "__main__":
 
@@ -236,12 +167,11 @@ if __name__ == "__main__":
         packages=find_packages(),
         ext_modules=[CMakeExtension('pybmix.core.pybmixcpp')],
         cmdclass={
-            "egg_info": egg_info,
-            "build_py": build_py,
             "clean": clean,
             "build_ext": CMakeBuild,
             },
         install_requires=[
+            "2to3",
             "cmake",
             "ninja",
             "numpy",
