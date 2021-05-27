@@ -181,7 +181,31 @@ class PitmanYorMixing(BaseMixing):
 
 
 class StickBreakMixing(BaseMixing):
-    """ 
+    """ This class represents a Stick-Breaking process used for mixing in a mixture
+    model. A Stick-Breaking process with 'H' components is defined as follows:
+    
+        w[0] = v[0],
+        w[h] = v[h] x (1 - v[0])(1 - v[1])...(1 - v[h-1])   h=1, ... H-2
+        w[H-1] = 1 - sum(w[:H-1])
+
+    The stick proportions v are assumed to be independently distributed
+    v[h] ~ Beta(a_h, b_h). Different choices of a_h and b_h define different
+    processes. 
+    For instance a_h = 1, b_h = alpha defines a truncation of the
+    Dirichlet proces with total_mass = alpha. 
+    a_h = 1 - discount, b_h = strength + (h+1) * discount corresponds to a 
+    truncation of the Pitman-Yor process. 
+
+    Parameters
+    ----------
+    n_comp : int greater than 1
+        number of components in the process
+    strength : float greater than 0 or None
+        strength (or concentration) parameter of the Pitman-Yor Process
+    discount : float, in the range (0, 1) or None. 
+        If discount == 0, PitmanYorMixing is the same of DirichletProcessMixing
+    beta_params : sequence of tuples or None
+        The parameters of the Beta distributions of the stick proportions
     """
 
     ID = mixing_id.TruncSB
@@ -202,6 +226,9 @@ class StickBreakMixing(BaseMixing):
                Points where to evaluate the probability mass function
         nsamples : int
                    Number of samples
+        mc_iter : int
+                 Number of Monte Carlo iterations used to approximate this
+                 distribution.
         """
 
         niter = int(mc_iter)
