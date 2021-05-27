@@ -13,6 +13,11 @@ class BaseHierarchy(metaclass=abc.ABCMeta):
 
 
 class UnivariateNormal(BaseHierarchy):
+    """ This class represents a univariate normal hierarchy, i.e. the model 
+        y_1, ... y_n | mu, s^2 ~ N(mu, s^2)
+        (mu, s^2) ~ Normal-inverse gamma(mu0, lambda, a, b)
+    Optionally, hyperpriors can be assumed on mu0, lambda, a  and b
+    """
     ID = hierarchy_id.NNIG
     NAME = hierarchy_id.HierarchyId.Name(ID)
 
