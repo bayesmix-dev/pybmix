@@ -234,7 +234,8 @@ class StickBreakMixing(BaseMixing):
         niter = int(mc_iter)
         nus = self._simulate_weights(niter)
         weights = self._break_sticks(nus)
-        # simulate from the categorical distribution in a smart way
+        # simulate from the categorical in batch using the inverse-cdf method
+        # see https://stackoverflow.com/a/62875642
         cum_prob = np.cumsum(weights, axis=-1)
         r = np.random.uniform(size=(nsamples, niter, 1))
         clus_allocs = np.argmax(cum_prob > r, axis=-1)
