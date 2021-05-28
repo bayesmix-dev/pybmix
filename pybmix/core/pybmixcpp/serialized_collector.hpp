@@ -4,7 +4,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include "bayesmix/src/collectors/memory_collector.hpp"
+#include "bayesmix/src/collectors/memory_collector.h"
 
 class SerializedCollector : public MemoryCollector {
  public:

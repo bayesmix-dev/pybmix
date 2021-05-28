@@ -2,15 +2,14 @@ import logging
 import numpy as np
 
 import pybmix.core.mixing as mix
+import pybmix.proto.algorithm_id_pb2 as algorithm_id
 from pybmix.core.hierarchy import BaseHierarchy
 from pybmix.core.chain import MCMCchain
-from pybmix.proto.marginal_state_pb2 import MarginalState
+from pybmix.proto.algorithm_state_pb2 import AlgorithmState
 from pybmix.core.pybmixcpp import AlgorithmWrapper, ostream_redirect
 
-# TODO: algo_type, hier_type, hier_prior_type, mix_type, mix_prior_tye -> Enums
-
-MARGINAL_ALGORITHMS = ["N2", "N8"] 
-CONDITIONAL_ALGORITHMS = []
+MARGINAL_ALGORITHMS = ["Neal2", "Neal3", "Neal8"] 
+CONDITIONAL_ALGORITHMS = ["BlockedGibbs"]
 
 
 class MixtureModel(object):
@@ -25,12 +24,17 @@ class MixtureModel(object):
         self.mixing = mixing
         self.hierarchy = hierarchy
 
-    def run_mcmc(self, y, algorithm="N2", niter=1000, nburn=500, rng_seed=-1):
+    def run_mcmc(self, y, algorithm="Neal2", niter=1000, nburn=500, rng_seed=-1):
+        if algorithm not in (MARGINAL_ALGORITHMS + CONDITIONAL_ALGORITHMS):
+            raise ValueError(
+                "'algorithm' parameter must be one of [{0}], found {1} instead".format(
+                    ", ".join(MARGINAL_ALGORITHMS + CONDITIONAL_ALGORITHMS),
+                    algorithm))
+
         self.algo_name = algorithm
+        self.algo_id = algorithm_id.AlgorithmId.Value(self.algo_name)
         self._algo = AlgorithmWrapper(
-            algorithm, self.hierarchy.NAME,
-            self.hierarchy.prior_params.DESCRIPTOR.full_name,
-            self.mixing.NAME, self.mixing.prior_proto.DESCRIPTOR.full_name,
+            self.algo_name, self.hierarchy.NAME, self.mixing.NAME,
             self.hierarchy.prior_params.SerializeToString(),
             self.mixing.prior_proto.SerializeToString())
         
@@ -39,12 +43,7 @@ class MixtureModel(object):
 
     def get_chain(self, optimize_memory=False):
         deserialize = not optimize_memory
-        if self.algo_name in MARGINAL_ALGORITHMS:
-            objtype = MarginalState
-        else:
-            objtype = None
-            logging.error("Algorithm is not marginal")
         
         return MCMCchain(
             self._algo.get_collector().get_serialized_chain(),
-            objtype, deserialize)
+            AlgorithmState, deserialize)
