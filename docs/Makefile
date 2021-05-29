@@ -6,7 +6,8 @@
 SPHINXOPTS    ?=
 SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = .
-BUILDDIR      = _build
+BUILDDIR      = $(PWD)/_build
+PROTO_DIR = $(PWD)/../pybmix/core/pybmixcpp/bayesmix/proto
 
 # Put it first so that "make" without argument is like "make help".
 help:
@@ -18,3 +19,5 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+	docker run --rm -v $(PWD)/source:/out -v $(PROTO_DIR):/protos \
+		pseudomuto/protoc-gen-doc --doc_opt=html,protos.html
