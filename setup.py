@@ -173,7 +173,6 @@ if __name__ == "__main__":
             },
         install_requires=[
             "2to3",
-            "cmake",
             "ninja",
             "numpy",
             "scipy",
