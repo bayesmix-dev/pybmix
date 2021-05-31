@@ -155,6 +155,16 @@ class CMakeBuild(build_ext):
 
 if __name__ == "__main__":
 
+    folder = os.path.dirname(__file__)
+
+    install_requires = ["2to3", "ninja", "numpy", "scipy", "protobuf==3.14.0"]
+
+    # with open(os.path.join(folder, 'requirements.txt')) as fp:
+    #     install_requires.extend([line.strip() for line in fp])
+
+    with open(os.path.join(folder, "docs", 'requirements.txt')) as fp:
+        install_requires.extend([line.strip() for line in fp])
+
     # Build tbb before setup if needed
     maybe_build_tbb()
 
@@ -171,12 +181,6 @@ if __name__ == "__main__":
             "clean": clean,
             "build_ext": CMakeBuild,
             },
-        install_requires=[
-            "2to3",
-            "ninja",
-            "numpy",
-            "scipy",
-            "protobuf==3.14.0"
-        ],
+        install_requires=install_requires,
         zip_safe=False,
     )
