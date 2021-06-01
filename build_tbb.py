@@ -11,7 +11,7 @@ def maybe_build_tbb():
     https://github.com/stan-dev/pystan/blob/develop/setup.py"""
     
     stan_math_lib = os.path.abspath(os.path.join(os.path.dirname(
-        __file__), 'lib', 'math', 'lib'))
+        __file__), 'pybmix', 'core', 'pybmixcpp', 'bayesmix' 'lib', 'math', 'lib'))
 
     tbb_dir = os.path.join(stan_math_lib, 'tbb')
     tbb_dir = os.path.abspath(tbb_dir)
