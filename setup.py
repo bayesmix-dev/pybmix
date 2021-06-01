@@ -168,7 +168,7 @@ if __name__ == "__main__":
         install_requires.extend([line.strip() for line in fp])
 
     # Build tbb before setup if needed
-    # maybe_build_tbb()
+    maybe_build_tbb()
 
     setup(
         name="pybmix",
