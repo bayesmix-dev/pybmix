@@ -47,12 +47,12 @@ endforeach()
 set(PYBMIX_LINK_LIBRARIES 
   pthread 
   protobuf::libprotobuf
-  tbb
+  ${CMAKE_CURRENT_LIST_DIR}/pybmix/core/pybmixcpp/bayesmix/lib/math/lib/tbb/libtbb.so.2
 )
 
 target_include_directories(pybmixcpp PUBLIC ${BAYESMIX_INCLUDE_PATHS})
 target_compile_definitions(pybmixcpp PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
-target_link_libraries(pybmixcpp PUBLIC bayesmixlib ${BAYESMIX_LINK_LIBRARIES})
+target_link_libraries(pybmixcpp PUBLIC bayesmixlib ${PYBMIX_LINK_LIBRARIES})
 target_compile_options(pybmixcpp PUBLIC ${BAYESMIX_COMPILE_OPTIONS})
 
 add_custom_target(genterate_protos ALL DEPENDS ${PROTO_PYS})
