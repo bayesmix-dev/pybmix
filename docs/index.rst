@@ -14,9 +14,7 @@ Welcome to pybmix's documentation!
    :maxdepth: 1
    :caption: Tutorials:
 
-   examples/estimate_univ_density.ipynb
-   examples/clustering_univ_data.ipynb
-   examples/prior_elicitation.ipynb
+   examples/test.ipynb
 
 Indices and tables
 ==================
