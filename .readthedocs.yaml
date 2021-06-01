@@ -24,4 +24,5 @@ python:
       path: .
 
 submodules:
-  exclude: all
+  include: all
+  recursive: true
