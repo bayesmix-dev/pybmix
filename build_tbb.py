@@ -24,6 +24,7 @@ def maybe_build_tbb():
     tbb_root = os.path.join(stan_math_lib, 'tbb_2019_U8').replace("\\", "/")
 
     import glob
+    print("******** LET'S SEE WHAT'S INSIDE ********")
     print("\n".join(glob.glob(tbb_root + "/*")))
 
     cmd.extend(['-C', tbb_root])
