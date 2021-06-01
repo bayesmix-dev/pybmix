@@ -7,4 +7,4 @@ sphinx_rtd_theme>=0.5.1
 sphinx_autodoc_typehints>=1.11.1
 ipython>=7.20.0
 ipykernel>=5.5.0
-cmake>=.15.0
+cmake>=3.15.0
