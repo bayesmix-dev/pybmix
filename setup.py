@@ -14,6 +14,7 @@ from distutils.command.install import install as _install
 
 sys.path.insert(0, os.path.join(os.path.abspath('.'),
                                 "pybmix/core/pybmixcpp/bayesmix"))
+print(sys.path)
 from build_tbb import maybe_build_tbb
 
 
