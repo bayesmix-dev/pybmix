@@ -66,7 +66,9 @@ class CMakeBuild(build_ext):
         except OSError:
             msg = "CMake missing - probably upgrade to a newer version of Pip?"
             raise RuntimeError(msg)
-
+        
+        maybe_build_tbb()
+        
         # To support Python 2, we have to avoid super(), since distutils is all
         # old-style classes.
         build_ext.run(self)
