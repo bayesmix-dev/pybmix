@@ -14,4 +14,3 @@ ninja>=1.10
 protobuf==3.14.0
 2to3==1.0
 scipy>=1.4.1
-
