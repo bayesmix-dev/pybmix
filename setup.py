@@ -17,11 +17,11 @@ sys.path.insert(0, os.path.join(os.path.abspath('.'),
 print(sys.path)
 from build_tbb import maybe_build_tbb
 
-
-PYBMIXCPP_PATH = os.path.join("pybmix", "core", "pybmixcpp")
+HERE = os.path.abspath('.')
+PYBMIXCPP_PATH = os.path.join(HERE, "pybmix", "core", "pybmixcpp")
 BAYEXMIX_PATH = os.path.join(PYBMIXCPP_PATH , "bayesmix")
 PROTO_IN_DIR = os.path.join(BAYEXMIX_PATH, "proto")
-PROTO_OUT_DIR = os.path.join("pybmix", "proto/")
+PROTO_OUT_DIR = os.path.join(HERE, "pybmix", "proto/")
 
 # Convert distutils Windows platform specifiers to CMake -A arguments
 PLAT_TO_CMAKE = {
@@ -157,6 +157,12 @@ class CMakeBuild(build_ext):
             sys.exit(-1)
 
 
+class build_py(_build_py):
+    def run(self):
+        self.run_command("build_ext")
+        return super().run()
+
+
 if __name__ == "__main__":
 
     folder = os.path.dirname(__file__)
@@ -184,6 +190,7 @@ if __name__ == "__main__":
         cmdclass={
             "clean": clean,
             "build_ext": CMakeBuild,
+            "build_py": build_py
             },
         install_requires=install_requires,
         zip_safe=False,
