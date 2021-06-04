@@ -8,18 +8,14 @@ from setuptools.command.build_ext import build_ext
 from distutils.command.build_py import build_py as _build_py
 from distutils.command.clean import clean as _clean
 from distutils.spawn import find_executable
-from setuptools.command.develop import develop as _develop
-from setuptools.command.egg_info import egg_info as _egg_info
-from distutils.command.install import install as _install
 
-sys.path.append("pybmix/core/pybmixcpp/bayesmix")
 from build_tbb import maybe_build_tbb
 
-
-PYBMIXCPP_PATH = os.path.join("pybmix", "core", "pybmixcpp")
+HERE = os.path.abspath('.')
+PYBMIXCPP_PATH = os.path.join(HERE, "pybmix", "core", "pybmixcpp")
 BAYEXMIX_PATH = os.path.join(PYBMIXCPP_PATH , "bayesmix")
 PROTO_IN_DIR = os.path.join(BAYEXMIX_PATH, "proto")
-PROTO_OUT_DIR = os.path.join("pybmix", "proto/")
+PROTO_OUT_DIR = os.path.join(HERE, "pybmix", "proto/")
 
 # Convert distutils Windows platform specifiers to CMake -A arguments
 PLAT_TO_CMAKE = {
@@ -64,7 +60,9 @@ class CMakeBuild(build_ext):
         except OSError:
             msg = "CMake missing - probably upgrade to a newer version of Pip?"
             raise RuntimeError(msg)
-
+        
+        maybe_build_tbb()
+        
         # To support Python 2, we have to avoid super(), since distutils is all
         # old-style classes.
         build_ext.run(self)
@@ -153,7 +151,23 @@ class CMakeBuild(build_ext):
             sys.exit(-1)
 
 
+class build_py(_build_py):
+    def run(self):
+        self.run_command("build_ext")
+        return super().run()
+
+
 if __name__ == "__main__":
+
+    folder = os.path.dirname(__file__)
+
+    install_requires = ["2to3", "ninja", "numpy", "scipy", "protobuf==3.14.0"]
+
+    # with open(os.path.join(folder, 'requirements.txt')) as fp:
+    #     install_requires.extend([line.strip() for line in fp])
+
+    with open(os.path.join(folder, "docs", 'requirements.txt')) as fp:
+        install_requires.extend([line.strip() for line in fp])
 
     # Build tbb before setup if needed
     maybe_build_tbb()
@@ -170,14 +184,8 @@ if __name__ == "__main__":
         cmdclass={
             "clean": clean,
             "build_ext": CMakeBuild,
+            "build_py": build_py
             },
-        install_requires=[
-            "2to3",
-            "cmake",
-            "ninja",
-            "numpy",
-            "scipy",
-            "protobuf==3.14.0"
-        ],
+        install_requires=install_requires,
         zip_safe=False,
     )

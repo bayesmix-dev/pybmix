@@ -30,10 +30,10 @@ set(PY_PROTO_DIR "${CMAKE_CURRENT_LIST_DIR}/pybmix/proto")
 set(PROTO_PYS)
 message("ProtoFiles: ${ProtoFiles}")
 foreach(PROTO_FILE IN LISTS ProtoFiles)
-  message(STATUS "GENERATING PYTHON protoc proto(cc): ${PROTO_FILE}")
   get_filename_component(PROTO_DIR ${PROTO_FILE} DIRECTORY)
   get_filename_component(PROTO_NAME ${PROTO_FILE} NAME_WE)
   set(PROTO_PY ${PY_PROTO_DIR}/${PROTO_NAME}_pb2.py)
+  message(STATUS "GENERATING PYTHON protoc proto(cc): ${PROTO_FILE} --> ${PROTO_PY}")
   add_custom_command(
     OUTPUT ${PROTO_PY}
     COMMAND protobuf::protoc "--proto_path=${SOURCE_DIR}/bayesmix/proto"
@@ -44,9 +44,19 @@ foreach(PROTO_FILE IN LISTS ProtoFiles)
     list(APPEND PROTO_PYS ${PROTO_PY})
 endforeach()
 
+set(PYBMIX_LINK_LIBRARIES 
+  pthread 
+  protobuf::libprotobuf
+  tbb
+)
+
+SET(PYBMIX_LINK_OPTIONS
+  "-L${CMAKE_CURRENT_LIST_DIR}/pybmix/core/pybmixcpp/bayesmix/lib/math/lib/tbb/"
+)
+
 target_include_directories(pybmixcpp PUBLIC ${BAYESMIX_INCLUDE_PATHS})
 target_compile_definitions(pybmixcpp PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
-target_link_libraries(pybmixcpp PUBLIC bayesmixlib ${BAYESMIX_LINK_LIBRARIES})
+target_link_libraries(pybmixcpp PUBLIC bayesmixlib ${PYBMIX_LINK_OPTIONS} ${PYBMIX_LINK_LIBRARIES})
 target_compile_options(pybmixcpp PUBLIC ${BAYESMIX_COMPILE_OPTIONS})
 
 add_custom_target(genterate_protos ALL DEPENDS ${PROTO_PYS})

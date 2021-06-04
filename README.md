@@ -1,10 +1,6 @@
-# Bayesian Mixture Models in Python
+# pybmix: Bayesian Mixture Models in Python
 
-
-## Prerequisites
-
-- Protocol buffers
-- cmake
+A Python interface to [bayesmix](https://github.com/bayesmix-dev/bayesmix/)
 
 
 ## Installation
@@ -19,12 +15,10 @@ pip3 install -e .
 ```
 from the root folder of this repo.
 
+## Getting Started
 
-# Structure
+See our [tutorials](https://pybmix.readthedocs.io/en/docs/)!
 
-This repo contains two main directories: `pybmix` and `pybmixcpp`.
+## Contributing
 
-`pybmixcpp/` contains a copy of the C++ library `bayesmix` and the code for 
-a small python package that is the raw interface between  `bayesmix` and Python.
-
-`pybmix/` contains the Python package.
+Just get in touch with us (email in setup.cfg), open a PR or an Issue! 
