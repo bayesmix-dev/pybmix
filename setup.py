@@ -8,13 +8,7 @@ from setuptools.command.build_ext import build_ext
 from distutils.command.build_py import build_py as _build_py
 from distutils.command.clean import clean as _clean
 from distutils.spawn import find_executable
-from setuptools.command.develop import develop as _develop
-from setuptools.command.egg_info import egg_info as _egg_info
-from distutils.command.install import install as _install
 
-sys.path.insert(0, os.path.join(os.path.abspath('.'),
-                                "pybmix/core/pybmixcpp/bayesmix"))
-print(sys.path)
 from build_tbb import maybe_build_tbb
 
 HERE = os.path.abspath('.')

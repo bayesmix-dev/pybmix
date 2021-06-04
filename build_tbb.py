@@ -10,10 +10,8 @@ def maybe_build_tbb():
     """Build tbb. This function is taken from
     https://github.com/stan-dev/pystan/blob/develop/setup.py"""
 
-    print("******* BUILD TBB ***********")
-    
     stan_math_lib = os.path.abspath(os.path.join(os.path.dirname(
-        __file__), 'pybmix', 'core', 'pybmixcpp', 'bayesmix' 'lib', 'math', 'lib'))
+        __file__), 'pybmix', 'core', 'pybmixcpp', 'bayesmix', 'lib', 'math', 'lib'))
 
     tbb_dir = os.path.join(stan_math_lib, 'tbb')
     tbb_dir = os.path.abspath(tbb_dir)
@@ -24,10 +22,6 @@ def maybe_build_tbb():
     cmd = [make]
 
     tbb_root = os.path.join(stan_math_lib, 'tbb_2019_U8').replace("\\", "/")
-
-    import glob
-    print("******** LET'S SEE WHAT'S INSIDE ********")
-    print("\n".join(glob.glob(tbb_root + "/*")))
 
     cmd.extend(['-C', tbb_root])
     cmd.append('tbb_build_dir={}'.format(stan_math_lib))
