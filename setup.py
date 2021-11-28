@@ -9,7 +9,7 @@ from distutils.command.build_py import build_py as _build_py
 from distutils.command.clean import clean as _clean
 from distutils.spawn import find_executable
 
-from build_tbb import maybe_build_tbb
+from .build_tbb import maybe_build_tbb
 
 HERE = os.path.abspath('.')
 PYBMIXCPP_PATH = os.path.join(HERE, "pybmix", "core", "pybmixcpp")
