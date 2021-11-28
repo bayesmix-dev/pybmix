@@ -1,6 +1,8 @@
 import glob
 import os
+import platform
 import sys
+import shutil
 import subprocess
 
 from setuptools import setup, Extension, find_packages
