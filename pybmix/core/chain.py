@@ -1,6 +1,6 @@
 import logging
 import numpy as np
-from google.protobuf.pyext._message import RepeatedScalarContainer
+from google.protobuf.internal.containers import RepeatedScalarFieldContainer
 
 from pybmix.utils.proto_utils import get_field
 import pybmix.proto.matrix_pb2 as matrix_pb2
@@ -56,7 +56,7 @@ class MCMCchain(object):
 
         # we need to perform these checks because we're checking also
         # for base classes
-        if isinstance(extractor(chain[0]), RepeatedScalarContainer):
+        if isinstance(extractor(chain[0]), RepeatedScalarFieldContainer):
             out = self._extract_repeated(chain, extractor)
         elif isinstance(extractor(chain[0]), matrix_pb2.Vector):
             out = self._extract_vector(chain, extractor)

@@ -27,9 +27,7 @@ def maybe_build_tbb():
     cmd.append('tbb_build_dir={}'.format(stan_math_lib))
     cmd.append('tbb_build_prefix=tbb')
     cmd.append('tbb_root={}'.format(tbb_root))
-
     cmd.append('stdver=c++14')
-
     cmd.append('compiler=gcc')
 
     cwd = os.path.abspath(os.path.dirname(__file__))

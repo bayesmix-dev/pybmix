@@ -9,7 +9,7 @@ from distutils.command.build_py import build_py as _build_py
 from distutils.command.clean import clean as _clean
 from distutils.spawn import find_executable
 
-from build_tbb import maybe_build_tbb
+# from build_tbb import maybe_build_tbb
 
 HERE = os.path.abspath('.')
 PYBMIXCPP_PATH = os.path.join(HERE, "pybmix", "core", "pybmixcpp")
@@ -61,7 +61,7 @@ class CMakeBuild(build_ext):
             msg = "CMake missing - probably upgrade to a newer version of Pip?"
             raise RuntimeError(msg)
         
-        maybe_build_tbb()
+        # maybe_build_tbb()
         
         # To support Python 2, we have to avoid super(), since distutils is all
         # old-style classes.
@@ -170,7 +170,7 @@ if __name__ == "__main__":
         install_requires.extend([line.strip() for line in fp])
 
     # Build tbb before setup if needed
-    maybe_build_tbb()
+    # maybe_build_tbb()
 
     setup(
         name="pybmix",

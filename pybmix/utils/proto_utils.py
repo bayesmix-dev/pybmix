@@ -4,7 +4,7 @@ from google.protobuf.message import Message
 from google.protobuf.internal.containers import (
     MutableMapping, RepeatedCompositeFieldContainer,
     RepeatedScalarFieldContainer)
-from google.protobuf.pyext._message import RepeatedCompositeContainer
+# from google.protobuf.pyext._message import RepeatedCompositeContainer
 
 
 def set_oneof_field(fieldname, msg, val):
@@ -105,8 +105,7 @@ def set_shallow_field(fieldname, msg, val):
         rep = getattr(msg, fieldname)
         rep.append(val)
         success = True
-    elif typ in {RepeatedCompositeFieldContainer,
-                RepeatedCompositeContainer}:
+    elif typ in {RepeatedCompositeFieldContainer}:
         rep = getattr(msg, fieldname)
         rep.add().CopyFrom(val)
         success = True

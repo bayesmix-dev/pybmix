@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13.0)
 project(pybmixcpp)
 
 set (CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -msse2 -funroll-loops -ftree-vectorize -fopenmp")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -msse2 -funroll-loops -ftree-vectorize")
 set(COMPILE_OPTIONS -D_REENTRANT -fPIC)
 set(CMAKE_BUILD_TYPE Release)
 
@@ -47,7 +47,6 @@ endforeach()
 set(PYBMIX_LINK_LIBRARIES 
   pthread 
   protobuf::libprotobuf
-  tbb
 )
 
 SET(PYBMIX_LINK_OPTIONS
