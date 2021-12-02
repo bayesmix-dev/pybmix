@@ -11,6 +11,11 @@ from distutils.command.build_py import build_py as _build_py
 from distutils.command.clean import clean as _clean
 from distutils.spawn import find_executable
 
+<<<<<<< HEAD
+=======
+from build_tbb import maybe_build_tbb
+
+>>>>>>> 36c82cfece3e965548c2d18323125a2221af07ce
 HERE = os.path.abspath('.')
 PYBMIXCPP_PATH = os.path.join(HERE, "pybmix", "core", "pybmixcpp")
 BAYEXMIX_PATH = os.path.join(PYBMIXCPP_PATH , "bayesmix")
@@ -212,7 +217,8 @@ if __name__ == "__main__":
 
     folder = os.path.dirname(__file__)
 
-    install_requires = ["2to3", "ninja", "numpy", "scipy", "protobuf==3.14.0", "cmake>=3.21.0"]
+    install_requires = ["2to3", "ninja", "numpy", "scipy", "protobuf==3.14.0", 
+                        "cmake>=3.21.0"]
 
     # with open(os.path.join(folder, 'requirements.txt')) as fp:
     #     install_requires.extend([line.strip() for line in fp])
