@@ -6,6 +6,4 @@ requires = [
     "ninja>=1.10.0",
     "2to3"
 ]
-build-backend = "setuptools.build_meta"
-    "wheel"
-]
+build-backend = "wheel"
