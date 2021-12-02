@@ -11,11 +11,6 @@ from distutils.command.build_py import build_py as _build_py
 from distutils.command.clean import clean as _clean
 from distutils.spawn import find_executable
 
-<<<<<<< HEAD
-=======
-from build_tbb import maybe_build_tbb
-
->>>>>>> 36c82cfece3e965548c2d18323125a2221af07ce
 HERE = os.path.abspath('.')
 PYBMIXCPP_PATH = os.path.join(HERE, "pybmix", "core", "pybmixcpp")
 BAYEXMIX_PATH = os.path.join(PYBMIXCPP_PATH , "bayesmix")
