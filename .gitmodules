@@ -1,6 +1,6 @@
 [submodule "pybmix/src/bayesmix"]
 	path = pybmix/core/pybmixcpp/bayesmix
-	url = https://github.com/bayesmix-dev/bayesmix.git
+	url = https://github.com/taguhiM/bayesmix.git
 	depth = 1
 	update = merge
 [submodule "lib/pybind11"]
