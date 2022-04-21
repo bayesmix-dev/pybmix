@@ -1,0 +1,7 @@
+values {
+    size: 4
+    data: 5.5
+    data: 0.2
+    data: 1.5
+    data: 2
+}
