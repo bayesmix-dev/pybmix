@@ -2,7 +2,7 @@
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
 
-#include "lib/argparse/argparse.h"
+#include "pybmixcpp/bayesmix/lib/argparse/argparse.h"
 #include "src/plots/plot_utils.h"
 #include "src/utils/io_utils.h"
 

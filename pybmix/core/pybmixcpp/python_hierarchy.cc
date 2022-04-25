@@ -113,27 +113,14 @@ void PythonHierarchy::clear_summary_statistics() {
 
 //! PYTHON
 Python::Hyperparams PythonHierarchy::compute_posterior_hypers() const {
-    // Initialize relevant variables
-    if (card == 0) {  // no update possible
-        return *hypers;
-    }
-    // Compute posterior hyperparameters
+        // Compute posterior hyperparameters
     Python::Hyperparams post_params;
-    double y_bar = data_sum / (1.0 * card);  // sample mean
-    double ss = data_sum_squares - card * y_bar * y_bar;
-    post_params.generic_hypers.push_back(
-            (hypers->generic_hypers[1] * hypers->generic_hypers[0] + data_sum) /
-            (hypers->generic_hypers[1] + card));
-    post_params.generic_hypers.push_back(hypers->generic_hypers[1] + card);
-    post_params.generic_hypers.push_back(hypers->generic_hypers[2] + 0.5 * card);
-    post_params.generic_hypers.push_back(
-            hypers->generic_hypers[3] + 0.5 * ss +
-            0.5 * hypers->generic_hypers[1] * card *
-            (y_bar - hypers->generic_hypers[0]) *
-            (y_bar - hypers->generic_hypers[0]) /
-            (card + hypers->generic_hypers[1]));
+    py::list params_py = vector_to_list(hypers->generic_hypers);
+    py::list post_params_py = fun.attr("compute_posterior_hypers")(card,params_py,data_sum, data_sum_squares);
+    post_params.generic_hypers = list_to_vector(post_params_py);
     return post_params;
-}
+    }
+
 
 //! C++
 void PythonHierarchy::set_state_from_proto(
