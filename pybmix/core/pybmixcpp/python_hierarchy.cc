@@ -96,19 +96,18 @@ Python::State PythonHierarchy::draw(const Python::Hyperparams &params) {
 //! PYTHON
 void PythonHierarchy::update_summary_statistics(
         const Eigen::RowVectorXd &datum, const bool add) {
-    if (add) {
-        data_sum += datum(0);
-        data_sum_squares += datum(0) * datum(0);
-    } else {
-        data_sum -= datum(0);
-        data_sum_squares -= datum(0) * datum(0);
-    }
+    py::list datum_py = eigen_to_list(datum);
+    py::list sum_stats_py = fun.attr("update_summary_statistics")(datum_py,add,data_sum, data_sum_squares);
+    data_sum = sum_stats_py[0].cast<double>();
+    data_sum_squares = sum_stats_py[1].cast<double>();
 }
 
 //! PYTHON
+//! TODO: maybe this is redundant
 void PythonHierarchy::clear_summary_statistics() {
-    data_sum = 0;
-    data_sum_squares = 0;
+    py::list sum_stats_py = fun.attr("clear_summary_statistics")(data_sum, data_sum_squares);
+    data_sum = sum_stats_py[0].cast<double>();
+    data_sum_squares = sum_stats_py[1].cast<double>();
 }
 
 //! PYTHON

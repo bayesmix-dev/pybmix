@@ -51,7 +51,22 @@ def compute_posterior_hypers(card, hypers, data_sum, data_sum_squares):
     post_hypers.append((h_var_scaling * h_mean + data_sum) / h_var_scaling + card)  # mean
     post_hypers.append(h_var_scaling + card)  # var_scaling
     post_hypers.append(h_shape + 0.5 * card)  # shape
-    num = h_scale + 0.5 * sstat + 0.5 * h_var_scaling * card * (y_bar - h_mean) * (y_bar - h_mean)
+    num = h_scale + 0.5 * sstat + 0.5 * h_var_scaling * card * (y_bar - h_mean) ** 2
     denom = card + h_var_scaling
     post_hypers.append(num / denom)  # scale
     return post_hypers
+
+
+def update_summary_statistics(x, add, data_sum, data_sum_squares):
+    if add:
+        data_sum += x[0]
+        data_sum_squares += x[0] ** 2
+    else:
+        data_sum -= x[0]
+        data_sum_squares -= x[0] ** 2
+    return data_sum, data_sum_squares
+
+def clear_summary_statistics(data_sum, data_sum_squares):
+    data_sum = 0
+    data_sum_squares = 0
+    return data_sum, data_sum_squares
