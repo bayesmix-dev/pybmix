@@ -208,26 +208,29 @@ void synchronize_py_to_cpp_state(std::mt19937 &cpp_gen,
 }
 
 py::list vector_to_list(const std::vector<double> &x) {
-    py::list L;
-    for (auto &elem: x) {
-        L.append(elem);
+    unsigned int size = x.size();
+    py::list L(size);
+    for (unsigned int i =0; i<size; ++i) {
+        L[i] = x[i];
     }
     return L;
 }
 
 
 py::list eigen_to_list(const Eigen::RowVectorXd &x) {
-    py::list L;
-    for (int i = 0; i < x.size(); ++i) {
-        L.append(x[i]);
+    unsigned int size = x.size();
+    py::list L(size);
+    for (unsigned int i = 0; i < size; ++i) {
+        L[i] = x[i];
     }
     return L;
 }
 
 std::vector<double> list_to_vector(py::list &x) {
-    std::vector<double> v;
-    for (auto &elem: x) {
-        v.push_back(elem.cast<double>());
+    unsigned int size = x.size();
+    std::vector<double> v(size);
+    for (unsigned int i = 0; i < size; ++i) {
+        v[i] = x[i].cast<double>();
     }
     return v;
 }
