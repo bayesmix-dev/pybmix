@@ -17,6 +17,8 @@
 namespace py = pybind11;
 using namespace py::literals;
 
+extern py::module_ fun;
+
 //! Conjugate Normal Normal-InverseGamma hierarchy for univariate data.
 
 //! This class represents a hierarchical model where data are distributed
@@ -50,6 +52,9 @@ class PythonHierarchy
  public:
   PythonHierarchy() = default;
   ~PythonHierarchy() = default;
+
+//  py::object posterior_hypers_evaluator = fun.attr("compute_posterior_hypers");
+
 
   //! Updates hyperparameter values given a vector of cluster states
   void update_hypers(const std::vector<bayesmix::AlgorithmState::ClusterState>
