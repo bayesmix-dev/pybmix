@@ -16,6 +16,8 @@
 #include "ls_state.pb.h"
 #include "pybmixcpp/bayesmix/src/utils/rng.h"
 #include "py_global.h"
+#include "pybind11/stl.h"
+#include "pybind11/eigen.h"
 
 void synchronize_cpp_to_py_state(const std::mt19937 &cpp_gen,
                                  py::object &py_gen);
@@ -23,33 +25,24 @@ void synchronize_cpp_to_py_state(const std::mt19937 &cpp_gen,
 void synchronize_py_to_cpp_state(std::mt19937 &cpp_gen,
                                  const py::object &py_gen);
 
-py::list vector_to_list(const std::vector<double> &x);
-
 std::vector<double> list_to_vector(py::list &x);
-
-py::list eigen_to_list(const Eigen::RowVectorXd &x);
 
 //! PYTHON
 double PythonHierarchy::like_lpdf(const Eigen::RowVectorXd &datum) const {
-    py::list state_py = vector_to_list(state.generic_state);
-    py::list datum_py = eigen_to_list(datum);
-    double result = py_global::like_lpdf_evaluator(datum_py, state_py).cast<double>();
+    double result = py_global::like_lpdf_evaluator(datum, state.generic_state).cast<double>();
     return result;
 }
 
 //! PYTHON
 double PythonHierarchy::marg_lpdf(const Python::Hyperparams &params,
                                   const Eigen::RowVectorXd &datum) const {
-    py::list params_py = vector_to_list(params.generic_hypers);
-    py::list datum_py = eigen_to_list(datum);
-    double result = py_global::marg_lpdf_evaluator(datum_py, params_py).cast<double>();
+    double result = py_global::marg_lpdf_evaluator(datum, params.generic_hypers).cast<double>();
     return result;
 }
 
 //! PYTHON
 void PythonHierarchy::initialize_state() {
-    py::list hypers_py = vector_to_list(hypers->generic_hypers);
-    py::list state_py = py_global::initialize_state_evaluator(hypers_py);
+    py::list state_py = py_global::initialize_state_evaluator(hypers->generic_hypers);
     state.generic_state = list_to_vector(state_py);
 }
 
@@ -66,6 +59,7 @@ void PythonHierarchy::initialize_hypers() {
 }
 
 //! PYTHON
+//! TODO: put in python
 void PythonHierarchy::update_hypers(
         const std::vector <bayesmix::AlgorithmState::ClusterState> &states) {
     auto &rng = bayesmix::Rng::Instance().get();
@@ -76,9 +70,7 @@ void PythonHierarchy::update_hypers(
 Python::State PythonHierarchy::draw(const Python::Hyperparams &params) {
   Python::State out;
   synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_global::py_gen);
-  py::list params_py = vector_to_list(params.generic_hypers);
-  py::list state_py = vector_to_list(state.generic_state);
-  py::list draw_py = py_global::draw_evaluator(state_py,params_py,py_global::py_gen);
+  py::list draw_py = py_global::draw_evaluator(state.generic_state,params.generic_hypers,py_global::py_gen);
   out.generic_state = list_to_vector(draw_py);
   synchronize_py_to_cpp_state(bayesmix::Rng::Instance().get(), py_global::py_gen);
   return out;
@@ -88,9 +80,7 @@ Python::State PythonHierarchy::draw(const Python::Hyperparams &params) {
 //! PYTHON
 void PythonHierarchy::update_summary_statistics(
         const Eigen::RowVectorXd &datum, const bool add) {
-    py::list datum_py = eigen_to_list(datum);
-//    py::list sum_stats_py = fun.attr("update_summary_statistics")(datum_py,add,data_sum, data_sum_squares);
-    py::list sum_stats_py = py_global::update_summary_statistics_evaluator(datum_py,add,data_sum, data_sum_squares);
+    py::list sum_stats_py = py_global::update_summary_statistics_evaluator(datum,add,data_sum, data_sum_squares);
     data_sum = sum_stats_py[0].cast<double>();
     data_sum_squares = sum_stats_py[1].cast<double>();
 }
@@ -105,10 +95,9 @@ void PythonHierarchy::clear_summary_statistics() {
 
 //! PYTHON
 Python::Hyperparams PythonHierarchy::compute_posterior_hypers() const {
-        // Compute posterior hyperparameters
+    // Compute posterior hyperparameters
     Python::Hyperparams post_params;
-    py::list params_py = vector_to_list(hypers->generic_hypers);
-    py::list post_params_py = py_global::posterior_hypers_evaluator(card,params_py,data_sum, data_sum_squares);
+    py::list post_params_py = py_global::posterior_hypers_evaluator(card,hypers->generic_hypers,data_sum, data_sum_squares);
     post_params.generic_hypers = list_to_vector(post_params_py);
     return post_params;
     }
@@ -200,24 +189,6 @@ void synchronize_py_to_cpp_state(std::mt19937 &cpp_gen,
     ss_state_ >> cpp_gen;
 }
 
-py::list vector_to_list(const std::vector<double> &x) {
-    unsigned int size = x.size();
-    py::list L(size);
-    for (unsigned int i =0; i<size; ++i) {
-        L[i] = x[i];
-    }
-    return L;
-}
-
-
-py::list eigen_to_list(const Eigen::RowVectorXd &x) {
-    unsigned int size = x.size();
-    py::list L(size);
-    for (unsigned int i = 0; i < size; ++i) {
-        L[i] = x[i];
-    }
-    return L;
-}
 
 std::vector<double> list_to_vector(py::list &x) {
     unsigned int size = x.size();
