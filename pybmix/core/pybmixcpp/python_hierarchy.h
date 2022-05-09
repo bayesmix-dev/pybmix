@@ -122,11 +122,14 @@ class PythonHierarchy
   //! Initializes hierarchy hyperparameters to appropriate values
   void initialize_hypers() override;
 
-  //! Sum of data points currently belonging to the cluster
-  double data_sum = 0;
+//  //! Sum of data points currently belonging to the cluster
+//  double data_sum = 0;
+//
+//  //! Sum of squared data points currently belonging to the cluster
+//  double data_sum_squares = 0;
 
-  //! Sum of squared data points currently belonging to the cluster
-  double data_sum_squares = 0;
+    //! Vector of summary statistics
+    std::vector<double> sum_stats;
 };
 
 #endif  // BAYESMIX_HIERARCHIES_PYTHON_HIERARCHY_H_

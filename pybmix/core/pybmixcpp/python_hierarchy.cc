@@ -80,24 +80,25 @@ Python::State PythonHierarchy::draw(const Python::Hyperparams &params) {
 //! PYTHON
 void PythonHierarchy::update_summary_statistics(
         const Eigen::RowVectorXd &datum, const bool add) {
-    py::list sum_stats_py = py_global::update_summary_statistics_evaluator(datum,add,data_sum, data_sum_squares);
-    data_sum = sum_stats_py[0].cast<double>();
-    data_sum_squares = sum_stats_py[1].cast<double>();
+    py::list sum_stats_py = py_global::update_summary_statistics_evaluator(datum,add,sum_stats);
+//    data_sum = sum_stats_py[0].cast<double>();
+//    data_sum_squares = sum_stats_py[1].cast<double>();
+    sum_stats = list_to_vector(sum_stats_py);
 }
 
 //! PYTHON
-// TODO: vector summary statistics (generic approach)
 void PythonHierarchy::clear_summary_statistics() {
-    py::list sum_stats_py = py_global::clear_summary_statistics_evaluator(data_sum, data_sum_squares);
-    data_sum = sum_stats_py[0].cast<double>();
-    data_sum_squares = sum_stats_py[1].cast<double>();
+    py::list sum_stats_py = py_global::clear_summary_statistics_evaluator(sum_stats);
+//    data_sum = sum_stats_py[0].cast<double>();
+//    data_sum_squares = sum_stats_py[1].cast<double>();
+    sum_stats = list_to_vector(sum_stats_py);
 }
 
 //! PYTHON
 Python::Hyperparams PythonHierarchy::compute_posterior_hypers() const {
     // Compute posterior hyperparameters
     Python::Hyperparams post_params;
-    py::list post_params_py = py_global::posterior_hypers_evaluator(card,hypers->generic_hypers,data_sum, data_sum_squares);
+    py::list post_params_py = py_global::posterior_hypers_evaluator(card,hypers->generic_hypers,sum_stats);
     post_params.generic_hypers = list_to_vector(post_params_py);
     return post_params;
     }

@@ -38,7 +38,9 @@ def draw(state, hypers, rng):
     return [r1, r2]
 
 
-def compute_posterior_hypers(card, hypers, data_sum, data_sum_squares):
+def compute_posterior_hypers(card, hypers, sum_stats):
+    data_sum = sum_stats[0]
+    data_sum_squares = sum_stats[1]
     h_mean = hypers[0]
     h_var_scaling = hypers[1]
     h_shape = hypers[2]
@@ -57,17 +59,21 @@ def compute_posterior_hypers(card, hypers, data_sum, data_sum_squares):
     return post_hypers
 
 
-def update_summary_statistics(x, add, data_sum, data_sum_squares):
+def update_summary_statistics(x, add, sum_stats):
+    if not len(sum_stats):
+        sum_stats = [0, 0]
+    data_sum = sum_stats[0]
+    data_sum_squares = sum_stats[1]
     if add:
         data_sum += x[0]
         data_sum_squares += x[0] ** 2
     else:
         data_sum -= x[0]
         data_sum_squares -= x[0] ** 2
-    return data_sum, data_sum_squares
+    return [data_sum, data_sum_squares]
 
 
-def clear_summary_statistics(data_sum, data_sum_squares):
+def clear_summary_statistics(sum_stats):
     data_sum = 0
     data_sum_squares = 0
-    return data_sum, data_sum_squares
+    return [data_sum, data_sum_squares]
