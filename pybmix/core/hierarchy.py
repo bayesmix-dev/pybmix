@@ -63,3 +63,8 @@ class LinearModel(BaseHierarchy):
     ID = hierarchy_id.LinRegUni
     NAME = hierarchy_id.HierarchyId.Name(ID)
     pass
+
+class PythonHierarchy(BaseHierarchy):
+    ID = hierarchy_id.Python
+    NAME = hierarchy_id.HierarchyId.Name(ID)
+    pass
