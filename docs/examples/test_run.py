@@ -1,3 +1,9 @@
+import os
+import sys
+HERE = os.path.dirname(os.path.realpath(__file__))
+BUILD_DIR = os.path.join(HERE, "../../")
+sys.path.insert(0, os.path.realpath(BUILD_DIR))
+
 import numpy as np
 import matplotlib.pyplot as plt
 from pybmix.core.mixing import DirichletProcessMixing
