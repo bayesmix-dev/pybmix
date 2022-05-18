@@ -1,12 +1,18 @@
 import logging
 import numpy as np
 
+import os
+import sys
+HERE = os.path.dirname(os.path.realpath(__file__))
+BUILD_DIR = os.path.join(HERE, "../../build/")
+sys.path.insert(0, os.path.realpath(BUILD_DIR))
+
 import pybmix.core.mixing as mix
 import pybmix.proto.algorithm_id_pb2 as algorithm_id
 from pybmix.core.hierarchy import BaseHierarchy
 from pybmix.core.chain import MCMCchain
 from pybmix.proto.algorithm_state_pb2 import AlgorithmState
-from pybmix.core.pybmixcpp import AlgorithmWrapper, ostream_redirect
+from pybmixcpp import AlgorithmWrapper, ostream_redirect
 
 MARGINAL_ALGORITHMS = ["Neal2", "Neal3", "Neal8"] 
 CONDITIONAL_ALGORITHMS = ["BlockedGibbs"]

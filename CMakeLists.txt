@@ -52,4 +52,5 @@ target_compile_definitions(pybmixcpp PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO
 target_link_libraries(pybmixcpp PUBLIC bayesmixlib ${BAYESMIX_LINK_LIBRARIES})
 target_compile_options(pybmixcpp PUBLIC ${BAYESMIX_COMPILE_OPTIONS})
 
-add_custom_target(genterate_protos ALL DEPENDS ${PROTO_PYS})
+add_custom_target(generate_protos ALL DEPENDS ${PROTO_PYS})
+add_custom_target(two_to_three ALL COMMAND ${CMAKE_CURRENT_LIST_DIR}/convert_proto.sh DEPENDS generate_protos)

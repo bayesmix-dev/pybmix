@@ -1,7 +1,13 @@
 import numpy as np
 
+import os
+import sys
+HERE = os.path.dirname(os.path.realpath(__file__))
+BUILD_DIR = os.path.join(HERE, "../../build/")
+sys.path.insert(0, os.path.realpath(BUILD_DIR))
+
 from pybmix.core.mixture_model import MixtureModel
-from pybmix.core.pybmixcpp import _minbinder_cluster_estimate, ostream_redirect
+from pybmixcpp import _minbinder_cluster_estimate, ostream_redirect
 
 class ClusterEstimator(object):
     """
