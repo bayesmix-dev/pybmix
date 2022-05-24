@@ -13,7 +13,7 @@ from distutils.spawn import find_executable
 
 HERE = os.path.abspath('.')
 PYBMIXCPP_PATH = os.path.join(HERE, "pybmix", "core", "pybmixcpp")
-BAYEXMIX_PATH = os.path.join(PYBMIXCPP_PATH , "bayesmix")
+BAYEXMIX_PATH = os.path.join(PYBMIXCPP_PATH , "bayesmix_")
 PROTO_IN_DIR = os.path.join(BAYEXMIX_PATH, "proto")
 PROTO_OUT_DIR = os.path.join(HERE, "pybmix", "proto/")
 

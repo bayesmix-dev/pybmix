@@ -15,7 +15,7 @@ import sys
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../'))
 sys.path.insert(0, os.path.join(os.path.abspath('../'),
-                                "pybmix/core/pybmixcpp/bayesmix"))
+                                "pybmix/core/pybmixcpp/bayesmix_"))
 
 
 

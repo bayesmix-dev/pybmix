@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [master]
+
+  workflow_dispatch:
+
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: build
+        run: docker
+
+      - name: create build
+        run: docker build -f resources/docker/test/Dockerfile -t test .
+
+      - name: run C++ tests
+        run: docker run -w /usr/bayesmix_ test ./build_/test/test_bayesmix
+
+      - name: run Python tests
+        run: docker run -w /usr/bayesmix_/python test pytest

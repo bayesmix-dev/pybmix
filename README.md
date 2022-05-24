@@ -7,7 +7,7 @@ A Python interface to [bayesmix](https://github.com/bayesmix-dev/bayesmix/)
 
 First, clone this repository with its submodules
 ```shell
-git clone --recurse-submodule git@github.com:bayesmix-dev/pybmix.git
+git clone --recurse-submodule git@github.com:bayesmix_-dev/pybmix.git
 ```
 Ideally things should work by simply typing
 ```shell

@@ -1,0 +1,24 @@
+# Build folder
+build/
+# Visual Studio Code folder
+.vscode
+# SFTP configuration file
+sftp-config.json
+# Sublime Text files
+*.sublime-*
+# Python compilation files
+*.pyc
+# File collectors
+*.recordio
+# PDF output files
+*.pdf
+# Local files
+*.local.*
+# MacOS storage files
+.DS_Store
+#CLion cash
+.idea/
+# Build debug folder
+cmake-build-debug/
+# mypy cache
+.mypy_cache/

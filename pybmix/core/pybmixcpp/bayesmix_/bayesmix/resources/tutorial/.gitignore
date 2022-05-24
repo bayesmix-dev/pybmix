@@ -1,0 +1,5 @@
+# Output folders
+out/*.csv
+.Rhistory
+.RData
+plots.R
