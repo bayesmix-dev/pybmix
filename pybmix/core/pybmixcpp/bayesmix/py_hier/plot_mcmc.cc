@@ -1,6 +1,6 @@
 #include <matplot/matplot.h>
 
-#include "pybmixcpp/bayesmix/lib/argparse/argparse.h"
+#include "bayesmix/lib/argparse/argparse.h"
 #include "src/plots/plot_utils.h"
 #include "src/utils/io_utils.h"
 #include "py_global.h"

@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "algorithm_state.pb.h"
-#include "pybmixcpp/bayesmix/src/hierarchies/conjugate_hierarchy.h"
+#include "bayesmix/src/hierarchies/conjugate_hierarchy.h"
 #include "hierarchy_id.pb.h"
 #include "hierarchy_prior.pb.h"
 

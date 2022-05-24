@@ -6,6 +6,7 @@
 #include <pybind11/stl.h>
 
 #include "bayesmix/src/includes.h"
+#include "py_hier/includes.h"
 #include "serialized_collector.hpp"
 
 class AlgorithmWrapper {

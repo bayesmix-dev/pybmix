@@ -3,7 +3,7 @@
 
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
-
+#include "load_hierarchies_2.h"
 
 namespace py = pybind11;
 using namespace py::literals;
@@ -18,6 +18,7 @@ namespace py_global{
     extern py::object like_lpdf_evaluator;
     extern py::object marg_lpdf_evaluator;
     extern py::object initialize_state_evaluator;
+    extern py::object initialize_hypers_evaluator;
     extern py::object draw_evaluator;
     extern py::object update_summary_statistics_evaluator;
     extern py::object clear_summary_statistics_evaluator;

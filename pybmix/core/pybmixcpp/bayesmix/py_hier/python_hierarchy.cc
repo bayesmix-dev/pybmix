@@ -14,10 +14,10 @@
 #include "algorithm_state.pb.h"
 #include "hierarchy_prior.pb.h"
 #include "ls_state.pb.h"
-#include "pybmixcpp/bayesmix/src/utils/rng.h"
+#include "bayesmix/src/utils/rng.h"
 #include "py_global.h"
-#include "pybind11/stl.h"
-#include "pybind11/eigen.h"
+#include <pybind11/stl.h>
+#include <pybind11/eigen.h>
 
 void synchronize_cpp_to_py_state(const std::mt19937 &cpp_gen,
                                  py::object &py_gen);
@@ -48,14 +48,16 @@ void PythonHierarchy::initialize_state() {
 
 //! C++
 void PythonHierarchy::initialize_hypers() {
-    if (prior->has_values()) {
-        // Set values
-        hypers->generic_hypers.clear();
-        int size = prior->values().size();
-        for (int i = 0; i < size; ++i) {
-            hypers->generic_hypers.push_back((prior->values().data())[i]);
-        }
-    }
+//    if (prior->has_values()) {
+//        // Set values
+//        hypers->generic_hypers.clear();
+//        int size = prior->values().size();
+//        for (int i = 0; i < size; ++i) {
+//            hypers->generic_hypers.push_back((prior->values().data())[i]);
+//        }
+//    }
+    py::list hypers_py = py_global::initialize_hypers_evaluator();
+    hypers->generic_hypers = list_to_vector(hypers_py);
 }
 
 //! PYTHON

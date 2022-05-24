@@ -16,11 +16,11 @@ SET_SOURCE_FILES_PROPERTIES(${PROTO_HEADERS} ${PROTO_SOURCES} PROPERTIES GENERAT
 # Generate python module
 add_subdirectory(lib/pybind11)
 pybind11_add_module(pybmixcpp ${SOURCES}
-    "${SOURCE_DIR}/module.cpp"
-    "${SOURCE_DIR}/algorithm_wrapper.hpp"
-    "${SOURCE_DIR}/algorithm_wrapper.cpp"
-    "${SOURCE_DIR}/serialized_collector.hpp"
-    "${SOURCE_DIR}/serialized_collector.cpp"
+    "${SOURCE_DIR}/bayesmix/module.cpp"
+    "${SOURCE_DIR}/bayesmix/algorithm_wrapper.hpp"
+    "${SOURCE_DIR}/bayesmix/algorithm_wrapper.cpp"
+    "${SOURCE_DIR}/bayesmix/serialized_collector.hpp"
+    "${SOURCE_DIR}/bayesmix/serialized_collector.cpp"
     ${PROTO_HEADERS} ${PROTO_SOURCES})
 
 # generate Python's proto classes
@@ -34,7 +34,7 @@ foreach(PROTO_FILE IN LISTS ProtoFiles)
   message(STATUS "GENERATING PYTHON protoc proto(cc): ${PROTO_FILE} --> ${PROTO_PY}")
   add_custom_command(
     OUTPUT ${PROTO_PY}
-    COMMAND protobuf::protoc "--proto_path=${SOURCE_DIR}/bayesmix/src/proto"
+    COMMAND protobuf::protoc "--proto_path=${SOURCE_DIR}/bayesmix/bayesmix/src/proto"
     ${PROTO_DIRS} "--python_out=${PY_PROTO_DIR}" ${PROTO_FILE}
     DEPENDS ${PROTO_FILE} protobuf::protoc
     COMMENT "Generate Python protocol buffer for ${PROTO_FILE}"

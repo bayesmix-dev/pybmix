@@ -3,7 +3,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "pybmixcpp/bayesmix/lib/argparse/argparse.h"
+#include "bayesmix/lib/argparse/argparse.h"
 #include "includes.h"
 #include "py_global.h"
 
