@@ -1,7 +1,7 @@
 import numpy as np
 
 from pybmix.core.mixture_model import MixtureModel
-from pybmix.core.pybmixcpp import _minbinder_cluster_estimate, ostream_redirect
+from pybmixlib import _minbinder_cluster_estimate, ostream_redirect
 
 class ClusterEstimator(object):
     """
