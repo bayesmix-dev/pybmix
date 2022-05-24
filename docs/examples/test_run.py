@@ -41,7 +41,7 @@ densities = dens_est.estimate_density(grid)
 
 plt.hist(y, density=True)
 plt.plot(grid, np.mean(densities, axis=0), lw=3, label="predictive density")
-idxs = [5, 20, 100]
+idxs = [5, 20, 90]
 
 for idx in idxs:
     plt.plot(grid, densities[idx, :], "--", label="iteration: {0}".format(idx))
