@@ -2,7 +2,9 @@ import os
 import sys
 HERE = os.path.dirname(os.path.realpath(__file__))
 BUILD_DIR = os.path.join(HERE, "../../")
+CORE_DIR = os.path.join(BUILD_DIR, "pybmix/core/")
 sys.path.insert(0, os.path.realpath(BUILD_DIR))
+sys.path.insert(0, os.path.realpath(CORE_DIR))
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -29,7 +31,7 @@ hierarchy = PythonHierarchy()
 hierarchy.make_default_fixed_params(y, 2)
 mixture = MixtureModel(mixing, hierarchy)
 
-mixture.run_mcmc(y, algorithm="Neal2", niter=2000, nburn=1000)
+mixture.run_mcmc(y, algorithm="Neal2", niter=110, nburn=10)
 
 from pybmix.estimators.density_estimator import DensityEstimator
 
@@ -39,7 +41,7 @@ densities = dens_est.estimate_density(grid)
 
 plt.hist(y, density=True)
 plt.plot(grid, np.mean(densities, axis=0), lw=3, label="predictive density")
-idxs = [5, 100, 300]
+idxs = [5, 20, 100]
 
 for idx in idxs:
     plt.plot(grid, densities[idx, :], "--", label="iteration: {0}".format(idx))
