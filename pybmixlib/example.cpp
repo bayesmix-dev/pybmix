@@ -1,8 +1,10 @@
-#include <pybind11/eigen.h>
+#include <stan/math/rev.hpp>
+
+// #include <pybind11/eigen.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-#include <Eigen/Dense>
+// #include <Eigen/Dense>
 
 #include "algorithm_wrapper.hpp"
 #include "bayesmix/src/utils/distributions.hpp"

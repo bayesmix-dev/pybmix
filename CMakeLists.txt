@@ -1,27 +1,24 @@
 cmake_minimum_required(VERSION 3.13.0)
-project(pybmixcpp)
+project(pybmix)
 
-set (CMAKE_CXX_STANDARD 14)
-set(COMPILE_OPTIONS -D_REENTRANT -fPIC)
-set(CMAKE_BUILD_TYPE Release)
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -funroll-loops -ftree-vectorize")
-set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
+SET(SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/pybmixlib/bayesmix")
 
+option(DISABLE_TESTS ON)
+option(DISABLE_BENCHMARKS ON)
+option(DISABLE_DOCS ON)
+option(DISABLE_PLOTS ON)
+option(DISABLE_EXAMPLES ON)
+option(BUILD_RUN OFF)
 
-SET(SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/pybmix/core/pybmixcpp")
-add_subdirectory(${SOURCE_DIR}/bayesmix)
+add_subdirectory(${SOURCE_DIR})
 include_directories(${SOURCE_DIR})
 SET_SOURCE_FILES_PROPERTIES(${PROTO_HEADERS} ${PROTO_SOURCES} PROPERTIES GENERATED TRUE)
 
-# Generate python module
-add_subdirectory(lib/pybind11)
-pybind11_add_module(pybmixcpp ${SOURCES}
-    "${SOURCE_DIR}/module.cpp"
-    "${SOURCE_DIR}/algorithm_wrapper.hpp"
-    "${SOURCE_DIR}/algorithm_wrapper.cpp"
-    "${SOURCE_DIR}/serialized_collector.hpp"
-    "${SOURCE_DIR}/serialized_collector.cpp"
-    ${PROTO_HEADERS} ${PROTO_SOURCES})
+message ("*** PROTOC "  protobuf::protoc)
+message ("*** Protobuf_VERSION "  ${Protobuf_VERSION})
+message ("*** Protobuf_PROTOC_LIBRARIES "  ${Protobuf_PROTOC_LIBRARIES})
+
+
 
 # generate Python's proto classes
 set(PY_PROTO_DIR "${CMAKE_CURRENT_LIST_DIR}/pybmix/proto")
@@ -34,7 +31,7 @@ foreach(PROTO_FILE IN LISTS ProtoFiles)
   message(STATUS "GENERATING PYTHON protoc proto(cc): ${PROTO_FILE} --> ${PROTO_PY}")
   add_custom_command(
     OUTPUT ${PROTO_PY}
-    COMMAND protobuf::protoc "--proto_path=${SOURCE_DIR}/bayesmix/src/proto"
+    COMMAND /usr/local/bin/protoc "--proto_path=${SOURCE_DIR}/src/proto"
     ${PROTO_DIRS} "--python_out=${PY_PROTO_DIR}" ${PROTO_FILE}
     DEPENDS ${PROTO_FILE} protobuf::protoc
     COMMENT "Generate Python protocol buffer for ${PROTO_FILE}"
@@ -42,14 +39,7 @@ foreach(PROTO_FILE IN LISTS ProtoFiles)
     list(APPEND PROTO_PYS ${PROTO_PY})
 endforeach()
 
-find_package (TBB EXACT PATHS ${TBB_ROOT})
-find_package(OpenMP REQUIRED)
+SET_SOURCE_FILES_PROPERTIES(${PROTO_PYS} PROPERTIES GENERATED TRUE)
 
-message("INCLUDE_PATHS" ${INCLUDE_PATHS})
-
-target_include_directories(pybmixcpp PUBLIC ${BAYESMIX_INCLUDE_PATHS})
-target_compile_definitions(pybmixcpp PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
-target_link_libraries(pybmixcpp PUBLIC bayesmixlib ${BAYESMIX_LINK_LIBRARIES})
-target_compile_options(pybmixcpp PUBLIC ${BAYESMIX_COMPILE_OPTIONS})
-
-add_custom_target(genterate_protos ALL DEPENDS ${PROTO_PYS})
+add_custom_target(generate_protos ALL DEPENDS ${PROTO_PYS})
+add_custom_target(two_to_three ALL COMMAND ${CMAKE_CURRENT_LIST_DIR}/convert_proto.sh DEPENDS generate_protos)

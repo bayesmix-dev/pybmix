@@ -1,6 +1,7 @@
 #ifndef PYBMIX_ALGORITHM_WRAPPER_
 #define PYBMIX_ALGORITHM_WRAPPER_
 
+#include <stan/math/rev.hpp>
 #include <pybind11/eigen.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>

@@ -6,7 +6,7 @@ import pybmix.proto.algorithm_id_pb2 as algorithm_id
 from pybmix.core.hierarchy import BaseHierarchy
 from pybmix.core.chain import MCMCchain
 from pybmix.proto.algorithm_state_pb2 import AlgorithmState
-from pybmix.core.pybmixcpp import AlgorithmWrapper, ostream_redirect
+from pybmixlib import AlgorithmWrapper, ostream_redirect
 
 MARGINAL_ALGORITHMS = ["Neal2", "Neal3", "Neal8"] 
 CONDITIONAL_ALGORITHMS = ["BlockedGibbs"]
