@@ -83,7 +83,7 @@ Python::State PythonHierarchy::draw(const Python::Hyperparams &params) {
 //! PYTHON
 void PythonHierarchy::update_summary_statistics(
         const Eigen::RowVectorXd &datum, const bool add) {
-    py::list sum_stats_py = py_global::update_summary_statistics_evaluator(datum,add,sum_stats);
+    py::list sum_stats_py = py_global::update_summary_statistics_evaluator(datum,add,sum_stats, state->generic_state, cluster_data_values);
 //    data_sum = sum_stats_py[0].cast<double>();
 //    data_sum_squares = sum_stats_py[1].cast<double>();
     sum_stats = list_to_vector(sum_stats_py);
@@ -212,7 +212,7 @@ void LapNIGHierarchy::sample_full_cond(const bool update_params /*= false*/) {
     this->sample_prior();
   } else {
     synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_global::py_gen);
-    py::list result = py_global::sample_full_cond_evaluator(iter_, accepted_, state, sum_stats, py_global::py_gen, curr_vals, hypers);
+    py::list result = py_global::sample_full_cond_evaluator(iter_, accepted_, state->generic_state, sum_stats, py_global::py_gen, curr_vals, hypers->generic_hypers);
     synchronize_py_to_cpp_state(bayesmix::Rng::Instance().get(), py_global::py_gen);
     result_vec = list_to_vector(result);
     iter_ = result_vec[0];
@@ -264,7 +264,7 @@ void LapNIGHierarchy::sample_full_cond(const bool update_params /*= false*/) {
 Eigen::VectorXd LapNIGHierarchy::propose_rwmh(
     const Eigen::VectorXd &curr_vals) {
     synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_global::py_gen);
-    double proposal = py_global::propose_rwmh_evaluator().cast<double>(curr_vals, hypers, py_global::py_gen);
+    double proposal = py_global::propose_rwmh_evaluator().cast<double>(curr_vals, hypers->generic_hypers, py_global::py_gen);
     synchronize_py_to_cpp_state(bayesmix::Rng::Instance().get(), py_global::py_gen);
     return proposal;
 }
@@ -287,7 +287,7 @@ Eigen::VectorXd LapNIGHierarchy::propose_rwmh(
 //! PYTHON
 double LapNIGHierarchy::eval_prior_lpdf_unconstrained(
     const Eigen::VectorXd &unconstrained_parameters) {
-    double result = py_global::eval_prior_lpdf_unconstrained_evaluator(unconstrained_parameters, hypers);
+    double result = py_global::eval_prior_lpdf_unconstrained_evaluator(unconstrained_parameters, hypers->generic_hypers);
     return result;
 }
 
