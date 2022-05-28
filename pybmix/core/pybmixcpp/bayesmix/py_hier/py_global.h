@@ -22,6 +22,10 @@ namespace py_global{
     extern py::object draw_evaluator;
     extern py::object update_summary_statistics_evaluator;
     extern py::object clear_summary_statistics_evaluator;
+    extern py::object sample_full_cond_evaluator;
+    extern py::object propose_rwmh_evaluator;
+    extern py::object eval_prior_lpdf_unconstrained_evaluator;
+    extern py::object eval_like_lpdf_unconstrained_evaluator;
 };
 
 #endif
