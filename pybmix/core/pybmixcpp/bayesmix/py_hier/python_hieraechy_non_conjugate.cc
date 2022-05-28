@@ -29,26 +29,26 @@ void synchronize_py_to_cpp_state(std::mt19937 &cpp_gen,
 std::vector<double> list_to_vector(py::list &x);
 
 //! PYTHON
-double PythonHierarchy::like_lpdf(const Eigen::RowVectorXd &datum) const {
+double PythonHierarchyNonConjugate::like_lpdf(const Eigen::RowVectorXd &datum) const {
     double result = py_global::like_lpdf_evaluator(datum, state.generic_state).cast<double>();
     return result;
 }
 
 //! PYTHON
-double PythonHierarchy::marg_lpdf(const Python::Hyperparams &params,
+double PythonHierarchyNonConjugate::marg_lpdf(const Python::Hyperparams &params,
                                   const Eigen::RowVectorXd &datum) const {
     double result = py_global::marg_lpdf_evaluator(datum, params.generic_hypers).cast<double>();
     return result;
 }
 
 //! PYTHON
-void PythonHierarchy::initialize_state() {
+void PythonHierarchyNonConjugate::initialize_state() {
     py::list state_py = py_global::initialize_state_evaluator(hypers->generic_hypers);
     state.generic_state = list_to_vector(state_py);
 }
 
 //! C++
-void PythonHierarchy::initialize_hypers() {
+void PythonHierarchyNonConjugate::initialize_hypers() {
 //    if (prior->has_values()) {
 //        // Set values
 //        hypers->generic_hypers.clear();
@@ -63,14 +63,14 @@ void PythonHierarchy::initialize_hypers() {
 
 //! PYTHON
 //! TODO: put in python
-void PythonHierarchy::update_hypers(
+void PythonHierarchyNonConjugate::update_hypers(
         const std::vector <bayesmix::AlgorithmState::ClusterState> &states) {
     auto &rng = bayesmix::Rng::Instance().get();
     if (prior->has_values()) return;
 }
 
 //! PYTHON
-Python::State PythonHierarchy::draw(const Python::Hyperparams &params) {
+Python::State PythonHierarchyNonConjugate::draw(const Python::Hyperparams &params) {
   Python::State out;
   synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_global::py_gen);
   py::list draw_py = py_global::draw_evaluator(state.generic_state,params.generic_hypers,py_global::py_gen);
@@ -81,7 +81,7 @@ Python::State PythonHierarchy::draw(const Python::Hyperparams &params) {
 
 
 //! PYTHON
-void PythonHierarchy::update_summary_statistics(
+void PythonHierarchyNonConjugate::update_summary_statistics(
         const Eigen::RowVectorXd &datum, const bool add) {
     py::list sum_stats_py = py_global::update_summary_statistics_evaluator(datum,add,sum_stats, state->generic_state, cluster_data_values);
 //    data_sum = sum_stats_py[0].cast<double>();
@@ -90,7 +90,7 @@ void PythonHierarchy::update_summary_statistics(
 }
 
 //! PYTHON
-void PythonHierarchy::clear_summary_statistics() {
+void PythonHierarchyNonConjugate::clear_summary_statistics() {
     py::list sum_stats_py = py_global::clear_summary_statistics_evaluator(sum_stats);
 //    data_sum = sum_stats_py[0].cast<double>();
 //    data_sum_squares = sum_stats_py[1].cast<double>();
@@ -98,7 +98,7 @@ void PythonHierarchy::clear_summary_statistics() {
 }
 
 //! PYTHON
-Python::Hyperparams PythonHierarchy::compute_posterior_hypers() const {
+Python::Hyperparams PythonHierarchyNonConjugate::compute_posterior_hypers() const {
     // Compute posterior hyperparameters
     Python::Hyperparams post_params;
     py::list post_params_py = py_global::posterior_hypers_evaluator(card,hypers->generic_hypers,sum_stats);
@@ -108,7 +108,7 @@ Python::Hyperparams PythonHierarchy::compute_posterior_hypers() const {
 
 
 //! C++
-void PythonHierarchy::set_state_from_proto(
+void PythonHierarchyNonConjugate::set_state_from_proto(
         const google::protobuf::Message &state_) {
     auto &statecast = downcast_state(state_);
     int size = statecast.general_state().size();
@@ -122,7 +122,7 @@ void PythonHierarchy::set_state_from_proto(
 
 //! C++
 std::shared_ptr <bayesmix::AlgorithmState::ClusterState>
-PythonHierarchy::get_state_proto() const {
+PythonHierarchyNonConjugate::get_state_proto() const {
     bayesmix::Vector state_;
     state_.set_size(state.generic_state.size());
     *state_.mutable_data() = {
@@ -134,7 +134,7 @@ PythonHierarchy::get_state_proto() const {
 }
 
 //! C++
-void PythonHierarchy::set_hypers_from_proto(
+void PythonHierarchyNonConjugate::set_hypers_from_proto(
         const google::protobuf::Message &hypers_) {
     auto &hyperscast = downcast_hypers(hypers_).python_state();
     int size = hyperscast.data().size();
@@ -147,7 +147,7 @@ void PythonHierarchy::set_hypers_from_proto(
 
 //! C++
 std::shared_ptr <bayesmix::AlgorithmState::HierarchyHypers>
-PythonHierarchy::get_hypers_proto() const {
+PythonHierarchyNonConjugate::get_hypers_proto() const {
     bayesmix::Vector hypers_;
     hypers_.set_size(hypers->generic_hypers.size());
     *hypers_.mutable_data() = {

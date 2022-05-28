@@ -3,7 +3,7 @@
 namespace py_global{
     //py::scoped_interpreter guard{}; Gives core dumped
     py::module_ numpy = py::module_::import("numpy");
-    py::module_ fun = py::module_::import("fun"); //add fun to build folder
+    py::module_ fun = py::module_::import("fun1"); //add fun to build folder
     py::module_ numpy_random = py::module_::import("numpy.random");
     py::object py_engine = numpy_random.attr("MT19937")();
     py::object py_gen = numpy_random.attr("Generator")(py_engine);

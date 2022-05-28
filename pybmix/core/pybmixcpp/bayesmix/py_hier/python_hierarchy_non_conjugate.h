@@ -48,12 +48,12 @@ struct Hyperparams {
 
 };  // namespace Python
 
-class PythonHierarchy
-    : public ConjugateHierarchy<PythonHierarchy, Python::State,
+class PythonHierarchyNonConjugate
+    : public BaseHierarchy<PythonHierarchyNonConjugate, Python::State,
                                 Python::Hyperparams, bayesmix::PythonPrior> {
  public:
-  PythonHierarchy() = default;
-  ~PythonHierarchy() = default;
+  PythonHierarchyNonConjugate() = default;
+  ~PythonHierarchyNonConjugate() = default;
 
   //! NON-CONJUGATE
   static unsigned int accepted_;
