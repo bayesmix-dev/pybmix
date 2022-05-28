@@ -85,3 +85,27 @@ class PythonHierarchy(BaseHierarchy):
         self.prior_params.values.data.append(3)
         self.prior_params.values.data.append(np.var(y) / exp_num_clusters)
         self.prior_params.values.data.append(0.01)
+
+
+class PythonHierarchyNonConjugate(BaseHierarchy):
+    ID = hierarchy_id.Python
+    NAME = hierarchy_id.HierarchyId.Name(ID)
+
+    def __init__(self, prior_params=None):
+        self.prior_params = hprior.PythonPrior()
+        if prior_params is not None:
+            success = set_oneof_field("prior", self.prior_params, prior_params)
+            if not success:
+                raise ValueError(
+                    "expected 'prior_params' to be of instance [{0}]"
+                    "found {1} instead".format(
+                        " ".join(get_oneof_types("prior", self.prior_params)),
+                        type(prior_params)))
+
+    def make_default_fixed_params(self, y, exp_num_clusters=5):
+        self.prior_params.values.data.append(np.mean(y))
+        self.prior_params.values.data.append(3)
+        self.prior_params.values.data.append(np.var(y) / exp_num_clusters)
+        self.prior_params.values.data.append(0.01)
+        self.prior_params.values.data.append(10)
+        self.prior_params.values.data.append(0.1)

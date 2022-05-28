@@ -26,7 +26,7 @@ def initialize_state(hypers):
 
 
 def initialize_hypers():
-    return [1, 1, 1, 1]
+    return [1, 1, 1, 1, 1, 1]
 
 
 def draw(state, hypers, rng):
