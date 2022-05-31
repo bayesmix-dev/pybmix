@@ -12,3 +12,6 @@
     depth = 1
 	url = https://github.com/bayesmix-dev/math.git
     ignore = dirty
+[submodule "pybmix/core/pybmixcpp/bayesmix/bayesmix"]
+	path = pybmix/core/pybmixcpp/bayesmix/bayesmix
+	url = https://github.com/taguhiM/bayesmix.git

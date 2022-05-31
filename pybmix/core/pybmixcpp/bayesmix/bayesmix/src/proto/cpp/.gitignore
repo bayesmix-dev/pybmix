@@ -1,3 +1,0 @@
-# Protocol Buffers implementation files (version-dependent)
-*.pb.cc
-*.pb.h
