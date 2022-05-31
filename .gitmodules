@@ -1,14 +1,10 @@
-[submodule "pybmix/src/bayesmix"]
-	path = pybmix/core/pybmixcpp/bayesmix/bayesmix
-	url = https://github.com/taguhiM/bayesmix.git
-	depth = 1
-	update = merge
 [submodule "lib/pybind11"]
 	path = lib/pybind11
 	depth = 1
 	url = https://github.com/pybind/pybind11.git
+[submodule "pybmix/core/pybmixcpp/bayesmix/bayesmix"]
+	path = pybmix/core/pybmixcpp/bayesmix/bayesmix
+	url = https://github.com/taguhiM/bayesmix.git
 [submodule "lib/math"]
 	path = lib/math
-    depth = 1
 	url = https://github.com/bayesmix-dev/math.git
-    ignore = dirty
