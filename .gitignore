@@ -133,3 +133,6 @@ dmypy.json
 
 # PyCharm
 .idea/
+
+# 2to3 path
+convert_proto.sh

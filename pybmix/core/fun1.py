@@ -9,6 +9,7 @@ def like_lpdf(x, state):
 
 
 def initialize_state(hypers):
+    print("*************** fun1 - initialize_state *************")
     mean = hypers[0]
     shape = hypers[2]
     scale = hypers[3]

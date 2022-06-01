@@ -206,7 +206,7 @@ std::vector<double> list_to_vector(py::list &x) {
 //! NON-CONJUGATE
 
 //! PYTHON
-void LapNIGHierarchy::sample_full_cond(const bool update_params /*= false*/) {
+void PythonHierarchyNonConjugate::sample_full_cond(const bool update_params /*= false*/) {
   if (this->card == 0) {
     // No posterior update possible
     this->sample_prior();
@@ -222,7 +222,7 @@ void LapNIGHierarchy::sample_full_cond(const bool update_params /*= false*/) {
     }
 }
 
-void LapNIGHierarchy::sample_full_cond(const bool update_params /*= false*/) {
+void PythonHierarchyNonConjugate::sample_full_cond(const bool update_params /*= false*/) {
   if (this->card == 0) {
     // No posterior update possible
     this->sample_prior();
@@ -261,7 +261,7 @@ void LapNIGHierarchy::sample_full_cond(const bool update_params /*= false*/) {
 
 
 //! PYTHON
-Eigen::VectorXd LapNIGHierarchy::propose_rwmh(
+Eigen::VectorXd PythonHierarchyNonConjugate::propose_rwmh(
     const Eigen::VectorXd &curr_vals) {
     synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_global::py_gen);
     double proposal = py_global::propose_rwmh_evaluator().cast<double>(curr_vals, hypers->generic_hypers, py_global::py_gen);
@@ -269,7 +269,7 @@ Eigen::VectorXd LapNIGHierarchy::propose_rwmh(
     return proposal;
 }
 
-Eigen::VectorXd LapNIGHierarchy::propose_rwmh(
+Eigen::VectorXd PythonHierarchyNonConjugate::propose_rwmh(
     const Eigen::VectorXd &curr_vals) {
   auto &rng = bayesmix::Rng::Instance().get();
   double candidate_mean =
@@ -285,13 +285,13 @@ Eigen::VectorXd LapNIGHierarchy::propose_rwmh(
 
 
 //! PYTHON
-double LapNIGHierarchy::eval_prior_lpdf_unconstrained(
+double PythonHierarchyNonConjugate::eval_prior_lpdf_unconstrained(
     const Eigen::VectorXd &unconstrained_parameters) {
     double result = py_global::eval_prior_lpdf_unconstrained_evaluator(unconstrained_parameters, hypers->generic_hypers);
     return result;
 }
 
-double LapNIGHierarchy::eval_prior_lpdf_unconstrained(
+double PythonHierarchyNonConjugate::eval_prior_lpdf_unconstrained(
     const Eigen::VectorXd &unconstrained_parameters) {
   double mu = unconstrained_parameters(0);
   double log_scale = unconstrained_parameters(1);
@@ -303,13 +303,13 @@ double LapNIGHierarchy::eval_prior_lpdf_unconstrained(
 
 
 //! PYTHON
-double LapNIGHierarchy::eval_like_lpdf_unconstrained(
+double PythonHierarchyNonConjugate::eval_like_lpdf_unconstrained(
     const Eigen::VectorXd &unconstrained_parameters, const bool is_current) {
     double result = py_global::eval_like_lpdf_unconstrained_evaluator(unconstrained_parameters, is_current, sum_stats, cluster_data_values);
     return result;
 }
 
-double LapNIGHierarchy::eval_like_lpdf_unconstrained(
+double PythonHierarchyNonConjugate::eval_like_lpdf_unconstrained(
     const Eigen::VectorXd &unconstrained_parameters, const bool is_current) {
   double mean = unconstrained_parameters(0);
   double log_scale = unconstrained_parameters(1);
