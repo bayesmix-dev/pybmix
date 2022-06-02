@@ -16,34 +16,26 @@
 #include "hierarchy_prior.pb.h"
 #include "ls_state.pb.h"
 #include "bayesmix/src/utils/rng.h"
-#include "py_global.h"
 #include <pybind11/stl.h>
 #include <pybind11/eigen.h>
-
-void synchronize_cpp_to_py_state(const std::mt19937 &cpp_gen,
-                                 py::object &py_gen);
-
-void synchronize_py_to_cpp_state(std::mt19937 &cpp_gen,
-                                 const py::object &py_gen);
-
-std::vector<double> list_to_vector(py::list &x);
+#include "auxiliary_functions.h"
 
 //! PYTHON
 double PythonHierarchyNonConjugate::like_lpdf(const Eigen::RowVectorXd &datum) const {
-    double result = py_global::like_lpdf_evaluator(datum, state.generic_state).cast<double>();
+    double result = like_lpdf_evaluator(datum, state.generic_state).cast<double>();
     return result;
 }
 
 //! PYTHON
 double PythonHierarchyNonConjugate::marg_lpdf(const Python::Hyperparams &params,
                                   const Eigen::RowVectorXd &datum) const {
-    double result = py_global::marg_lpdf_evaluator(datum, params.generic_hypers).cast<double>();
+    double result = marg_lpdf_evaluator(datum, params.generic_hypers).cast<double>();
     return result;
 }
 
 //! PYTHON
 void PythonHierarchyNonConjugate::initialize_state() {
-    py::list state_py = py_global::initialize_state_evaluator(hypers->generic_hypers);
+    py::list state_py = initialize_state_evaluator(hypers->generic_hypers);
     state.generic_state = list_to_vector(state_py);
 }
 
@@ -57,7 +49,7 @@ void PythonHierarchyNonConjugate::initialize_hypers() {
 //            hypers->generic_hypers.push_back((prior->values().data())[i]);
 //        }
 //    }
-    py::list hypers_py = py_global::initialize_hypers_evaluator();
+    py::list hypers_py = initialize_hypers_evaluator();
     hypers->generic_hypers = list_to_vector(hypers_py);
 }
 
@@ -72,10 +64,10 @@ void PythonHierarchyNonConjugate::update_hypers(
 //! PYTHON
 Python::State PythonHierarchyNonConjugate::draw(const Python::Hyperparams &params) {
   Python::State out;
-  synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_global::py_gen);
-  py::list draw_py = py_global::draw_evaluator(state.generic_state,params.generic_hypers,py_global::py_gen);
+  synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_gen);
+  py::list draw_py = draw_evaluator(state.generic_state,params.generic_hypers,py_gen);
   out.generic_state = list_to_vector(draw_py);
-  synchronize_py_to_cpp_state(bayesmix::Rng::Instance().get(), py_global::py_gen);
+  synchronize_py_to_cpp_state(bayesmix::Rng::Instance().get(), py_gen);
   return out;
 }
 
@@ -83,7 +75,7 @@ Python::State PythonHierarchyNonConjugate::draw(const Python::Hyperparams &param
 //! PYTHON
 void PythonHierarchyNonConjugate::update_summary_statistics(
         const Eigen::RowVectorXd &datum, const bool add) {
-    py::list sum_stats_py = py_global::update_summary_statistics_evaluator(datum,add,sum_stats, state->generic_state, cluster_data_values);
+    py::list sum_stats_py = update_summary_statistics_evaluator(datum,add,sum_stats, state->generic_state, cluster_data_values);
 //    data_sum = sum_stats_py[0].cast<double>();
 //    data_sum_squares = sum_stats_py[1].cast<double>();
     sum_stats = list_to_vector(sum_stats_py);
@@ -91,7 +83,7 @@ void PythonHierarchyNonConjugate::update_summary_statistics(
 
 //! PYTHON
 void PythonHierarchyNonConjugate::clear_summary_statistics() {
-    py::list sum_stats_py = py_global::clear_summary_statistics_evaluator(sum_stats);
+    py::list sum_stats_py = clear_summary_statistics_evaluator(sum_stats);
 //    data_sum = sum_stats_py[0].cast<double>();
 //    data_sum_squares = sum_stats_py[1].cast<double>();
     sum_stats = list_to_vector(sum_stats_py);
@@ -101,7 +93,7 @@ void PythonHierarchyNonConjugate::clear_summary_statistics() {
 Python::Hyperparams PythonHierarchyNonConjugate::compute_posterior_hypers() const {
     // Compute posterior hyperparameters
     Python::Hyperparams post_params;
-    py::list post_params_py = py_global::posterior_hypers_evaluator(card,hypers->generic_hypers,sum_stats);
+    py::list post_params_py = posterior_hypers_evaluator(card,hypers->generic_hypers,sum_stats);
     post_params.generic_hypers = list_to_vector(post_params_py);
     return post_params;
     }
@@ -173,7 +165,7 @@ void synchronize_cpp_to_py_state(const std::mt19937 &cpp_gen,
     state >> aux_string;
     unsigned int pos = std::stoul(aux_string);
 
-    py::object array = py_global::numpy.attr("array")(state_list, "uint32");
+    py::object array = numpy.attr("array")(state_list, "uint32");
     py::dict state_dict("key"_a = array, "pos"_a = pos);
     py::dict d("bit_generator"_a = "MT19937", "state"_a = state_dict);
     py_gen.attr("__setstate__")(d);
@@ -211,9 +203,9 @@ void PythonHierarchyNonConjugate::sample_full_cond(const bool update_params /*= 
     // No posterior update possible
     this->sample_prior();
   } else {
-    synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_global::py_gen);
-    py::list result = py_global::sample_full_cond_evaluator(iter_, accepted_, state->generic_state, sum_stats, py_global::py_gen, curr_vals, hypers->generic_hypers);
-    synchronize_py_to_cpp_state(bayesmix::Rng::Instance().get(), py_global::py_gen);
+    synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_gen);
+    py::list result = sample_full_cond_evaluator(iter_, accepted_, state->generic_state, sum_stats, py_gen, curr_vals, hypers->generic_hypers);
+    synchronize_py_to_cpp_state(bayesmix::Rng::Instance().get(), py_gen);
     result_vec = list_to_vector(result);
     iter_ = result_vec[0];
     accepted_ = result_vec[1];
@@ -263,9 +255,9 @@ void PythonHierarchyNonConjugate::sample_full_cond(const bool update_params /*= 
 //! PYTHON
 Eigen::VectorXd PythonHierarchyNonConjugate::propose_rwmh(
     const Eigen::VectorXd &curr_vals) {
-    synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_global::py_gen);
-    double proposal = py_global::propose_rwmh_evaluator().cast<double>(curr_vals, hypers->generic_hypers, py_global::py_gen);
-    synchronize_py_to_cpp_state(bayesmix::Rng::Instance().get(), py_global::py_gen);
+    synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_gen);
+    double proposal = propose_rwmh_evaluator().cast<double>(curr_vals, hypers->generic_hypers, py_gen);
+    synchronize_py_to_cpp_state(bayesmix::Rng::Instance().get(), py_gen);
     return proposal;
 }
 
@@ -287,7 +279,7 @@ Eigen::VectorXd PythonHierarchyNonConjugate::propose_rwmh(
 //! PYTHON
 double PythonHierarchyNonConjugate::eval_prior_lpdf_unconstrained(
     const Eigen::VectorXd &unconstrained_parameters) {
-    double result = py_global::eval_prior_lpdf_unconstrained_evaluator(unconstrained_parameters, hypers->generic_hypers);
+    double result = eval_prior_lpdf_unconstrained_evaluator(unconstrained_parameters, hypers->generic_hypers);
     return result;
 }
 
@@ -305,7 +297,7 @@ double PythonHierarchyNonConjugate::eval_prior_lpdf_unconstrained(
 //! PYTHON
 double PythonHierarchyNonConjugate::eval_like_lpdf_unconstrained(
     const Eigen::VectorXd &unconstrained_parameters, const bool is_current) {
-    double result = py_global::eval_like_lpdf_unconstrained_evaluator(unconstrained_parameters, is_current, sum_stats, cluster_data_values);
+    double result = eval_like_lpdf_unconstrained_evaluator(unconstrained_parameters, is_current, sum_stats, cluster_data_values);
     return result;
 }
 

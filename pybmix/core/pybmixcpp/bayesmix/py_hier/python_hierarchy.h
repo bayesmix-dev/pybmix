@@ -17,8 +17,6 @@
 namespace py = pybind11;
 using namespace py::literals;
 
-extern py::module_ fun;
-
 //! Conjugate Normal Normal-InverseGamma hierarchy for univariate data.
 
 //! This class represents a hierarchical model where data are distributed
@@ -130,6 +128,21 @@ class PythonHierarchy
 
     //! Vector of summary statistics
     std::vector<double> sum_stats;
+
+    py::module_ numpy = py::module_::import("numpy");
+    py::module_ fun = py::module_::import("fun1"); //add fun to build folder
+    py::module_ numpy_random = py::module_::import("numpy.random");
+    py::object py_engine = numpy_random.attr("MT19937")();
+    py::object py_gen = numpy_random.attr("Generator")(py_engine);
+    py::object posterior_hypers_evaluator = fun.attr("compute_posterior_hypers");
+    py::object like_lpdf_evaluator = fun.attr("like_lpdf");
+    py::object marg_lpdf_evaluator = fun.attr("marg_lpdf");
+    py::object initialize_state_evaluator = fun.attr("initialize_state");
+    py::object initialize_hypers_evaluator = fun.attr("initialize_hypers");
+    py::object draw_evaluator = fun.attr("draw");
+    py::object update_summary_statistics_evaluator = fun.attr("update_summary_statistics");
+    py::object clear_summary_statistics_evaluator = fun.attr("clear_summary_statistics");
+
 };
 
 #endif  // BAYESMIX_HIERARCHIES_PYTHON_HIERARCHY_H_
