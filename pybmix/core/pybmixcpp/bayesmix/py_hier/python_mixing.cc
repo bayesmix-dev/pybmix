@@ -87,7 +87,7 @@ const {
             state.generic_state.data(),
             state.generic_state.data() + state.generic_state.size()};
     auto out = std::make_shared<bayesmix::MixingState>();
-    out->mutable_general_state()->CopyFrom(state_);
+    out->mutable_dp_state()->CopyFrom(state_);
     return out;
 
 }

@@ -12,7 +12,10 @@ import pybmix.proto.algorithm_id_pb2 as algorithm_id
 from pybmix.core.hierarchy import BaseHierarchy
 from pybmix.core.chain import MCMCchain
 from pybmix.proto.algorithm_state_pb2 import AlgorithmState
+print("Only last import of mixture_model missing")
 from pybmixcpp import AlgorithmWrapper, ostream_redirect
+
+print("Finished all imports of mixture_model")
 
 MARGINAL_ALGORITHMS = ["Neal2", "Neal3", "Neal8"] 
 CONDITIONAL_ALGORITHMS = ["BlockedGibbs"]

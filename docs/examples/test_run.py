@@ -6,12 +6,18 @@ CORE_DIR = os.path.join(BUILD_DIR, "pybmix/core/")
 sys.path.insert(0, os.path.realpath(BUILD_DIR))
 sys.path.insert(0, os.path.realpath(CORE_DIR))
 
+print("Imported os and sys, built paths")
+
 import numpy as np
 import matplotlib.pyplot as plt
 from pybmix.core.mixing import DirichletProcessMixing
-from pybmix.core.hierarchy import PythonHierarchy
+print("Imported DPM Mixing")
+from pybmix.core.hierarchy import PythonHierarchyNonConjugate
+print("Imported the hierarchy")
 from pybmix.core.mixture_model import MixtureModel
 np.random.seed(2021)
+
+print("Finished all imports")
 
 # Import the change_name function
 from pybmix.core.hierarchy_changer import change_hierarchy
@@ -29,13 +35,13 @@ plt.hist(y)
 plt.show()
 
 mixing = DirichletProcessMixing(total_mass=5)
-hierarchy = PythonHierarchy()
+hierarchy = PythonHierarchyNonConjugate()
 hierarchy.make_default_fixed_params(y, 2)
 mixture = MixtureModel(mixing, hierarchy)
 
 change_hierarchy('fun1')
 
-mixture.run_mcmc(y, algorithm="Neal2", niter=110, nburn=10)
+mixture.run_mcmc(y, algorithm="Neal8", niter=110, nburn=10)
 
 from pybmix.estimators.density_estimator import DensityEstimator
 
@@ -54,7 +60,7 @@ for idx in idxs:
 
 change_hierarchy('fun2')
 
-mixture.run_mcmc(y, algorithm="Neal2", niter=110, nburn=10)
+mixture.run_mcmc(y, algorithm="Neal8", niter=110, nburn=10)
 
 from pybmix.estimators.density_estimator import DensityEstimator
 

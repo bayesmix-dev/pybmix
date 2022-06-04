@@ -1,5 +1,5 @@
-#ifndef BAYESMIX_HIERARCHIES_PYTHON_HIERARCHY_H_
-#define BAYESMIX_HIERARCHIES_PYTHON_HIERARCHY_H_
+#ifndef BAYESMIX_HIERARCHIES_PYTHON_HIERARCHY_NON_CONJUGATE_H_
+#define BAYESMIX_HIERARCHIES_PYTHON_HIERARCHY_NON_CONJUGATE_H_
 
 #include <google/protobuf/stubs/casts.h>
 #include <pybind11/embed.h>
@@ -11,10 +11,12 @@
 #include <set>
 
 #include "algorithm_state.pb.h"
-#include "bayesmix/src/hierarchies/conjugate_hierarchy.h"
+// #include "bayesmix/src/hierarchies/conjugate_hierarchy.h"
 #include "bayesmix/src/hierarchies/base_hierarchy.h"
 #include "hierarchy_id.pb.h"
 #include "hierarchy_prior.pb.h"
+
+#include "python_hierarchy.h"
 
 namespace py = pybind11;
 using namespace py::literals;
@@ -33,6 +35,8 @@ using namespace py::literals;
 //! refer to parent classes: `AbstractHierarchy`, `BaseHierarchy`, and
 //! `ConjugateHierarchy`.
 
+// Already defined in python_hierarchy.h, do we want to keep it this way?
+/*
 namespace Python {
 //! Custom container for State values
 struct State {
@@ -43,8 +47,10 @@ struct State {
 struct Hyperparams {
   std::vector<double> generic_hypers;
 };
-
 };  // namespace Python
+*/
+
+using namespace Python;
 
 class PythonHierarchyNonConjugate
     : public BaseHierarchy<PythonHierarchyNonConjugate, Python::State,
@@ -54,8 +60,13 @@ class PythonHierarchyNonConjugate
   ~PythonHierarchyNonConjugate() = default;
 
   //! NON-CONJUGATE
-  static unsigned int accepted_;
-  static unsigned int iter_;
+  // static unsigned int accepted_;
+  // static unsigned int iter_;
+
+  //! Returns the Protobuf ID associated to this class
+  bayesmix::HierarchyId get_id() const override {
+    return bayesmix::HierarchyId::PythonNonConjugate;
+  }
 
   void save_posterior_hypers() {
     throw std::runtime_error("save_posterior_hypers() not implemented");
@@ -79,11 +90,6 @@ class PythonHierarchyNonConjugate
   //! Resets summary statistics for this cluster
   void clear_summary_statistics() override;
 
-  //! Returns the Protobuf ID associated to this class
-  bayesmix::HierarchyId get_id() const override {
-    return bayesmix::HierarchyId::Python;
-  }
-
   //! Read and set state values from a given Protobuf message
   void set_state_from_proto(const google::protobuf::Message &state_) override;
 
@@ -105,7 +111,7 @@ class PythonHierarchyNonConjugate
       const override;
 
   //! Computes and return posterior hypers given data currently in this cluster
-  Python::Hyperparams compute_posterior_hypers() const;
+  // Python::Hyperparams compute_posterior_hypers() const;
 
   //! Returns whether the hierarchy models multivariate data or not
   bool is_multivariate() const override { return false; }
@@ -147,8 +153,8 @@ class PythonHierarchyNonConjugate
   //! @param params     Container of (prior or posterior) hyperparameter values
   //! @param datum      Point which is to be evaluated
   //! @return           The evaluation of the lpdf
-  double marg_lpdf(const Python::Hyperparams &params,
-                   const Eigen::RowVectorXd &datum) const override;
+//  double marg_lpdf(const Python::Hyperparams &params,
+//                   const Eigen::RowVectorXd &datum) const;
 
   //! Updates cluster statistics when a datum is added or removed from it
   //! @param datum      Data point which is being added or removed
@@ -176,9 +182,9 @@ class PythonHierarchyNonConjugate
     py::module_ numpy_random = py::module_::import("numpy.random");
     py::object py_engine = numpy_random.attr("MT19937")();
     py::object py_gen = numpy_random.attr("Generator")(py_engine);
-    py::object posterior_hypers_evaluator = fun.attr("compute_posterior_hypers");
+    //py::object posterior_hypers_evaluator = fun.attr("compute_posterior_hypers");
     py::object like_lpdf_evaluator = fun.attr("like_lpdf");
-    py::object marg_lpdf_evaluator = fun.attr("marg_lpdf");
+    //py::object marg_lpdf_evaluator = fun.attr("marg_lpdf");
     py::object initialize_state_evaluator = fun.attr("initialize_state");
     py::object initialize_hypers_evaluator = fun.attr("initialize_hypers");
     py::object draw_evaluator = fun.attr("draw");
@@ -188,6 +194,7 @@ class PythonHierarchyNonConjugate
     py::object propose_rwmh_evaluator = fun.attr("propose_rwmh");
     py::object eval_prior_lpdf_unconstrained_evaluator = fun.attr("eval_prior_lpdf_unconstrained");
     py::object eval_like_lpdf_unconstrained_evaluator = fun.attr("eval_like_lpdf_unconstrained");
+
 };
 
-#endif  // BAYESMIX_HIERARCHIES_PYTHON_HIERARCHY_H_
+#endif  // BAYESMIX_HIERARCHIES_PYTHON_HIERARCHY_NON_CONJUGATE_H_

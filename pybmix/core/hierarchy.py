@@ -88,7 +88,7 @@ class PythonHierarchy(BaseHierarchy):
 
 
 class PythonHierarchyNonConjugate(BaseHierarchy):
-    ID = hierarchy_id.Python
+    ID = hierarchy_id.PythonNonConjugate
     NAME = hierarchy_id.HierarchyId.Name(ID)
 
     def __init__(self, prior_params=None):

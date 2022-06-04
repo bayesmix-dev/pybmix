@@ -25,7 +25,7 @@ namespace PYTHON {
 };  // namespace Python
 
 class PYTHONMixing
-        : public BaseMixing<PYTHONMixing, PYTHON::State,bayesmix::PYTHONPrior> {
+        : public BaseMixing<PYTHONMixing, PYTHON::State,bayesmix::PYPrior> {
 public:
     PYTHONMixing() = default;
     ~PYTHONMixing() = default;
