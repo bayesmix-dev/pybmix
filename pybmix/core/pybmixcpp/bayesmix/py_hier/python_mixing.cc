@@ -29,53 +29,39 @@
 void PYTHONMixing::update_state(
         const std::vector<std::shared_ptr<AbstractHierarchy>> &unique_values,
         const std::vector<unsigned int> &allocations) {
-//    auto &rng = bayesmix::Rng::Instance().get();
-//    auto priorcast = cast_prior();
-//    unsigned int n = allocations.size();
-
+    auto priorcast = cast_prior();
+    unsigned int n = allocations.size();
+    synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_gen);
+    py::list py_updated_state = update_state_evaluator(priorcast->values(), n, unique_values);
+    state.generic_state = list_to_vector(py_updated_state);
+    synchronize_py_to_cpp_state(bayesmix::Rng::Instance().get(), py_gen);
 }
 
 double PYTHONMixing::mass_existing_cluster(
         const unsigned int n, const unsigned int n_clust, const bool log,
         const bool propto, const std::shared_ptr<AbstractHierarchy> hier) const {
-//    double out;
-//    if (log) {
-//        out = hier->get_log_card();
-//        if (!propto) out -= std::log(n + state.generic_state[0]);
-//    } else {
-//        out = 1.0 * hier->get_card();
-//        if (!propto) out /= (n + state.generic_state[0]);
-//    }
-//    return out;
-    return 0;
+    double out = mass_existing_cluster_evaluator(n, n_clust, log, propto, hier->get_card(), state.generic_state).cast<double>();
+    return out;
 }
 
 double PYTHONMixing::mass_new_cluster(const unsigned int n,
                                          const unsigned int n_clust,
                                          const bool log,
                                          const bool propto) const {
-//    double out;
-//    if (log) {
-//        out = std::log(state.generic_state[0]);
-//        if (!propto) out -= std::log(n + state.generic_state[0]);
-//    } else {
-//        out = state.generic_state[0];
-//        if (!propto) out /= (n + state.generic_state[0]);
-//    }
-//    return out;
-    return 0;
+    double out = mass_new_cluster_evaluator(n, n_clust, log, propto, state.generic_state).cast<double>();
+    return out;
 }
 
 //! C++
 void PYTHONMixing::set_state_from_proto(
         const google::protobuf::Message &state_) {
-//    auto &statecast = downcast_state(state_);
-//    int size = statecast.general_state().size();
-//    std::vector<double> aux_v{};
-//    for (int i = 0; i < size; ++i) {
-//        aux_v.push_back((statecast.general_state().data())[i]);
-//    }
-//    state.generic_state = aux_v;
+    auto &statecast = downcast_state(state_);
+    int size = statecast.general_state().values().size();
+    std::vector<double> aux_v{};
+    for (int i = 0; i < size; ++i) {
+        aux_v.push_back((statecast.general_state().values().data())[i]);
+    }
+    state.generic_state = aux_v;
 }
 
 //! C++
@@ -94,6 +80,6 @@ const {
 
 //! PYTHON
 void PYTHONMixing::initialize_state() {
-//    py::list state_py = initialize_state_evaluator();
-//    state.generic_state = list_to_vector(state_py);
+    py::list state_py = initialize_state_evaluator();
+    state.generic_state = list_to_vector(state_py);
 }

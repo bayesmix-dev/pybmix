@@ -13,6 +13,7 @@ import matplotlib.pyplot as plt
 from pybmix.core.mixing import DirichletProcessMixing
 print("Imported DPM Mixing")
 from pybmix.core.hierarchy import PythonHierarchyNonConjugate
+from pybmix.core.hierarchy import PythonHierarchy
 print("Imported the hierarchy")
 from pybmix.core.mixture_model import MixtureModel
 np.random.seed(2021)
@@ -35,13 +36,13 @@ plt.hist(y)
 plt.show()
 
 mixing = DirichletProcessMixing(total_mass=5)
-hierarchy = PythonHierarchyNonConjugate()
+hierarchy = PythonHierarchy()
 hierarchy.make_default_fixed_params(y, 2)
 mixture = MixtureModel(mixing, hierarchy)
 
 change_hierarchy('fun1')
 
-mixture.run_mcmc(y, algorithm="Neal8", niter=110, nburn=10)
+mixture.run_mcmc(y, algorithm="Neal2", niter=110, nburn=10)
 
 from pybmix.estimators.density_estimator import DensityEstimator
 

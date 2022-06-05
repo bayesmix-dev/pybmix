@@ -25,7 +25,7 @@ namespace PYTHON {
 };  // namespace Python
 
 class PYTHONMixing
-        : public BaseMixing<PYTHONMixing, PYTHON::State,bayesmix::PYPrior> {
+        : public BaseMixing<PYTHONMixing, PYTHON::State,bayesmix::PYTHONPrior> {
 public:
     PYTHONMixing() = default;
     ~PYTHONMixing() = default;
@@ -80,8 +80,11 @@ protected:
     py::module_ numpy_random = py::module_::import("numpy.random");
     py::object py_engine = numpy_random.attr("MT19937")();
     py::object py_gen = numpy_random.attr("Generator")(py_engine);
-    py::object initialize_state_evaluator = mixing_fun.attr("initialize_state");
+    py::object update_state_evaluator = mixing_fun.attr("update_state");
+    py::object mass_existing_cluster_evaluator = mixing_fun.attr("mass_existing_cluster");
+    py::object mass_new_cluster_evaluator = mixing_fun.attr("mass_new_cluster");
 
+    py::object initialize_state_evaluator = mixing_fun.attr("initialize_state");
 };
 
 
