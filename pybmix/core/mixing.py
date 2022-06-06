@@ -7,7 +7,7 @@ from scipy.special import loggamma, gamma
 
 import pybmix.proto.mixing_id_pb2 as mixing_id
 from pybmix.proto.distribution_pb2 import BetaDistribution, GammaDistribution
-from pybmix.proto.mixing_prior_pb2 import DPPrior, PYPrior, TruncSBPrior
+from pybmix.proto.mixing_prior_pb2 import DPPrior, PYPrior, TruncSBPrior, PYTHONPrior
 from pybmix.utils.combinatorials import stirling, generalized_factorial_memoizer
 
 
@@ -70,7 +70,7 @@ class DirichletProcessMixing(BaseMixing):
         out = np.zeros_like(grid, dtype=np.float)
         for i, g in enumerate(grid):
             out[i] = gamma(total_mass) / gamma(total_mass + nsamples) * \
-                stirling(nsamples, g) * (total_mass) ** g
+                     stirling(nsamples, g) * (total_mass) ** g
 
         return out
 
@@ -161,7 +161,7 @@ class PitmanYorMixing(BaseMixing):
                 [np.log(strength + l * discount) for l in range(k)])
             vnk = vnk_num - vnk_den
             out_logscale = vnk + np.log(self.generalized_factorial(nsamples, k)) - \
-                k * np.log(discount)
+                           k * np.log(discount)
             out[i] = np.exp(out_logscale)
         return out
 
@@ -240,7 +240,7 @@ class StickBreakMixing(BaseMixing):
         r = np.random.uniform(size=(nsamples, niter, 1))
         clus_allocs = np.argmax(cum_prob > r, axis=-1)
         mc_samples = np.apply_along_axis(lambda x: len(np.unique(x)), axis=0,
-                                   arr=clus_allocs)
+                                         arr=clus_allocs)
         out = np.zeros_like(grid, dtype=np.float)
         for i, k in enumerate(grid):
             out[i] = np.sum(mc_samples == k)
@@ -286,7 +286,7 @@ class StickBreakMixing(BaseMixing):
                     "incompatible 'n_comp' and 'beta_params': "
                     "ncomp - 1={0} != 'len(beta_params)={1}'".format(
                         n_comp - 1, len(beta_params)))
-            
+
             self._a_coeffs = np.array([x[0] for x in beta_params])
             self._b_coeffs = np.array([x[1] for x in beta_params])
 
@@ -299,7 +299,7 @@ class StickBreakMixing(BaseMixing):
             if strength <= 0:
                 raise ValueError(
                     "Parameter 'strength' must be strictly greater than zero")
-            
+
             if discount is not None:
                 if discount >= 1 or discount <= 0:
                     raise ValueError(
@@ -311,8 +311,41 @@ class StickBreakMixing(BaseMixing):
 
             self._a_coeffs = np.ones(n_comp - 1) * (1 - discount)
             self._b_coeffs = np.array(
-                [strength + (h+1) * discount for h in range(n_comp - 1)])
+                [strength + (h + 1) * discount for h in range(n_comp - 1)])
 
         else:
             raise ValueError("Not enough parameters provided")
-            
+
+
+class PythonMixing(BaseMixing):
+    """ This class represents a Dirichlet Process used for mixing in a mixture
+    model. The Drichlet process depends on a 'total_mass' parameter, which
+    could also be random.
+
+    Parameters
+    ----------
+    total_mass : float greater than 0 or None
+                 total_mass (or concentration) parameter of the Dirichlet Process
+                 if None, assumes that 'total_mass_prior' is passed
+    """
+    ID = mixing_id.PYTHON
+    NAME = mixing_id.MixingId.Name(ID)
+
+    def __init__(self, state, prior):
+        self._build_prior_proto(state, prior)
+        self.state = state
+        self.prior = prior
+
+    def prior_cluster_distribution(self, grid, nsamples):
+        total_mass = self.state[0]
+        out = np.zeros_like(grid, dtype=np.float)
+        for i, g in enumerate(grid):
+            out[i] = gamma(total_mass) / gamma(total_mass + nsamples) * \
+                     stirling(nsamples, g) * (total_mass) ** g
+
+        return out
+
+    def _build_prior_proto(self, state, prior):
+        self.prior_proto = PYTHONPrior()
+        total_mass = state[0]
+        self.prior_proto.values.data.append(total_mass)

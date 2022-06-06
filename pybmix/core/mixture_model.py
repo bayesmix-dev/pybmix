@@ -39,14 +39,13 @@ class MixtureModel(object):
                 "'algorithm' parameter must be one of [{0}], found {1} instead".format(
                     ", ".join(MARGINAL_ALGORITHMS + CONDITIONAL_ALGORITHMS),
                     algorithm))
-
         self.algo_name = algorithm
         self.algo_id = algorithm_id.AlgorithmId.Value(self.algo_name)
         self._algo = AlgorithmWrapper(
             self.algo_name, self.hierarchy.NAME, self.mixing.NAME,
             self.hierarchy.prior_params.SerializeToString(),
             self.mixing.prior_proto.SerializeToString())
-        
+
         with ostream_redirect(stdout=True, stderr=True):
             self._algo.run(y, niter, nburn, rng_seed)
 

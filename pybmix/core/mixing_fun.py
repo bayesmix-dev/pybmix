@@ -5,13 +5,13 @@ import scipy.stats as ss
 import importlib
 
 
-def initialize_state(hypers):
-    total_mass = 2
+def initialize_state():
+    total_mass = 5
     return [total_mass]
 
 
 def update_state(prior_values, allocation_size, unique_values):
-    return
+    return [5]
 
 
 def mass_existing_cluster(n, n_clust, log, propto, hier_card, state):
@@ -24,6 +24,7 @@ def mass_existing_cluster(n, n_clust, log, propto, hier_card, state):
         out = hier_card
         if not propto:
             out /= (n + total_mass)
+    return out
 
 
 def mass_new_cluster(n, n_clust, log, propto, state):
@@ -36,3 +37,4 @@ def mass_new_cluster(n, n_clust, log, propto, state):
         out = total_mass
         if not propto:
             out /= (n + total_mass)
+    return out
