@@ -9,6 +9,7 @@
 #include "mixing_prior.pb.h"
 #include "mixing_state.pb.h"
 #include "bayesmix/src/hierarchies/abstract_hierarchy.h"
+#include "bayesmix/src/utils/proto_utils.h"
 #include "bayesmix/src/utils/rng.h"
 
 #include <Eigen/Dense>
@@ -32,7 +33,7 @@ void PYTHONMixing::update_state(
     auto priorcast = cast_prior();
     unsigned int n = allocations.size();
     synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_gen);
-    py::list py_updated_state = update_state_evaluator(priorcast->values(), n, unique_values);
+    py::list py_updated_state = update_state_evaluator(bayesmix::to_eigen(priorcast->values()), n, unique_values.size());
     state.generic_state = list_to_vector(py_updated_state);
     synchronize_py_to_cpp_state(bayesmix::Rng::Instance().get(), py_gen);
 }
@@ -56,10 +57,10 @@ double PYTHONMixing::mass_new_cluster(const unsigned int n,
 void PYTHONMixing::set_state_from_proto(
         const google::protobuf::Message &state_) {
     auto &statecast = downcast_state(state_);
-    int size = statecast.general_state().values().size();
+    int size = statecast.general_state().size();
     std::vector<double> aux_v{};
     for (int i = 0; i < size; ++i) {
-        aux_v.push_back((statecast.general_state().values().data())[i]);
+        aux_v.push_back((statecast.general_state().data())[i]);
     }
     state.generic_state = aux_v;
 }
@@ -73,7 +74,7 @@ const {
             state.generic_state.data(),
             state.generic_state.data() + state.generic_state.size()};
     auto out = std::make_shared<bayesmix::MixingState>();
-    out->mutable_dp_state()->CopyFrom(state_);
+    out->mutable_general_state()->CopyFrom(state_);
     return out;
 
 }
