@@ -103,9 +103,9 @@ class PythonHierarchyNonConjugate(BaseHierarchy):
                         type(prior_params)))
 
     def make_default_fixed_params(self, y, exp_num_clusters=5):
-        self.prior_params.values.data.append(np.mean(y))
-        self.prior_params.values.data.append(3)
-        self.prior_params.values.data.append(np.var(y) / exp_num_clusters)
-        self.prior_params.values.data.append(0.01)
+        self.prior_params.values.data.append(0)
         self.prior_params.values.data.append(10)
-        self.prior_params.values.data.append(0.1)
+        self.prior_params.values.data.append(2)
+        self.prior_params.values.data.append(1)
+        self.prior_params.values.data.append(10)
+        self.prior_params.values.data.append(1)

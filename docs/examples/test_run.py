@@ -41,13 +41,14 @@ plt.show()
 
 # mixing = DirichletProcessMixing(total_mass=5)
 mixing = PythonMixing(state=[5], prior=[0])
-hierarchy = PythonHierarchy()
+#hierarchy = PythonHierarchy()
+hierarchy = PythonHierarchyNonConjugate()
 hierarchy.make_default_fixed_params(y, 2)
 mixture = MixtureModel(mixing, hierarchy)
 
 change_hierarchy('fun1')
 
-mixture.run_mcmc(y, algorithm="Neal2", niter=110, nburn=10)
+mixture.run_mcmc(y, algorithm="Neal8", niter=110, nburn=10)
 
 from pybmix.estimators.density_estimator import DensityEstimator
 
