@@ -192,9 +192,9 @@ protected:
     py::object update_summary_statistics_evaluator = fun.attr("update_summary_statistics");
     py::object clear_summary_statistics_evaluator = fun.attr("clear_summary_statistics");
     py::object sample_full_cond_evaluator = fun.attr("sample_full_cond");
-    py::object propose_rwmh_evaluator = fun.attr("propose_rwmh");
-    py::object eval_prior_lpdf_unconstrained_evaluator = fun.attr("eval_prior_lpdf_unconstrained");
-    py::object eval_like_lpdf_unconstrained_evaluator = fun.attr("eval_like_lpdf_unconstrained");
+    //py::object propose_rwmh_evaluator = fun.attr("propose_rwmh");
+    //py::object eval_prior_lpdf_unconstrained_evaluator = fun.attr("eval_prior_lpdf_unconstrained");
+    //py::object eval_like_lpdf_unconstrained_evaluator = fun.attr("eval_like_lpdf_unconstrained");
 
 };
 

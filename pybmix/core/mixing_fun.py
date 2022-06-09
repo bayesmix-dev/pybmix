@@ -38,3 +38,11 @@ def mass_new_cluster(n, n_clust, log, propto, state):
         if not propto:
             out /= (n + total_mass)
     return out
+
+
+def is_conditional():
+    return False
+
+
+def mixing_weights(log, propto, state):
+    pass

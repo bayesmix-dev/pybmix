@@ -49,7 +49,7 @@ public:
     bayesmix::MixingId get_id() const override { return bayesmix::MixingId::PYTHON; }
 
     //! Returns whether the mixing is conditional or marginal
-    bool is_conditional() const override { return false; }
+    bool is_conditional() const override { return is_conditional_evaluator().cast<bool>(); }
 
 protected:
     //! Returns probability mass for an old cluster (for marginal mixings only)
@@ -72,6 +72,13 @@ protected:
     double mass_new_cluster(const unsigned int n, const unsigned int n_clust,
                             const bool log, const bool propto) const override;
 
+    //! Returns mixing weights (for conditional mixings only)
+    //! @param log        Whether to return logarithm-scale values or not
+    //! @param propto     Whether to include normalizing constants or not
+    //! @return           The vector of mixing weights
+    Eigen::VectorXd mixing_weights(const bool log,
+                               const bool propto) const override;
+
     //! Initializes state parameters to appropriate values
     void initialize_state() override;
 
@@ -83,8 +90,9 @@ protected:
     py::object update_state_evaluator = mixing_fun.attr("update_state");
     py::object mass_existing_cluster_evaluator = mixing_fun.attr("mass_existing_cluster");
     py::object mass_new_cluster_evaluator = mixing_fun.attr("mass_new_cluster");
-
     py::object initialize_state_evaluator = mixing_fun.attr("initialize_state");
+    py::object is_conditional_evaluator = mixing_fun.attr("is_conditional");
+    py::object mixing_weights_evaluator = mixing_fun.attr("mixing_weights");
 };
 
 
