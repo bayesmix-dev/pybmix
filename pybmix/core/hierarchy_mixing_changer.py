@@ -8,3 +8,7 @@ def change_hierarchy(new_name):
 
 def change_non_conjugate_hierarchy(new_name):
     os.environ['HIER_NC_NAME'] = new_name
+
+
+def change_mixing(new_name):
+    os.environ['MIX_NAME'] = new_name

@@ -25,7 +25,7 @@ np.random.seed(2021)
 print("Finished all imports")
 
 # Import the change_name function
-from pybmix.core.hierarchy_mixing_changer import change_hierarchy, change_non_conjugate_hierarchy
+from pybmix.core.hierarchy_mixing_changer import change_hierarchy, change_non_conjugate_hierarchy, change_mixing
 
 
 def sample_from_mixture(weights, means, sds, n_data):
@@ -39,14 +39,21 @@ y = sample_from_mixture(np.array([0.5, 0.5]), np.array([-3, 3]), np.array([1, 1]
 plt.hist(y)
 plt.show()
 
-mixing = DirichletProcessMixing(total_mass=5)
-#mixing = PythonMixing(state=[5], prior=[0])
-#hierarchy = PythonHierarchy()
-hierarchy = PythonHierarchyNonConjugate()
+#mixing = DirichletProcessMixing(total_mass=5) # DP mixing
+
+mixing = PythonMixing(state=[5], prior=[0]) # Python implementation of DP mixing
+change_mixing("mixing_implementation_1")
+
+# hierarchy = PythonHierarchy() # Python implementation of NNIG
+# change_hierarchy("hierarchy_c_implementation_1")
+
+hierarchy = PythonHierarchyNonConjugate() # Python implemenation of LapNIG
+change_non_conjugate_hierarchy('hierarchy_nc_implementation_1')
+
 hierarchy.make_default_fixed_params(y, 2)
 mixture = MixtureModel(mixing, hierarchy)
 
-change_non_conjugate_hierarchy('hierarchy_nc_implementation_1')
+
 
 mixture.run_mcmc(y, algorithm="Neal8", niter=110, nburn=10)
 
