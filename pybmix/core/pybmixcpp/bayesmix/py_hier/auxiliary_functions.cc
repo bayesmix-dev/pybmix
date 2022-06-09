@@ -2,7 +2,7 @@
 #include <sstream>
 #include <vector>
 
-
+//! Synchronize rng c++ state to Python rng state
 void synchronize_cpp_to_py_state(const std::mt19937 &cpp_gen,
                                  py::object &py_gen) {
     std::stringstream state{};
@@ -25,6 +25,7 @@ void synchronize_cpp_to_py_state(const std::mt19937 &cpp_gen,
     py_gen.attr("__setstate__")(d);
 }
 
+//! Synchronize rng Python state to c++ rng state
 void synchronize_py_to_cpp_state(std::mt19937 &cpp_gen,
                                  const py::object &py_gen) {
     py::object py_state = py_gen.attr("__getstate__")();
@@ -39,7 +40,7 @@ void synchronize_py_to_cpp_state(std::mt19937 &cpp_gen,
     ss_state_ >> cpp_gen;
 }
 
-
+//! Convert py::list to std::vector<double>
 std::vector<double> list_to_vector(py::list &x) {
     unsigned int size = x.size();
     std::vector<double> v(size);

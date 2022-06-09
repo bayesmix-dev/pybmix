@@ -3,14 +3,12 @@ import scipy.stats as ss
 
 
 def like_lpdf(x, state):
-    # print("*************** fun1 - like_lpdf *************")
     mean = state[0]
     scale = state[1]
     return ss.laplace.logpdf(x, mean, scale)
 
 
 def initialize_state(hypers):
-    # print("*************** fun1 - initialize_state *************")
     mean = hypers[0]
     # var = hypers[1]
     shape = hypers[2]
@@ -21,12 +19,10 @@ def initialize_state(hypers):
 
 
 def initialize_hypers():
-    # print("*************** fun1 - initialize_hypers *************")
     return [0, 10, 2, 1, 10, 1]
 
 
 def draw(state, hypers, rng):
-    # print("*************** fun1 - draw *************")
     mean = hypers[0]
     var = hypers[1]
     shape = hypers[2]
@@ -40,9 +36,6 @@ def draw(state, hypers, rng):
 
 
 def update_summary_statistics(x, add, sum_stats, state, cluster_data_values):
-    # print("*************** fun1 - update_summary_statistics*************")
-    # print("x: ",type(x))
-    # print(type(cluster_data_values))
     if not len(sum_stats):
         sum_stats = [0, 0]
     if add:
@@ -56,13 +49,11 @@ def update_summary_statistics(x, add, sum_stats, state, cluster_data_values):
 
 
 def clear_summary_statistics(sum_stats):
-    # print("*************** fun1 - clear_summary_statistics *************")
     return [0, 0]
 
 
 # NON-CONJUGATE
 def sample_full_cond(state, sum_stats, rng, curr_vals, hypers):
-    # print("*************** fun1 - sample_full_cond *************")
     # only the case when card != 0
     # mean = hypers[0]
     # var = hypers[1]
@@ -87,7 +78,6 @@ def sample_full_cond(state, sum_stats, rng, curr_vals, hypers):
 
 
 def propose_rwmh(curr_vals, hypers, rng):
-    # print("*************** fun1 - propose_rwmh *************")
     # mean = hypers[0]
     # var = hypers[1]
     # shape = hypers[2]
@@ -101,7 +91,6 @@ def propose_rwmh(curr_vals, hypers, rng):
 
 
 def eval_prior_lpdf_unconstrained(unconstrained_parameters, hypers):
-    # print("*************** fun1 - eval_prior_lpdf_uncostrained *************")
     mean = hypers[0]
     # var = hypers[1]
     shape = hypers[2]
@@ -117,7 +106,6 @@ def eval_prior_lpdf_unconstrained(unconstrained_parameters, hypers):
 
 
 def eval_like_lpdf_unconstrained(unconstrained_parameters, is_current, sum_stats, cluster_data_values):
-    # print("*************** fun1 - eval_like_lpdf_uncostrained *************")
     mean = unconstrained_parameters[0]
     log_scale = unconstrained_parameters[1]
     scale = np.exp(log_scale)

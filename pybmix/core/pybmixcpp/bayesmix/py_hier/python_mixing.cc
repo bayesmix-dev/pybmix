@@ -85,6 +85,7 @@ void PYTHONMixing::initialize_state() {
     state.generic_state = list_to_vector(state_py);
 }
 
+//! PYTHON
 Eigen::VectorXd PYTHONMixing::mixing_weights(const bool log, const bool propto) const {
     py::list mixing_weights_py = mixing_weights_evaluator(log, propto, state.generic_state);
     return mixing_weights_py.cast<Eigen::VectorXd>();

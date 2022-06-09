@@ -51,9 +51,6 @@ class PythonHierarchy
   PythonHierarchy() = default;
   ~PythonHierarchy() = default;
 
-//  py::object posterior_hypers_evaluator = fun.attr("compute_posterior_hypers");
-
-
   //! Updates hyperparameter values given a vector of cluster states
   void update_hypers(const std::vector<bayesmix::AlgorithmState::ClusterState>
                          &states) override;
@@ -120,17 +117,11 @@ class PythonHierarchy
   //! Initializes hierarchy hyperparameters to appropriate values
   void initialize_hypers() override;
 
-//  //! Sum of data points currently belonging to the cluster
-//  double data_sum = 0;
-//
-//  //! Sum of squared data points currently belonging to the cluster
-//  double data_sum_squares = 0;
-
     //! Vector of summary statistics
     std::vector<double> sum_stats;
 
     py::module_ numpy = py::module_::import("numpy");
-    py::module_ fun = py::module_::import("fun"); //add fun to build folder
+    py::module_ fun = py::module_::import("hierarchy_c_implementation");
     py::module_ numpy_random = py::module_::import("numpy.random");
     py::object py_engine = numpy_random.attr("MT19937")();
     py::object py_gen = numpy_random.attr("Generator")(py_engine);

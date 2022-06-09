@@ -40,14 +40,6 @@ void PythonHierarchy::initialize_state() {
 
 //! C++
 void PythonHierarchy::initialize_hypers() {
-//    if (prior->has_values()) {
-//        // Set values
-//        hypers->generic_hypers.clear();
-//        int size = prior->values().size();
-//        for (int i = 0; i < size; ++i) {
-//            hypers->generic_hypers.push_back((prior->values().data())[i]);
-//        }
-//    }
     py::list hypers_py = initialize_hypers_evaluator();
     hypers->generic_hypers = list_to_vector(hypers_py);
 }
@@ -75,27 +67,22 @@ Python::State PythonHierarchy::draw(const Python::Hyperparams &params) {
 void PythonHierarchy::update_summary_statistics(
         const Eigen::RowVectorXd &datum, const bool add) {
     py::list sum_stats_py = update_summary_statistics_evaluator(datum,add,sum_stats);
-//    data_sum = sum_stats_py[0].cast<double>();
-//    data_sum_squares = sum_stats_py[1].cast<double>();
     sum_stats = list_to_vector(sum_stats_py);
 }
 
 //! PYTHON
 void PythonHierarchy::clear_summary_statistics() {
     py::list sum_stats_py = clear_summary_statistics_evaluator(sum_stats);
-//    data_sum = sum_stats_py[0].cast<double>();
-//    data_sum_squares = sum_stats_py[1].cast<double>();
     sum_stats = list_to_vector(sum_stats_py);
 }
 
 //! PYTHON
 Python::Hyperparams PythonHierarchy::compute_posterior_hypers() const {
-    // Compute posterior hyperparameters
     Python::Hyperparams post_params;
     py::list post_params_py = posterior_hypers_evaluator(card,hypers->generic_hypers,sum_stats);
     post_params.generic_hypers = list_to_vector(post_params_py);
     return post_params;
-    }
+}
 
 
 //! C++

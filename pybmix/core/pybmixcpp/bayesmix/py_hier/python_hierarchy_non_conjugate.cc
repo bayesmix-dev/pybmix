@@ -93,38 +93,6 @@ void PythonHierarchyNonConjugate::sample_full_cond(const bool update_params /*= 
     }
 }
 
-
-//! PYTHON
-//Eigen::VectorXd PythonHierarchyNonConjugate::propose_rwmh(
-//        const Eigen::VectorXd &curr_vals) {
-//    synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_gen);
-//    py::list proposal = propose_rwmh_evaluator(curr_vals, hypers->generic_hypers, py_gen);
-//    synchronize_py_to_cpp_state(bayesmix::Rng::Instance().get(), py_gen);
-//    Eigen::VectorXd proposalcpp;
-//    for(unsigned int i = 0; i < proposal.size(); ++i){
-//        proposalcpp << proposal[i].cast<double>();
-//    }
-//    return proposalcpp;
-//}
-//
-//
-////! PYTHON
-//double PythonHierarchyNonConjugate::eval_prior_lpdf_unconstrained(
-//        const Eigen::VectorXd &unconstrained_parameters) {
-//
-//    double result = eval_prior_lpdf_unconstrained_evaluator(unconstrained_parameters, hypers->generic_hypers).cast<double>();
-//    return result;
-//}
-//
-//
-////! PYTHON
-//double PythonHierarchyNonConjugate::eval_like_lpdf_unconstrained(
-//        const Eigen::VectorXd &unconstrained_parameters, const bool is_current) {
-//    double result = eval_like_lpdf_unconstrained_evaluator(unconstrained_parameters, is_current, sum_stats, cluster_data_values).cast<double>();
-//    return result;
-//}
-
-
 //! C++
 void PythonHierarchyNonConjugate::set_state_from_proto(
         const google::protobuf::Message &state_) {

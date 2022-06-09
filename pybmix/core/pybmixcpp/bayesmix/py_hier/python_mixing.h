@@ -83,7 +83,7 @@ protected:
     void initialize_state() override;
 
     py::module_ numpy = py::module_::import("numpy");
-    py::module_ mixing_fun = py::module_::import("mixing_fun"); //add fun to build folder
+    py::module_ mixing_fun = py::module_::import("mixing_implementation");
     py::module_ numpy_random = py::module_::import("numpy.random");
     py::object py_engine = numpy_random.attr("MT19937")();
     py::object py_gen = numpy_random.attr("Generator")(py_engine);

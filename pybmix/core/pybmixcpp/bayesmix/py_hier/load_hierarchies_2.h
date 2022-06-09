@@ -8,7 +8,6 @@
 #include "python_hierarchy.h"
 #include "python_hierarchy_non_conjugate.h"
 #include "bayesmix/src/runtime/factory.h"
-#include <iostream>
 
 //! Loads all available `Hierarchy` objects into the appropriate factory, so
 //! that they are ready to be chosen and used at runtime.
