@@ -52,7 +52,7 @@ change_non_conjugate_hierarchy('hierarchy_nc_implementation_1')
 
 hierarchy.make_default_fixed_params(y, 2)
 mixture = MixtureModel(mixing, hierarchy)
-
+change_mixing('mixing_implementation_1')
 
 
 mixture.run_mcmc(y, algorithm="Neal8", niter=110, nburn=10)

@@ -59,9 +59,6 @@ public:
     PythonHierarchyNonConjugate() = default;
     ~PythonHierarchyNonConjugate() = default;
 
-    //! NON-CONJUGATE
-    // static unsigned int accepted_;
-    // static unsigned int iter_;
 
     //! Returns the Protobuf ID associated to this class
     bayesmix::HierarchyId get_id() const override {
@@ -76,8 +73,6 @@ public:
     //! @param update_params  Save posterior hypers after the computation?
     void sample_full_cond(const bool update_params = false) override;
     //!
-
-//  py::object posterior_hypers_evaluator = fun.attr("compute_posterior_hypers");
 
 
     //! Updates hyperparameter values given a vector of cluster states
@@ -117,45 +112,16 @@ public:
     bool is_multivariate() const override { return false; }
 
 protected:
-
-    //! NON-CONJUGATE
-
     //! Set of values of data points belonging to this cluster
     // std::list<Eigen::RowVectorXd> cluster_data_values;
     Eigen::MatrixXd cluster_data_values;
 
-    //! Samples from the proposal distribution using Random Walk
-    //! Metropolis-Hastings
-    Eigen::VectorXd propose_rwmh(const Eigen::VectorXd &curr_vals);
-    //!
-
-    //! Evaluates the prior given the mean (unconstrained_parameters(0))
-    //! and log of the scale (unconstrained_parameters(1))
-    double eval_prior_lpdf_unconstrained(
-            const Eigen::VectorXd &unconstrained_parameters);
-
-    //! Evaluates the (sum of the) log likelihood for all the observations in the
-    //! cluster given the mean (unconstrained_parameters(0))
-    //! and log of the scale (unconstrained_parameters(1)).
-    //! The parameter "is_current" is used to identify if the evaluation of the
-    //! likelihood is on the current or on the proposed parameters, in order to
-    //! avoid repeating calculations of the sum of the absolute differences
-    double eval_like_lpdf_unconstrained(
-            const Eigen::VectorXd &unconstrained_parameters, const bool is_current);
-
-    //!
 
     //! Evaluates the log-likelihood of data in a single point
     //! @param datum      Point which is to be evaluated
     //! @return           The evaluation of the lpdf
     double like_lpdf(const Eigen::RowVectorXd &datum) const override;
 
-    //! Evaluates the log-marginal distribution of data in a single point
-    //! @param params     Container of (prior or posterior) hyperparameter values
-    //! @param datum      Point which is to be evaluated
-    //! @return           The evaluation of the lpdf
-//  double marg_lpdf(const Python::Hyperparams &params,
-//                   const Eigen::RowVectorXd &datum) const;
 
     //! Updates cluster statistics when a datum is added or removed from it
     //! @param datum      Data point which is being added or removed
@@ -169,15 +135,11 @@ protected:
     //! Initializes hierarchy hyperparameters to appropriate values
     void initialize_hypers() override;
 
-//  //! Sum of data points currently belonging to the cluster
-//  double data_sum = 0;
-//
-//  //! Sum of squared data points currently belonging to the cluster
-//  double data_sum_squares = 0;
-
     //! Vector of summary statistics
     std::vector<double> sum_stats;
 
+
+    //! methods to be used through pybind11
     py::module_ numpy = py::module_::import("numpy");
     py::module_ fun = py::module_::import("hierarchy_nc_implementation");
     py::module_ numpy_random = py::module_::import("numpy.random");
