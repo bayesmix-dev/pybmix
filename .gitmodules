@@ -5,6 +5,3 @@
 [submodule "pybmix/core/pybmixcpp/bayesmix/bayesmix"]
 	path = pybmix/core/pybmixcpp/bayesmix/bayesmix
 	url = https://github.com/taguhiM/bayesmix.git
-[submodule "lib/math"]
-	path = lib/math
-	url = https://github.com/bayesmix-dev/math.git
