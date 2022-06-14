@@ -39,7 +39,6 @@ mixing = DirichletProcessMixing(total_mass=5) # DP mixing
 hierarchy = PythonHierarchyNonConjugate() # Python implemenation of LapNIG
 change_non_conjugate_hierarchy('hierarchy_nc_implementation_1')
 
-hierarchy.make_default_fixed_params(y, 2)
 mixture = MixtureModel(mixing, hierarchy)
 
 
