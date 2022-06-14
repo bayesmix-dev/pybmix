@@ -6,7 +6,5 @@ target_sources(bayesmix PUBLIC
         auxiliary_functions.cc
         python_hierarchy.h
         python_hierarchy.cc
-        python_hierarchy_non_conjugate.h
-        python_hierarchy_non_conjugate.cc
         )
 
