@@ -16,7 +16,7 @@ using Builder = std::function<std::shared_ptr<AbstractProduct>()>;
 
 using HierarchyFactory = Factory<bayesmix::HierarchyId, AbstractHierarchy>;
 
-__attribute__((constructor)) static void load_hierarchies_2() {
+__attribute__((constructor)) static void load_py_hierarchies() {
     HierarchyFactory &factory = HierarchyFactory::Instance();
     // Initialize factory builder for Python Hierarchies
     Builder<AbstractHierarchy> Pythonbuilder = []() {

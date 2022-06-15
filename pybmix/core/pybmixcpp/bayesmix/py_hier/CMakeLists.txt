@@ -1,7 +1,6 @@
 target_sources(bayesmix PUBLIC
         includes.h
-        load_hierarchies_2.h
-        load_hierarchies_2.cc
+        load_py_hierarchies.h
         auxiliary_functions.h
         auxiliary_functions.cc
         python_hierarchy.h
