@@ -42,21 +42,3 @@ def sample_full_cond(state, sum_stats, rng, curr_vals, hypers):
     true_name = os.getenv('HIER_NC_NAME')
     module = importlib.import_module(true_name)
     return module.sample_full_cond(state, sum_stats, rng, curr_vals, hypers)
-
-
-def propose_rwmh(curr_vals, hypers, rng):
-    true_name = os.getenv('HIER_NC_NAME')
-    module = importlib.import_module(true_name)
-    return module.propose_rwmh(curr_vals, hypers, rng)
-
-
-def eval_prior_lpdf_unconstrained(unconstrained_parameters, hypers):
-    true_name = os.getenv('HIER_NC_NAME')
-    module = importlib.import_module(true_name)
-    return module.eval_prior_lpdf_unconstrained(unconstrained_parameters, hypers)
-
-
-def eval_like_lpdf_unconstrained(unconstrained_parameters, is_current, sum_stats, cluster_data_values):
-    true_name = os.getenv('HIER_NC_NAME')
-    module = importlib.import_module(true_name)
-    return module.eval_like_lpdf_unconstrained(unconstrained_parameters, is_current, sum_stats, cluster_data_values)
