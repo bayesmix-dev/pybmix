@@ -36,7 +36,7 @@ mixing = DirichletProcessMixing(total_mass=5) # DP mixing
 # change_hierarchy("hierarchy_c_implementation_1")
 
 hierarchy = PythonHierarchy() # Python implemenation of LapNIG
-change_hierarchy('hierarchy_nc_implementation_1')
+change_hierarchy('LapNIG_Hierarchy_1')
 
 mixture = MixtureModel(mixing, hierarchy)
 

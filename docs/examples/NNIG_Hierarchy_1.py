@@ -18,7 +18,7 @@ def marg_lpdf(x, hypers):
 
 
 def initialize_state(hypers):
-    print("---------------This is fun2-----------------")
+    print("--------------- This is NNIG_Hierarchy_1 -----------------")
     mean = hypers[0]
     #    var_scaling = hypers[1]
     shape = hypers[2]

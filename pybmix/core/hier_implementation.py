@@ -1,5 +1,11 @@
 import os
 import importlib
+import sys
+
+HERE = os.path.dirname(os.path.realpath(__file__))
+CURR_DIR = os.path.join(HERE, "../../")
+EX_DIR = os.path.join(CURR_DIR, "docs/examples/")
+sys.path.insert(0, os.path.realpath(EX_DIR))
 
 def like_lpdf(x, state):
     true_name = os.getenv('HIER_NAME')

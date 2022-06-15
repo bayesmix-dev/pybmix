@@ -9,7 +9,7 @@ def like_lpdf(x, state):
 
 
 def initialize_state(hypers):
-    print("----------- This is hierarchy_nc_implementation_1 -----------")
+    print("----------- This is LapNIG_Hierarchy_2 -----------------")
     mean = hypers[0]
     # var = hypers[1]
     shape = hypers[2]
