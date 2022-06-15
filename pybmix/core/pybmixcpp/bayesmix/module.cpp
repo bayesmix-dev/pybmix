@@ -1,7 +1,9 @@
+#include <stan/math/rev.hpp>
 #include <pybind11/eigen.h>
 #include <pybind11/iostream.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+
 
 #include "algorithm_wrapper.hpp"
 #include "bayesmix/src/utils/cluster_utils.h"

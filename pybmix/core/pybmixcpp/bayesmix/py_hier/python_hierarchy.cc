@@ -228,7 +228,7 @@ PythonHierarchy::get_state_proto() const {
 //! C++
 void PythonHierarchy::set_hypers_from_proto(
         const google::protobuf::Message &hypers_) {
-    auto &hyperscast = downcast_hypers(hypers_).python_state();
+    auto &hyperscast = downcast_hypers(hypers_).general_state();
     int size = hyperscast.data().size();
     std::vector<double> aux_v{};
     for (int i = 0; i < size; ++i) {
@@ -246,6 +246,6 @@ PythonHierarchy::get_hypers_proto() const {
             hypers->generic_hypers.data(),
             hypers->generic_hypers.data() + hypers->generic_hypers.size()};
     auto out = std::make_shared<bayesmix::AlgorithmState::HierarchyHypers>();
-    out->mutable_python_state()->CopyFrom(hypers_);
+    out->mutable_general_state()->CopyFrom(hypers_);
     return out;
 }

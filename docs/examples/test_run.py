@@ -10,7 +10,6 @@ sys.path.insert(0, os.path.realpath(CORE_DIR))
 import numpy as np
 import matplotlib.pyplot as plt
 from pybmix.core.mixing import DirichletProcessMixing
-from pybmix.core.hierarchy import PythonHierarchyNonConjugate
 from pybmix.core.hierarchy import PythonHierarchy
 from pybmix.core.mixture_model import MixtureModel
 
@@ -36,7 +35,7 @@ mixing = DirichletProcessMixing(total_mass=5) # DP mixing
 # hierarchy = PythonHierarchy() # Python implementation of NNIG
 # change_hierarchy("hierarchy_c_implementation_1")
 
-hierarchy = PythonHierarchyNonConjugate() # Python implemenation of LapNIG
+hierarchy = PythonHierarchy() # Python implemenation of LapNIG
 change_non_conjugate_hierarchy('hierarchy_nc_implementation_1')
 
 mixture = MixtureModel(mixing, hierarchy)

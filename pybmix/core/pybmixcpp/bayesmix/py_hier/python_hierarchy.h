@@ -2,6 +2,7 @@
 #define BAYESMIX_HIERARCHIES_PYTHON_HIERARCHY_H_
 
 #include <google/protobuf/message.h>
+#include <stan/math/rev.hpp>
 
 #include <google/protobuf/stubs/casts.h>
 #include <pybind11/embed.h>
@@ -56,6 +57,18 @@ class PythonHierarchy : public AbstractHierarchy {
  public:
   PythonHierarchy() = default;
   ~PythonHierarchy() = default;
+
+    //! Set the update algorithm for the current hierarchy
+    void set_updater(std::shared_ptr<AbstractUpdater> updater_) override{};
+
+    //! Returns (a pointer to) the likelihood for the current hierarchy
+    std::shared_ptr<AbstractLikelihood> get_likelihood() override{return nullptr;};
+
+    //! Returns (a pointer to) the prior model for the current hierarchy
+    std::shared_ptr<AbstractPriorModel> get_prior() override{return nullptr;};
+
+    //! Returns whether the hierarchy depends on covariate values or not
+    bool is_dependent() const override{return false;};
 
   //! Returns an independent, data-less copy of this object
   std::shared_ptr<AbstractHierarchy> clone() const override {
@@ -168,7 +181,7 @@ class PythonHierarchy : public AbstractHierarchy {
 
   //! Returns the Protobuf ID associated to this class
   bayesmix::HierarchyId get_id() const override {
-      return bayesmix::HierarchyId::PythonNonConjugate;
+      return bayesmix::HierarchyId::PythonHier;
   }
 
     void save_posterior_hypers() {
@@ -228,7 +241,7 @@ protected:
   }
 
   //! Re-initializes the prior of the hierarchy to a newly created object
-  void create_empty_prior() { prior.reset(new bayesmix::PythonPrior); }
+  void create_empty_prior() { prior.reset(new bayesmix::PythonHierPrior); }
 
   //! Re-initializes the hypers of the hierarchy to a newly created object
   void create_empty_hypers() { hypers.reset(new Python::Hyperparams); }
@@ -283,7 +296,7 @@ protected:
   Python::Hyperparams posterior_hypers;
 
   //! Pointer to a Protobuf prior object for this class
-  std::shared_ptr<bayesmix::PythonPrior> prior;
+  std::shared_ptr<bayesmix::PythonHierPrior> prior;
 
   //! Set of indexes of data points belonging to this cluster
   std::set<int> cluster_data_idx;
