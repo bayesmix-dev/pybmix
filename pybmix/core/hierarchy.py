@@ -11,6 +11,16 @@ class BaseHierarchy(metaclass=abc.ABCMeta):
     def make_default_fixed_params(y):
         pass
 
+    def check_prior_params(self, self_prior_params, prior_params):
+        if prior_params is not None:
+            success = set_oneof_field("prior", self_prior_params, prior_params)
+            if not success:
+                raise ValueError(
+                    "expected 'prior_params' to be of instance [{0}]"
+                    "found {1} instead".format(
+                        " ".join(get_oneof_types("prior", self_prior_params)),
+                        type(prior_params)))
+
 
 class UnivariateNormal(BaseHierarchy):
     """ This class represents a univariate normal hierarchy, i.e. the model 
@@ -23,14 +33,7 @@ class UnivariateNormal(BaseHierarchy):
 
     def __init__(self, prior_params=None):
         self.prior_params = hprior.NNIGPrior()
-        if prior_params is not None:
-            success = set_oneof_field("prior", self.prior_params, prior_params)
-            if not success:
-                raise ValueError(
-                    "expected 'prior_params' to be of instance [{0}]"
-                    "found {1} instead".format(
-                        " ".join(get_oneof_types("prior", self.prior_params)),
-                        type(prior_params)))
+        self.check_prior_params(self.prior_params, prior_params)
 
     def make_default_fixed_params(self, y, exp_num_clusters=5):
         """
@@ -71,14 +74,7 @@ class PythonHierarchy(BaseHierarchy):
 
     def __init__(self, prior_params=None):
         self.prior_params = hprior.PythonHierPrior()
-        if prior_params is not None:
-            success = set_oneof_field("prior", self.prior_params, prior_params)
-            if not success:
-                raise ValueError(
-                    "expected 'prior_params' to be of instance [{0}]"
-                    "found {1} instead".format(
-                        " ".join(get_oneof_types("prior", self.prior_params)),
-                        type(prior_params)))
+        self.check_prior_params(self.prior_params, prior_params)
 
     def make_default_fixed_params(self, y, exp_num_clusters=5):
         pass
