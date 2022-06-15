@@ -60,3 +60,9 @@ def compute_posterior_hypers(card, hypers, sum_stats):
     true_name = os.getenv('HIER_NAME')
     module = importlib.import_module(true_name)
     return module.compute_posterior_hypers(card, hypers, sum_stats)
+
+
+def is_conjugate():
+    true_name = os.getenv('HIER_NAME')
+    module = importlib.import_module(true_name)
+    return module.is_conjugate()

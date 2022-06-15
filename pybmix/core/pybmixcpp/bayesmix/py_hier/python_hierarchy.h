@@ -52,14 +52,13 @@ namespace Python {
     };
 };  // namespace Python
 
-//template <class Derived, typename State, typename Hyperparams, typename Prior>
 class PythonHierarchy : public AbstractHierarchy {
  public:
   PythonHierarchy() = default;
   ~PythonHierarchy() = default;
 
     //! Set the update algorithm for the current hierarchy
-    void set_updater(std::shared_ptr<AbstractUpdater> updater_) override{};
+    void set_updater(std::shared_ptr<AbstractUpdater> updater_) override{return;};
 
     //! Returns (a pointer to) the likelihood for the current hierarchy
     std::shared_ptr<AbstractLikelihood> get_likelihood() override{return nullptr;};
@@ -71,31 +70,10 @@ class PythonHierarchy : public AbstractHierarchy {
     bool is_dependent() const override{return false;};
 
   //! Returns an independent, data-less copy of this object
-  std::shared_ptr<AbstractHierarchy> clone() const override {
-    auto out = std::make_shared<PythonHierarchy>(static_cast<PythonHierarchy const &>(*this));
-    out->clear_data();
-    out->clear_summary_statistics();
-    return out;
-  }
+  std::shared_ptr<AbstractHierarchy> clone() const override;
 
   //! Returns an independent, data-less copy of this object
-  std::shared_ptr<AbstractHierarchy> deep_clone() const override {
-    auto out = std::make_shared<PythonHierarchy>(static_cast<PythonHierarchy const &>(*this));
-
-    out->clear_data();
-    out->clear_summary_statistics();
-
-    out->create_empty_prior();
-    std::shared_ptr<google::protobuf::Message> new_prior(prior->New());
-    new_prior->CopyFrom(*prior.get());
-    out->get_mutable_prior()->CopyFrom(*new_prior.get());
-
-    out->create_empty_hypers();
-    auto curr_hypers_proto = get_hypers_proto();
-    out->set_hypers_from_proto(*curr_hypers_proto.get());
-    out->initialize();
-    return out;
-  }
+  std::shared_ptr<AbstractHierarchy> deep_clone() const override;
 
   //! Evaluates the log-likelihood of data in a grid of points
   //! @param data        Grid of points (by row) which are to be evaluated
@@ -109,7 +87,7 @@ class PythonHierarchy : public AbstractHierarchy {
   //! Generates new state values from the centering prior distribution
   void sample_prior() override {
     state = static_cast<PythonHierarchy *>(this)->draw(*hypers);
-  }
+  };
 
   //! Overloaded version of sample_full_cond(bool), mainly used for debugging
   virtual void sample_full_cond(
@@ -117,21 +95,59 @@ class PythonHierarchy : public AbstractHierarchy {
       const Eigen::MatrixXd &covariates = Eigen::MatrixXd(0, 0)) override;
 
   //! Returns the current cardinality of the cluster
-  int get_card() const override { return card; }
+  int get_card() const override { return card; };
 
   //! Returns the logarithm of the current cardinality of the cluster
-  double get_log_card() const override { return log_card; }
+  double get_log_card() const override { return log_card; };
 
   //! Returns the indexes of data points belonging to this cluster
-  std::set<int> get_data_idx() const override { return cluster_data_idx; }
+  std::set<int> get_data_idx() const override { return cluster_data_idx;};
+
+  //! Public wrapper for `marg_lpdf()` methods
+  double get_marg_lpdf(
+          const Python::Hyperparams &params, const Eigen::RowVectorXd &datum,
+          const Eigen::RowVectorXd &covariate = Eigen::RowVectorXd(0)) const;
+
+  //! Evaluates the log-prior predictive distribution of data in a single point
+  //! @param datum      Point which is to be evaluated
+  //! @param covariate  (Optional) covariate vector associated to datum
+  //! @return           The evaluation of the lpdf
+  double prior_pred_lpdf(const Eigen::RowVectorXd &datum,
+                         const Eigen::RowVectorXd &covariate =
+  Eigen::RowVectorXd(0)) const override {
+      return get_marg_lpdf(*hypers, datum, covariate);
+  };
+
+  //! Evaluates the log-conditional predictive distr. of data in a single point
+  //! @param datum      Point which is to be evaluated
+  //! @param covariate  (Optional) covariate vector associated to datum
+  //! @return           The evaluation of the lpdf
+  double conditional_pred_lpdf(const Eigen::RowVectorXd &datum,
+                               const Eigen::RowVectorXd &covariate =
+  Eigen::RowVectorXd(0)) const override {
+      return get_marg_lpdf(posterior_hypers, datum, covariate);
+  };
+
+  //! Evaluates the log-prior predictive distr. of data in a grid of points
+  //! @param data        Grid of points (by row) which are to be evaluated
+  //! @param covariates  (Optional) covariate vectors associated to data
+  //! @return            The evaluation of the lpdf
+  virtual Eigen::VectorXd prior_pred_lpdf_grid(
+          const Eigen::MatrixXd &data,
+          const Eigen::MatrixXd &covariates = Eigen::MatrixXd(0,
+  0)) const override;
+
+  //! Evaluates the log-prior predictive distr. of data in a grid of points
+  //! @param data        Grid of points (by row) which are to be evaluated
+  //! @param covariates  (Optional) covariate vectors associated to data
+  //! @return            The evaluation of the lpdf
+  virtual Eigen::VectorXd conditional_pred_lpdf_grid(
+          const Eigen::MatrixXd &data,
+          const Eigen::MatrixXd &covariates = Eigen::MatrixXd(0,
+  0)) const override;
 
   //! Returns a pointer to the Protobuf message of the prior of this cluster
-  google::protobuf::Message *get_mutable_prior() override {
-    if (prior == nullptr) {
-      create_empty_prior();
-    }
-    return prior.get();
-  }
+  google::protobuf::Message *get_mutable_prior() override;
 
   //! Writes current state to a Protobuf message by pointer
   void write_state_to_proto(
@@ -143,13 +159,16 @@ class PythonHierarchy : public AbstractHierarchy {
       google::protobuf::Message *const out) const override;
 
   //! Returns the struct of the current state
-  Python::State get_state() const { return state; }
+  Python::State get_state() const { return state; };
 
   //! Returns the struct of the current prior hyperparameters
-  Python::Hyperparams get_hypers() const { return *hypers; }
+  Python::Hyperparams get_hypers() const { return *hypers; };
+
+  //! Computes and return posterior hypers given data currently in this cluster
+  Python::Hyperparams compute_posterior_hypers() const;
 
   //! Returns the struct of the current posterior hyperparameters
-  Python::Hyperparams get_posterior_hypers() const { return posterior_hypers; }
+  Python::Hyperparams get_posterior_hypers() const { return posterior_hypers; };
 
   //! Adds a datum and its index to the hierarchy
   void add_datum(
@@ -164,29 +183,28 @@ class PythonHierarchy : public AbstractHierarchy {
       const Eigen::RowVectorXd &covariate = Eigen::RowVectorXd(0)) override;
 
   //! Main function that initializes members to appropriate values
-  void initialize() override {
-    hypers = std::make_shared<Python::Hyperparams>();
-    check_prior_is_set();
-    initialize_hypers();
-    initialize_state();
-    posterior_hypers = *hypers;
-    clear_data();
-    clear_summary_statistics();
-  }
+  void initialize() override;
 
   //! Sets the (pointer to the) dataset matrix
   void set_dataset(const Eigen::MatrixXd *const dataset) override {
     dataset_ptr = dataset;
-  }
+  };
 
   //! Returns the Protobuf ID associated to this class
   bayesmix::HierarchyId get_id() const override {
       return bayesmix::HierarchyId::PythonHier;
-  }
+  };
 
-    void save_posterior_hypers() {
-        throw std::runtime_error("save_posterior_hypers() not implemented");
-    }
+  //! Saves posterior hyperparameters to the corresponding class member
+  void save_posterior_hypers() {
+      if(this->is_conjugate()){
+          posterior_hypers =
+                  static_cast<PythonHierarchy *>(this)->compute_posterior_hypers();
+      }
+      else{
+          throw std::runtime_error("save_posterior_hypers() not implemented");
+      }
+  };
 
     //! Generates new state values from the centering posterior distribution
     //! @param update_params  Save posterior hypers after the computation?
@@ -213,24 +231,19 @@ class PythonHierarchy : public AbstractHierarchy {
     //! Writes current state to a Protobuf message and return a shared_ptr
     //! New hierarchies have to first modify the field 'oneof val' in the
     //! AlgoritmState::ClusterState message by adding the appropriate type
-    std::shared_ptr<bayesmix::AlgorithmState::ClusterState> get_state_proto()
-    const override;
+    std::shared_ptr<bayesmix::AlgorithmState::ClusterState> get_state_proto() const override;
 
     //! Writes current value of hyperparameters to a Protobuf message and
     //! return a shared_ptr.
     //! New hierarchies have to first modify the field 'oneof val' in the
     //! AlgoritmState::HierarchyHypers message by adding the appropriate type
-    std::shared_ptr<bayesmix::AlgorithmState::HierarchyHypers> get_hypers_proto()
-    const;
+    std::shared_ptr<bayesmix::AlgorithmState::HierarchyHypers> get_hypers_proto() const;
 
     //! Returns whether the hierarchy models multivariate data or not
-    bool is_multivariate() const override { return false; }
+    bool is_multivariate() const override { return false; };
 
-    //TODO: PUT IN PYTHON
-    bool is_conjugate() const { return false; }
-
-//    //! Computes and return posterior hypers given data currently in this cluster
-//    Python::Hyperparams compute_posterior_hypers() const;
+    //! Returns whether the hierarchy is conjugate
+    bool is_conjugate() const;
 
 protected:
   //! Raises an error if the prior pointer is not initialized
@@ -238,53 +251,53 @@ protected:
     if (prior == nullptr) {
       throw std::invalid_argument("Hierarchy prior was not provided");
     }
-  }
+  };
 
   //! Re-initializes the prior of the hierarchy to a newly created object
-  void create_empty_prior() { prior.reset(new bayesmix::PythonHierPrior); }
+  void create_empty_prior() { prior.reset(new bayesmix::PythonHierPrior); };
 
   //! Re-initializes the hypers of the hierarchy to a newly created object
-  void create_empty_hypers() { hypers.reset(new Python::Hyperparams); }
+  void create_empty_hypers() { hypers.reset(new Python::Hyperparams); };
 
   //! Sets the cardinality of the cluster
   void set_card(const int card_) {
     card = card_;
     log_card = (card_ == 0) ? stan::math::NEGATIVE_INFTY : std::log(card_);
-  }
+  };
 
   //! Resets cardinality and indexes of data in this cluster
   void clear_data() {
     set_card(0);
     cluster_data_idx = std::set<int>();
-  }
+  };
 
   //! Down-casts the given generic proto message to a ClusterState proto
   bayesmix::AlgorithmState::ClusterState *downcast_state(
       google::protobuf::Message *const state_) const {
     return google::protobuf::internal::down_cast<
         bayesmix::AlgorithmState::ClusterState *>(state_);
-  }
+  };
 
   //! Down-casts the given generic proto message to a ClusterState proto
   const bayesmix::AlgorithmState::ClusterState &downcast_state(
       const google::protobuf::Message &state_) const {
     return google::protobuf::internal::down_cast<
         const bayesmix::AlgorithmState::ClusterState &>(state_);
-  }
+  };
 
   //! Down-casts the given generic proto message to a HierarchyHypers proto
   bayesmix::AlgorithmState::HierarchyHypers *downcast_hypers(
       google::protobuf::Message *const state_) const {
     return google::protobuf::internal::down_cast<
         bayesmix::AlgorithmState::HierarchyHypers *>(state_);
-  }
+  };
 
   //! Down-casts the given generic proto message to a HierarchyHypers proto
   const bayesmix::AlgorithmState::HierarchyHypers &downcast_hypers(
       const google::protobuf::Message &state_) const {
     return google::protobuf::internal::down_cast<
         const bayesmix::AlgorithmState::HierarchyHypers &>(state_);
-  }
+  };
 
   //! Container for state values
   Python::State state;
@@ -319,13 +332,29 @@ protected:
     //! @return           The evaluation of the lpdf
     double like_lpdf(const Eigen::RowVectorXd &datum) const override;
 
-    //TODO: ADD IN PYTHON
     //! Evaluates the log-marginal distribution of data in a single point
     //! @param params     Container of (prior or posterior) hyperparameter values
     //! @param datum      Point which is to be evaluated
     //! @return           The evaluation of the lpdf
-//  double marg_lpdf(const Python::Hyperparams &params,
-//                   const Eigen::RowVectorXd &datum) const;
+    double marg_lpdf(const Python::Hyperparams &params,
+                     const Eigen::RowVectorXd &datum) const;
+
+  //! Evaluates the log-marginal distribution of data in a single point
+  //! @param params     Container of (prior or posterior) hyperparameter values
+  //! @param datum      Point which is to be evaluated
+  //! @param covariate  Covariate vector associated to datum
+  //! @return           The evaluation of the lpdf
+  virtual double marg_lpdf(const Python::Hyperparams &params,
+                           const Eigen::RowVectorXd &datum,
+                           const Eigen::RowVectorXd &covariate) const {
+      if (!this->is_dependent()) {
+          throw std::runtime_error(
+                  "Cannot call marg_lpdf() from a non-dependent hierarchy");
+      } else {
+          throw std::runtime_error("marg_lpdf() not implemented");
+      }
+  };
+
     //! Updates cluster statistics when a datum is added or removed from it
     //! @param datum      Data point which is being added or removed
     //! @param add        Whether the datum is being added or removed
@@ -353,10 +382,10 @@ protected:
     py::object update_summary_statistics_evaluator = fun.attr("update_summary_statistics");
     py::object clear_summary_statistics_evaluator = fun.attr("clear_summary_statistics");
     py::object sample_full_cond_evaluator = fun.attr("sample_full_cond");
-    // py::object posterior_hypers_evaluator = fun.attr("compute_posterior_hypers");
-    // py::object marg_lpdf_evaluator = fun.attr("marg_lpdf");
+    py::object posterior_hypers_evaluator = fun.attr("compute_posterior_hypers");
+    py::object marg_lpdf_evaluator = fun.attr("marg_lpdf");
     // py::object update_hypers_evaluator = fun.attr("update_hypers");
-    // py::object is_conjugate_evaluator = fun.attr("is_conjugate");
+    py::object is_conjugate_evaluator = fun.attr("is_conjugate");
 };
 
 #endif  // BAYESMIX_HIERARCHIES_PYTHON_HIERARCHY_H_

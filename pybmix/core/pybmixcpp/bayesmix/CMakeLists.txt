@@ -110,7 +110,7 @@ set(LINK_LIBRARIES
         )
 
 
-set(COMPILE_OPTIONS -D_REENTRANT -fPIC -fvisibility=hidden)
+set(COMPILE_OPTIONS -D_REENTRANT -fPIC -fvisibility=hidden -std=c++17)
 
 file(GLOB ProtoFiles "${BASEPATH}/bayesmix/src/proto/*.proto")
 set(PROTO_DIR proto)

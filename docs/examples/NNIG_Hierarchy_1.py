@@ -64,7 +64,7 @@ def compute_posterior_hypers(card, hypers, sum_stats):
     return post_hypers
 
 
-def update_summary_statistics(x, add, sum_stats):
+def update_summary_statistics(x, add, sum_stats, state, cluster_data_values):
     if not len(sum_stats):
         sum_stats = [0, 0]
     data_sum = sum_stats[0]
@@ -75,10 +75,20 @@ def update_summary_statistics(x, add, sum_stats):
     else:
         data_sum -= x[0]
         data_sum_squares -= x[0] ** 2
-    return [data_sum, data_sum_squares]
+    sum_stats = [data_sum, data_sum_squares]
+    return [sum_stats, cluster_data_values]
 
 
 def clear_summary_statistics(sum_stats):
     data_sum = 0
     data_sum_squares = 0
     return [data_sum, data_sum_squares]
+
+
+def sample_full_cond(state, sum_stats, rng, curr_vals, hypers):
+    pass
+
+
+def is_conjugate():
+    return True
+

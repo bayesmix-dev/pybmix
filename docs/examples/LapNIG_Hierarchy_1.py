@@ -118,3 +118,16 @@ def eval_like_lpdf_unconstrained(unconstrained_parameters, is_current, sum_stats
             diff_sum += abs(elem[0] - mean)
         sum_stats[1] = diff_sum
     return np.log(0.5 / scale) + (-0.5 / scale * diff_sum)
+
+
+def marg_lpdf(x, hypers):
+    pass
+
+
+def compute_posterior_hypers(card, hypers, sum_stats):
+    pass
+
+
+def is_conjugate():
+    return False
+
