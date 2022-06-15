@@ -22,14 +22,14 @@
 
 
 std::shared_ptr<AbstractHierarchy> PythonHierarchy::clone() const {
-    auto out = std::make_shared<PythonHierarchy>(static_cast<PythonHierarchy const &>(*this));
+    auto out = std::make_shared<PythonHierarchy>((*this));
     out->clear_data();
     out->clear_summary_statistics();
     return out;
 }
 
 std::shared_ptr<AbstractHierarchy> PythonHierarchy::deep_clone() const {
-    auto out = std::make_shared<PythonHierarchy>(static_cast<PythonHierarchy const &>(*this));
+    auto out = std::make_shared<PythonHierarchy>((*this));
 
     out->clear_data();
     out->clear_summary_statistics();
@@ -60,10 +60,10 @@ void PythonHierarchy::add_datum(
     assert(cluster_data_idx.find(id) == cluster_data_idx.end());
     card += 1;
     log_card = std::log(card);
-    static_cast<PythonHierarchy *>(this)->update_ss(datum, covariate, true);
+    (this)->update_ss(datum, covariate, true);
     cluster_data_idx.insert(id);
     if (update_params) {
-        static_cast<PythonHierarchy *>(this)->save_posterior_hypers();
+        (this)->save_posterior_hypers();
     }
 }
 
@@ -71,13 +71,13 @@ void PythonHierarchy::remove_datum(
         const int id, const Eigen::RowVectorXd &datum,
         const bool update_params /*= false*/,
         const Eigen::RowVectorXd &covariate /* = Eigen::RowVectorXd(0)*/) {
-    static_cast<PythonHierarchy *>(this)->update_ss(datum, covariate, false);
+    (this)->update_ss(datum, covariate, false);
     set_card(card - 1);
     auto it = cluster_data_idx.find(id);
     assert(it != cluster_data_idx.end());
     cluster_data_idx.erase(it);
     if (update_params) {
-        static_cast<PythonHierarchy *>(this)->save_posterior_hypers();
+        (this)->save_posterior_hypers();
     }
 }
 
@@ -116,19 +116,19 @@ PythonHierarchy::like_lpdf_grid(
     if (covariates.cols() == 0) {
         // Pass null value as covariate
         for (int i = 0; i < data.rows(); i++) {
-            lpdf(i) = static_cast<PythonHierarchy const *>(this)->get_like_lpdf(
+            lpdf(i) = (this)->get_like_lpdf(
                     data.row(i), Eigen::RowVectorXd(0));
         }
     } else if (covariates.rows() == 1) {
         // Use unique covariate
         for (int i = 0; i < data.rows(); i++) {
-            lpdf(i) = static_cast<PythonHierarchy const *>(this)->get_like_lpdf(
+            lpdf(i) = (this)->get_like_lpdf(
                     data.row(i), covariates.row(0));
         }
     } else {
         // Use different covariates
         for (int i = 0; i < data.rows(); i++) {
-            lpdf(i) = static_cast<PythonHierarchy const *>(this)->get_like_lpdf(
+            lpdf(i) = (this)->get_like_lpdf(
                     data.row(i), covariates.row(i));
         }
     }
@@ -143,23 +143,23 @@ void PythonHierarchy::sample_full_cond(
     if (covariates.cols() == 0) {
         // Pass null value as covariate
         for (int i = 0; i < data.rows(); i++) {
-            static_cast<PythonHierarchy *>(this)->add_datum(i, data.row(i), false,
+            (this)->add_datum(i, data.row(i), false,
                                                             Eigen::RowVectorXd(0));
         }
     } else if (covariates.rows() == 1) {
         // Use unique covariate
         for (int i = 0; i < data.rows(); i++) {
-            static_cast<PythonHierarchy *>(this)->add_datum(i, data.row(i), false,
+            (this)->add_datum(i, data.row(i), false,
                                                             covariates.row(0));
         }
     } else {
         // Use different covariates
         for (int i = 0; i < data.rows(); i++) {
-            static_cast<PythonHierarchy *>(this)->add_datum(i, data.row(i), false,
+            (this)->add_datum(i, data.row(i), false,
                                                             covariates.row(i));
         }
     }
-    static_cast<PythonHierarchy *>(this)->sample_full_cond(true);
+    (this)->sample_full_cond(true);
 }
 
 //! PYTHON
@@ -334,19 +334,19 @@ PythonHierarchy::prior_pred_lpdf_grid(
     if (covariates.cols() == 0) {
         // Pass null value as covariate
         for (int i = 0; i < data.rows(); i++) {
-            lpdf(i) = static_cast<PythonHierarchy const *>(this)->prior_pred_lpdf(
+            lpdf(i) = (this)->prior_pred_lpdf(
                     data.row(i), Eigen::RowVectorXd(0));
         }
     } else if (covariates.rows() == 1) {
         // Use unique covariate
         for (int i = 0; i < data.rows(); i++) {
-            lpdf(i) = static_cast<PythonHierarchy const *>(this)->prior_pred_lpdf(
+            lpdf(i) = (this)->prior_pred_lpdf(
                     data.row(i), covariates.row(0));
         }
     } else {
         // Use different covariates
         for (int i = 0; i < data.rows(); i++) {
-            lpdf(i) = static_cast<PythonHierarchy const *>(this)->prior_pred_lpdf(
+            lpdf(i) = (this)->prior_pred_lpdf(
                     data.row(i), covariates.row(i));
         }
     }
@@ -361,19 +361,19 @@ Eigen::VectorXd PythonHierarchy::conditional_pred_lpdf_grid(
     if (covariates.cols() == 0) {
         // Pass null value as covariate
         for (int i = 0; i < data.rows(); i++) {
-            lpdf(i) = static_cast<PythonHierarchy const *>(this)->conditional_pred_lpdf(
+            lpdf(i) = (this)->conditional_pred_lpdf(
                     data.row(i), Eigen::RowVectorXd(0));
         }
     } else if (covariates.rows() == 1) {
         // Use unique covariate
         for (int i = 0; i < data.rows(); i++) {
-            lpdf(i) = static_cast<PythonHierarchy const *>(this)->conditional_pred_lpdf(
+            lpdf(i) = (this)->conditional_pred_lpdf(
                     data.row(i), covariates.row(0));
         }
     } else {
         // Use different covariates
         for (int i = 0; i < data.rows(); i++) {
-            lpdf(i) = static_cast<PythonHierarchy const *>(this)->conditional_pred_lpdf(
+            lpdf(i) = (this)->conditional_pred_lpdf(
                     data.row(i), covariates.row(i));
         }
     }

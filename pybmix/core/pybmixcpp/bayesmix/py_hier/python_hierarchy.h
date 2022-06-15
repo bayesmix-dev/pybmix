@@ -86,7 +86,7 @@ class PythonHierarchy : public AbstractHierarchy {
 
   //! Generates new state values from the centering prior distribution
   void sample_prior() override {
-    state = static_cast<PythonHierarchy *>(this)->draw(*hypers);
+    state = (this)->draw(*hypers);
   };
 
   //! Overloaded version of sample_full_cond(bool), mainly used for debugging
@@ -199,7 +199,7 @@ class PythonHierarchy : public AbstractHierarchy {
   void save_posterior_hypers() {
       if(this->is_conjugate()){
           posterior_hypers =
-                  static_cast<PythonHierarchy *>(this)->compute_posterior_hypers();
+                  (this)->compute_posterior_hypers();
       }
       else{
           throw std::runtime_error("save_posterior_hypers() not implemented");
