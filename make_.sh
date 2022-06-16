@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 cd build/;
-cmake ..;
+cmake .. ;
 make pybmixcpp;
 make generate_protos;
 make two_to_three;

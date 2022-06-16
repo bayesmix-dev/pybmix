@@ -32,16 +32,15 @@ plt.show()
 
 mixing = DirichletProcessMixing(total_mass=5) # DP mixing
 
-# hierarchy = PythonHierarchy() # Python implementation of NNIG
-# change_hierarchy("hierarchy_c_implementation_1")
 
-hierarchy = PythonHierarchy() # Python implemenation of LapNIG
-change_hierarchy('LapNIG_Hierarchy_1')
+hierarchy = PythonHierarchy()
+#change_hierarchy('LapNIG_Hierarchy_1')  # Python implementation of LapNIG
+change_hierarchy('NNIG_Hierarchy_1')  # Python implementation of nNIG
 
 mixture = MixtureModel(mixing, hierarchy)
 
 
-mixture.run_mcmc(y, algorithm="Neal8", niter=110, nburn=10)
+mixture.run_mcmc(y, algorithm="Neal2", niter=110, nburn=10)
 
 from pybmix.estimators.density_estimator import DensityEstimator
 
