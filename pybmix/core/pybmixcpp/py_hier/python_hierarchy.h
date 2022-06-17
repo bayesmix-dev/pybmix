@@ -26,20 +26,6 @@ using namespace py::literals;
 
 //! Base template class for a hierarchy object.
 
-//! This class is a templatized version of, and derived from, the
-//! `AbstractHierarchy` class, and the second stage of the curiously recurring
-//! template pattern for `Hierarchy` objects (please see the docs of the parent
-//! class for further information). It includes class members and some more
-//! functions which could not be implemented in the non-templatized abstract
-//! class.
-//! See, for instance, `ConjugateHierarchy` and `NNIGHierarchy` to better
-//! understand the CRTP patterns.
-
-//! @tparam Derived      Name of the implemented derived class
-//! @tparam State        Class name of the container for state values
-//! @tparam Hyperparams  Class name of the container for hyperprior parameters
-//! @tparam Prior        Class name of the container for prior parameters
-
 namespace Python {
 //! Custom container for State values
     struct State {
@@ -85,7 +71,7 @@ public:
         return bayesmix::HierarchyId::PythonHier;
     };
 
-    //! Returns (a pointer to) the likelihood for the current hierarchy
+    //! Returns (a pointer to) the likelihood for the current hierarchy, null for PythonHierarchy
     std::shared_ptr <AbstractLikelihood> get_likelihood() override { return nullptr; };
 
     //! Returns the logarithm of the current cardinality of the cluster
@@ -128,7 +114,7 @@ public:
     //! Read and set state values from a given Protobuf message
     void set_state_from_proto(const google::protobuf::Message &state_) override;
 
-    //! Set the update algorithm for the current hierarchy
+    //! Set the update algorithm for the current hierarchy, does nothing for PytonhHierarchy
     void set_updater(std::shared_ptr <AbstractUpdater> updater_) override { return; };
 
     //! Writes current state to a Protobuf message by pointer
