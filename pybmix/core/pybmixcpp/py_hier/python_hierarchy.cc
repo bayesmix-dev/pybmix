@@ -20,26 +20,6 @@
 #include <pybind11/eigen.h>
 #include "auxiliary_functions.h"
 
-void PythonHierarchy::set_module(const std::string & module_name) {
-    std::cout << "Using implementation: " << module_name << std::endl;
-    numpy = py::module_::import("numpy");
-    fun = py::module_::import(module_name.c_str());
-    numpy_random = py::module_::import("numpy.random");
-    py_engine = numpy_random.attr("MT19937")();
-    py_gen = numpy_random.attr("Generator")(py_engine);
-    like_lpdf_evaluator = fun.attr("like_lpdf");
-    initialize_state_evaluator = fun.attr("initialize_state");
-    initialize_hypers_evaluator = fun.attr("initialize_hypers");
-    draw_evaluator = fun.attr("draw");
-    update_summary_statistics_evaluator = fun.attr("update_summary_statistics");
-    clear_summary_statistics_evaluator = fun.attr("clear_summary_statistics");
-    sample_full_cond_evaluator = fun.attr("sample_full_cond");
-    posterior_hypers_evaluator = fun.attr("compute_posterior_hypers");
-    marg_lpdf_evaluator = fun.attr("marg_lpdf");
-    // py::object update_hypers_evaluator = fun.attr("update_hypers");
-    is_conjugate_evaluator = fun.attr("is_conjugate");
-}
-
 std::shared_ptr<AbstractHierarchy> PythonHierarchy::clone() const {
     auto out = std::make_shared<PythonHierarchy>((*this));
     out->clear_data();
@@ -63,6 +43,25 @@ std::shared_ptr<AbstractHierarchy> PythonHierarchy::deep_clone() const {
     out->set_hypers_from_proto(*curr_hypers_proto.get());
     out->initialize();
     return out;
+}
+
+void PythonHierarchy::set_module(const std::string & module_name) {
+
+    std::cout << "Using implementation: " << module_name << std::endl;
+
+    hier_implementation = py::module_::import(module_name.c_str());
+
+    clear_summary_statistics_evaluator = hier_implementation.attr("clear_summary_statistics");
+    draw_evaluator = hier_implementation.attr("draw");
+    initialize_state_evaluator = hier_implementation.attr("initialize_state");
+    initialize_hypers_evaluator = hier_implementation.attr("initialize_hypers");
+    is_conjugate_evaluator = hier_implementation.attr("is_conjugate");
+    like_lpdf_evaluator = hier_implementation.attr("like_lpdf");
+    marg_lpdf_evaluator = hier_implementation.attr("marg_lpdf");
+    posterior_hypers_evaluator = hier_implementation.attr("compute_posterior_hypers");
+    sample_full_cond_evaluator = hier_implementation.attr("sample_full_cond");
+    update_summary_statistics_evaluator = hier_implementation.attr("update_summary_statistics");
+//    update_hypers_evaluator = hier_implementation.attr("update_hypers");
 }
 
 google::protobuf::Message * PythonHierarchy::get_mutable_prior() {
