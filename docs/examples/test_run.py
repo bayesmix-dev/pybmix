@@ -15,9 +15,6 @@ from pybmix.core.mixture_model import MixtureModel
 
 np.random.seed(2021)
 
-# Import the change_name function
-from pybmix.core.hierarchy_mixing_changer import change_hierarchy
-
 
 def sample_from_mixture(weights, means, sds, n_data):
     n_comp = len(weights)
@@ -34,13 +31,10 @@ mixing = DirichletProcessMixing(total_mass=5) # DP mixing
 
 
 hierarchy = PythonHierarchy()
-#change_hierarchy('LapNIG_Hierarchy_1')  # Python implementation of LapNIG
-change_hierarchy('NNIG_Hierarchy_1')  # Python implementation of nNIG
 
 mixture = MixtureModel(mixing, hierarchy)
 
-
-mixture.run_mcmc(y, algorithm="Neal2", niter=110, nburn=10)
+mixture.run_mcmc(y, algorithm="Neal8", niter=110, nburn=10, hierarchy="NNIG_Hierarchy_1")
 
 from pybmix.estimators.density_estimator import DensityEstimator
 

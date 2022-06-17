@@ -57,6 +57,8 @@ class PythonHierarchy : public AbstractHierarchy {
   PythonHierarchy() = default;
   ~PythonHierarchy() = default;
 
+    void set_module(const std::string & module_name);
+
     //! Set the update algorithm for the current hierarchy
     void set_updater(std::shared_ptr<AbstractUpdater> updater_) override{return;};
 

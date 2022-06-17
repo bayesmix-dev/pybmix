@@ -42,6 +42,12 @@ void AlgorithmWrapper::say_hello() {
   std::cout << "Hello from AlgorithmWrapper" << std::endl;
 }
 
+void AlgorithmWrapper::change_module(const std::string & module_name) {
+    if(dynamic_cast<PythonHierarchy*>(hier.get()) != nullptr){
+        static_cast<PythonHierarchy*>(hier.get())->set_module(module_name.c_str());
+    }
+}
+
 void add_algorithm_wrapper(pybind11::module& m) {
   namespace py = pybind11;
   py::class_<AlgorithmWrapper>(m, "AlgorithmWrapper")
@@ -51,5 +57,6 @@ void add_algorithm_wrapper(pybind11::module& m) {
       .def("say_hello", &AlgorithmWrapper::say_hello)
       .def("run", &AlgorithmWrapper::run)
       .def("eval_density", &AlgorithmWrapper::eval_density)
-      .def("get_collector", &AlgorithmWrapper::get_collector);
+      .def("get_collector", &AlgorithmWrapper::get_collector)
+      .def("change_module", &AlgorithmWrapper::change_module);
 }

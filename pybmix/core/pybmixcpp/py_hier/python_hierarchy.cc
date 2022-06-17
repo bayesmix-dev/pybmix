@@ -20,6 +20,25 @@
 #include <pybind11/eigen.h>
 #include "auxiliary_functions.h"
 
+void PythonHierarchy::set_module(const std::string & module_name) {
+    std::cout << "Using implementation: " << module_name << std::endl;
+    numpy = py::module_::import("numpy");
+    fun = py::module_::import(module_name.c_str());
+    numpy_random = py::module_::import("numpy.random");
+    py_engine = numpy_random.attr("MT19937")();
+    py_gen = numpy_random.attr("Generator")(py_engine);
+    like_lpdf_evaluator = fun.attr("like_lpdf");
+    initialize_state_evaluator = fun.attr("initialize_state");
+    initialize_hypers_evaluator = fun.attr("initialize_hypers");
+    draw_evaluator = fun.attr("draw");
+    update_summary_statistics_evaluator = fun.attr("update_summary_statistics");
+    clear_summary_statistics_evaluator = fun.attr("clear_summary_statistics");
+    sample_full_cond_evaluator = fun.attr("sample_full_cond");
+    posterior_hypers_evaluator = fun.attr("compute_posterior_hypers");
+    marg_lpdf_evaluator = fun.attr("marg_lpdf");
+    // py::object update_hypers_evaluator = fun.attr("update_hypers");
+    is_conjugate_evaluator = fun.attr("is_conjugate");
+}
 
 std::shared_ptr<AbstractHierarchy> PythonHierarchy::clone() const {
     auto out = std::make_shared<PythonHierarchy>((*this));
@@ -82,22 +101,6 @@ void PythonHierarchy::remove_datum(
 }
 
 void PythonHierarchy::initialize() {
-    numpy = py::module_::import("numpy");
-    fun = py::module_::import("hier_implementation");
-    numpy_random = py::module_::import("numpy.random");
-    py_engine = numpy_random.attr("MT19937")();
-    py_gen = numpy_random.attr("Generator")(py_engine);
-    like_lpdf_evaluator = fun.attr("like_lpdf");
-    initialize_state_evaluator = fun.attr("initialize_state");
-    initialize_hypers_evaluator = fun.attr("initialize_hypers");
-    draw_evaluator = fun.attr("draw");
-    update_summary_statistics_evaluator = fun.attr("update_summary_statistics");
-    clear_summary_statistics_evaluator = fun.attr("clear_summary_statistics");
-    sample_full_cond_evaluator = fun.attr("sample_full_cond");
-    posterior_hypers_evaluator = fun.attr("compute_posterior_hypers");
-    marg_lpdf_evaluator = fun.attr("marg_lpdf");
-    // py::object update_hypers_evaluator = fun.attr("update_hypers");
-    is_conjugate_evaluator = fun.attr("is_conjugate");
     hypers = std::make_shared<Python::Hyperparams>();
     check_prior_is_set();
     initialize_hypers();

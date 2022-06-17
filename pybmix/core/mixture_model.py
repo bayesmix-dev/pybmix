@@ -3,6 +3,7 @@ import numpy as np
 
 import os
 import sys
+
 HERE = os.path.dirname(os.path.realpath(__file__))
 BUILD_DIR = os.path.join(HERE, "../../build/")
 sys.path.insert(0, os.path.realpath(BUILD_DIR))
@@ -14,8 +15,7 @@ from pybmix.core.chain import MCMCchain
 from pybmix.proto.algorithm_state_pb2 import AlgorithmState
 from pybmixcpp import AlgorithmWrapper, ostream_redirect
 
-
-MARGINAL_ALGORITHMS = ["Neal2", "Neal3", "Neal8"] 
+MARGINAL_ALGORITHMS = ["Neal2", "Neal3", "Neal8"]
 CONDITIONAL_ALGORITHMS = ["BlockedGibbs"]
 
 
@@ -31,7 +31,7 @@ class MixtureModel(object):
         self.mixing = mixing
         self.hierarchy = hierarchy
 
-    def run_mcmc(self, y, algorithm="Neal2", niter=1000, nburn=500, rng_seed=-1):
+    def run_mcmc(self, y, algorithm="Neal2", niter=1000, nburn=500, rng_seed=-1, hierarchy="NNIG_Hierarchy"):
         if algorithm not in (MARGINAL_ALGORITHMS + CONDITIONAL_ALGORITHMS):
             raise ValueError(
                 "'algorithm' parameter must be one of [{0}], found {1} instead".format(
@@ -43,13 +43,15 @@ class MixtureModel(object):
             self.algo_name, self.hierarchy.NAME, self.mixing.NAME,
             self.hierarchy.prior_params.SerializeToString(),
             self.mixing.prior_proto.SerializeToString())
+        if (self.hierarchy.NAME == 'PythonHier'):
+            self._algo.change_module(hierarchy)
 
         with ostream_redirect(stdout=True, stderr=True):
             self._algo.run(y, niter, nburn, rng_seed)
 
     def get_chain(self, optimize_memory=False):
         deserialize = not optimize_memory
-        
+
         return MCMCchain(
             self._algo.get_collector().get_serialized_chain(),
             AlgorithmState, deserialize)
