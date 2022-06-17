@@ -128,10 +128,6 @@ public:
     //! Read and set state values from a given Protobuf message
     void set_state_from_proto(const google::protobuf::Message &state_) override;
 
-    //! Writes current state to a Protobuf message by pointer
-    void write_state_to_proto(
-            google::protobuf::Message *const out) const override;
-
     //! Set the update algorithm for the current hierarchy
     void set_updater(std::shared_ptr <AbstractUpdater> updater_) override { return; };
 
@@ -195,7 +191,6 @@ public:
     //! Main function that initializes members to appropriate values
     void initialize() override;
 
-
     //! Returns whether the hierarchy depends on covariate values or not
     bool is_dependent() const override { return false; };
 
@@ -205,11 +200,14 @@ public:
     //! Returns whether the hierarchy is conjugate
     bool is_conjugate() const;
 
+    //! Resets summary statistics for this cluster
+    void clear_summary_statistics();
 
-    //! Generates new state values from the centering prior distribution
-    void sample_prior() override {
-        state = (this)->draw(*hypers);
-    };
+    //! Computes and return posterior hypers given data currently in this cluster
+    Python::Hyperparams compute_posterior_hypers() const;
+
+    //! Updates state values using the given (prior or posterior) hyperparameters
+    Python::State draw(const Python::Hyperparams &params);
 
     //! Generates new state values from the centering posterior distribution
     //! @param update_params  Save posterior hypers after the computation?
@@ -220,21 +218,10 @@ public:
             const Eigen::MatrixXd &data,
             const Eigen::MatrixXd &covariates = Eigen::MatrixXd(0, 0)) override;
 
-    //! Computes and return posterior hypers given data currently in this cluster
-    Python::Hyperparams compute_posterior_hypers() const;
-
-
-    //! Adds a datum and its index to the hierarchy
-    void add_datum(
-            const int id, const Eigen::RowVectorXd &datum,
-            const bool update_params = false,
-            const Eigen::RowVectorXd &covariate = Eigen::RowVectorXd(0)) override;
-
-    //! Removes a datum and its index from the hierarchy
-    void remove_datum(
-            const int id, const Eigen::RowVectorXd &datum,
-            const bool update_params = false,
-            const Eigen::RowVectorXd &covariate = Eigen::RowVectorXd(0)) override;
+    //! Generates new state values from the centering prior distribution
+    void sample_prior() override {
+        state = (this)->draw(*hypers);
+    };
 
     //! Saves posterior hyperparameters to the corresponding class member
     void save_posterior_hypers() {
@@ -250,11 +237,17 @@ public:
     void update_hypers(const std::vector <bayesmix::AlgorithmState::ClusterState>
                        &states) override;
 
-    //! Updates state values using the given (prior or posterior) hyperparameters
-    Python::State draw(const Python::Hyperparams &params);
+    //! Adds a datum and its index to the hierarchy
+    void add_datum(
+            const int id, const Eigen::RowVectorXd &datum,
+            const bool update_params = false,
+            const Eigen::RowVectorXd &covariate = Eigen::RowVectorXd(0)) override;
 
-    //! Resets summary statistics for this cluster
-    void clear_summary_statistics();
+    //! Removes a datum and its index from the hierarchy
+    void remove_datum(
+            const int id, const Eigen::RowVectorXd &datum,
+            const bool update_params = false,
+            const Eigen::RowVectorXd &covariate = Eigen::RowVectorXd(0)) override;
 
 protected:
 
@@ -265,18 +258,17 @@ protected:
         }
     };
 
-    //! Re-initializes the prior of the hierarchy to a newly created object
-    void create_empty_prior() { prior.reset(new bayesmix::PythonHierPrior); };
-
-    //! Re-initializes the hypers of the hierarchy to a newly created object
-    void create_empty_hypers() { hypers.reset(new Python::Hyperparams); };
-
-
     //! Resets cardinality and indexes of data in this cluster
     void clear_data() {
         set_card(0);
         cluster_data_idx = std::set<int>();
     };
+
+    //! Re-initializes the prior of the hierarchy to a newly created object
+    void create_empty_prior() { prior.reset(new bayesmix::PythonHierPrior); };
+
+    //! Re-initializes the hypers of the hierarchy to a newly created object
+    void create_empty_hypers() { hypers.reset(new Python::Hyperparams); };
 
     //! Initializes state parameters to appropriate values
     void initialize_state();
