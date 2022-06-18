@@ -31,12 +31,13 @@ mixing = DirichletProcessMixing(total_mass=5)  # DP mixing
 
 hierarchy = PythonHierarchy()
 
+# Checking that other classes work too
 # hierarchy = UnivariateNormal()
 # hierarchy.make_default_fixed_params(y,2)
 
 mixture = MixtureModel(mixing, hierarchy)
 
-mixture.run_mcmc(y, algorithm="Neal2", niter=1100, nburn=100, hier_implementation="LapNIG_Hierarchy_1")
+mixture.run_mcmc(y, algorithm="Neal8", niter=110, nburn=10, hier_implementation="LapNIG_Hierarchy_1")
 
 from pybmix.estimators.density_estimator import DensityEstimator
 
