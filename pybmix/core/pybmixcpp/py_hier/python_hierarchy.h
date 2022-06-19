@@ -363,7 +363,7 @@ protected:
   py::object posterior_hypers_evaluator;
   py::object sample_full_cond_evaluator;
   py::object update_summary_statistics_evaluator;
-  // py::object update_hypers_evaluator;
+  py::object update_hypers_evaluator;
 };
 
 #endif // BAYESMIX_HIERARCHIES_PYTHON_HIERARCHY_H_

@@ -27,7 +27,24 @@ def initialize_state(hypers):
 
 
 def initialize_hypers():
-    return [1, 1, 1, 1]
+    # Get hyperparameters:
+    # For mu0
+    mu00 = 5.5
+    sigma00 = 2.25
+    # For lambda0
+    alpha00 = 0.2
+    beta00 = 0.6
+    # For beta0
+    a00 = 4.0
+    b00 = 2.0
+    # For alpha0
+    alpha0 = 1.5
+    # Set initial values
+    mean = mu00
+    var_scaling = alpha00 / beta00
+    shape = alpha0
+    scale = a00 / b00
+    return [mean, var_scaling, shape, scale]
 
 
 def draw(state, hypers, rng):
@@ -75,7 +92,8 @@ def update_summary_statistics(x, add, sum_stats, state, cluster_data_values):
     else:
         data_sum -= x[0]
         data_sum_squares -= x[0] ** 2
-    return [data_sum, data_sum_squares]
+    sum_stats = [data_sum, data_sum_squares]
+    return [sum_stats, cluster_data_values]
 
 
 def clear_summary_statistics(sum_stats):
@@ -89,5 +107,45 @@ def sample_full_cond(state, sum_stats, rng, curr_vals, hypers):
 
 
 def is_conjugate():
-    return False
+    return True
+
+
+def update_hypers(states, hypers, rng):
+    # print("Old Hypers: ", hypers)
+    # print("States: ", states)
+    # Set the hyperparameters(here set like in bayesmix/resources/tutorial/nnig_ngg.asciipb)
+    # For mu0
+    mu00 = 5.5
+    sig200 = 2.25
+    # For lambda0
+    alpha00 = 0.2
+    beta00 = 0.6
+    # For tau0
+    a00 = 4.0
+    b00 = 2.0
+    # Compute posterior hyperparameters
+    b_n = 0.0
+    num = 0.0
+    beta_n = 0.0
+    for st in states:
+        mean = st[0]
+        var = st[1]
+        b_n += 1 / var
+        num += mean / var
+        beta_n += (hypers[0] - mean) * (hypers[0] - mean) / var
+    var = hypers[1] * b_n + 1/sig200
+    b_n += b00
+    num = hypers[1] * num + mu00/sig200
+    beta_n = beta00 + 0.5 * beta_n
+    sig_n = 1/var
+    mu_n = num/var
+    alpha_n = alpha00 + 0.5*len(states)
+    a_n = a00 + len(states)*hypers[2]
+    # Update hyperparameters with posterior random Gibbs sampling
+    new_mean = ss.norm.rvs(mu_n, sig_n, random_state=rng)
+    new_var_scaling = ss.gamma.rvs(a=alpha_n, loc=0, scale=1./beta_n, random_state=rng)
+    new_shape = hypers[2]
+    new_scale = ss.gamma.rvs(a=a_n, loc=0, scale=1./b_n, random_state=rng)
+    # print("New Hypers: ", [new_mean, new_var_scaling, new_shape, new_scale])
+    return [new_mean, new_var_scaling, new_shape, new_scale]
 

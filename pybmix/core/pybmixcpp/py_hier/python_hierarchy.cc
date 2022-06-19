@@ -119,7 +119,7 @@ void PythonHierarchy::set_module(const std::string &module_name) {
   sample_full_cond_evaluator = hier_implementation.attr("sample_full_cond");
   update_summary_statistics_evaluator =
       hier_implementation.attr("update_summary_statistics");
-  //    update_hypers_evaluator = hier_implementation.attr("update_hypers");
+  update_hypers_evaluator = hier_implementation.attr("update_hypers");
 }
 
 //! C++
@@ -326,9 +326,24 @@ void PythonHierarchy::save_posterior_hypers() {
 //! PYTHON
 void PythonHierarchy::update_hypers(
     const std::vector<bayesmix::AlgorithmState::ClusterState> &states) {
-  auto &rng = bayesmix::Rng::Instance().get();
-  if (prior->has_values())
-    return;
+  // std::cout << "Starting update_hypers!" << std::endl;
+  unsigned int size_states = states.size();
+  std::vector<std::vector<double>> pass_states{};
+  pass_states.reserve(size_states);
+  unsigned int size;
+  for (auto &st : states){
+    size = st.general_state().size();
+    std::vector<double> aux_v{};
+    aux_v.reserve(size);
+    for (int i = 0; i < size; ++i) {
+        aux_v.push_back((st.general_state().data())[i]);
+    }
+    pass_states.push_back(aux_v);
+  }
+  synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_gen);
+  py::list new_hypers = update_hypers_evaluator(pass_states, hypers->generic_hypers, py_gen);
+  synchronize_py_to_cpp_state(bayesmix::Rng::Instance().get(), py_gen);
+  hypers->generic_hypers = list_to_vector(new_hypers);
 }
 
 void PythonHierarchy::add_datum(

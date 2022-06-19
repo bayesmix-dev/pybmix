@@ -132,3 +132,5 @@ def is_conjugate():
     return False
 
 
+def update_hypers(states, hypers, rng):
+    return [hypers[0], hypers[1], hypers[2], hypers[3], hypers[4], hypers[5]]
