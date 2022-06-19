@@ -12,14 +12,15 @@ class BaseHierarchy(metaclass=abc.ABCMeta):
         pass
 
     def check_prior_params(self, self_prior_params, prior_params):
-        if prior_params is not None:
-            success = set_oneof_field("prior", self_prior_params, prior_params)
-            if not success:
-                raise ValueError(
-                    "expected 'prior_params' to be of instance [{0}]"
-                    "found {1} instead".format(
-                        " ".join(get_oneof_types("prior", self_prior_params)),
-                        type(prior_params)))
+        if prior_params is None:
+            return
+        success = set_oneof_field("prior", self_prior_params, prior_params)
+        if not success:
+            raise ValueError(
+                "expected 'prior_params' to be of instance [{0}]"
+                "found {1} instead".format(
+                    " ".join(get_oneof_types("prior", self_prior_params)),
+                    type(prior_params)))
 
 
 class UnivariateNormal(BaseHierarchy):
@@ -77,4 +78,4 @@ class PythonHierarchy(BaseHierarchy):
         self.check_prior_params(self.prior_params, prior_params)
 
     def make_default_fixed_params(self, y, exp_num_clusters=5):
-        pass
+        raise NotImplementedError("make_default_fixed_params not implemented for PythonHierarchy")

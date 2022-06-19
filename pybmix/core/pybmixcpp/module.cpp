@@ -4,7 +4,6 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 
-
 #include "algorithm_wrapper.hpp"
 #include "bayesmix/src/utils/cluster_utils.h"
 #include "serialized_collector.hpp"

@@ -15,7 +15,7 @@ from pybmix.core.chain import MCMCchain
 from pybmix.proto.algorithm_state_pb2 import AlgorithmState
 from pybmixcpp import AlgorithmWrapper, ostream_redirect
 
-MARGINAL_ALGORITHMS = ["Neal2", "Neal3", "Neal8"]
+MARGINAL_ALGORITHMS = ["Neal2", "Neal3", "Neal8", "SplitMerge"]
 CONDITIONAL_ALGORITHMS = ["BlockedGibbs"]
 
 
