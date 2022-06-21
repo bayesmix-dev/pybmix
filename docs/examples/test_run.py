@@ -37,7 +37,7 @@ hierarchy = PythonHierarchy("NNIG_Hierarchy_1")
 
 mixture = MixtureModel(mixing, hierarchy)
 
-mixture.run_mcmc(y, algorithm="Neal2", niter=110, nburn=10)
+mixture.run_mcmc(y, algorithm="Neal2", niter=220, nburn=20)
 
 from pybmix.estimators.density_estimator import DensityEstimator
 

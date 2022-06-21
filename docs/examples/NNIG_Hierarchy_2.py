@@ -5,7 +5,7 @@ import scipy.stats as ss
 def like_lpdf(x, state):
     mean = state[0]
     var = state[1]
-    return ss.norm.logpdf(x, mean, var)
+    return ss.norm.logpdf(x, mean, np.sqrt(var))
 
 
 def marg_lpdf(x, hypers):
