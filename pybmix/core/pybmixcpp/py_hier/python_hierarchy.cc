@@ -101,7 +101,6 @@ void PythonHierarchy::set_hypers_from_proto(
 }
 
 void PythonHierarchy::set_module(const std::string &module_name) {
-
     std::cout << "Using implementation: " << module_name << std::endl;
 
     hier_implementation = py::module_::import(module_name.c_str());
