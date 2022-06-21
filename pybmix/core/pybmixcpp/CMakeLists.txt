@@ -5,7 +5,7 @@ message("CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}")
 find_program(CCACHE_PROGRAM ccache)
 if (CCACHE_PROGRAM)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "${CCACHE_PROGRAM}")
-endif()
+endif ()
 
 project(bayesmix)
 
@@ -42,7 +42,7 @@ if (NOT Protobuf_FOUND AND NOT PROTOBUF_FOUND AND NOT TARGET protobuf::libprotob
         message(FATAL_ERROR
                 "Your cmake version is too old: either install a newer version (>=3.20)"
                 " or install google's protocol buffer (protobuf) library by hand.")
-    endif()
+    endif ()
 
     include(FetchContent)
     set(FETCHCONTENT_QUIET OFF)
@@ -73,7 +73,7 @@ if (NOT Protobuf_FOUND AND NOT PROTOBUF_FOUND AND NOT TARGET protobuf::libprotob
     message("   --> PROTOBUF VERSION: ${Protobuf_VERSION}")
     message("   --> PROTOBUF Found: ${Protobuf_FOUND}")
 
-endif()
+endif ()
 
 option(DISABLE_TESTS
         "If tests should be compiled or no" OFF)
@@ -115,7 +115,7 @@ set(COMPILE_OPTIONS -D_REENTRANT -fPIC -fvisibility=hidden -std=c++17)
 file(GLOB ProtoFiles "${BASEPATH}/bayesmix/src/proto/*.proto")
 set(PROTO_DIR proto)
 
-foreach(PROTO_FILE IN LISTS ProtoFiles)
+foreach (PROTO_FILE IN LISTS ProtoFiles)
     message(STATUS "protoc proto(cc): ${PROTO_FILE}")
     get_filename_component(PROTO_DIR ${PROTO_FILE} DIRECTORY)
     get_filename_component(PROTO_NAME ${PROTO_FILE} NAME_WE)
@@ -132,19 +132,19 @@ foreach(PROTO_FILE IN LISTS ProtoFiles)
             VERBATIM)
     list(APPEND PROTO_HDRS ${PROTO_HDR})
     list(APPEND PROTO_SRCS ${PROTO_SRC})
-endforeach()
+endforeach ()
 
 SET_SOURCE_FILES_PROPERTIES(${PROTO_SRCS} ${PROTO_HDRS} PROPERTIES GENERATED TRUE)
 
 get_directory_property(HAS_PARENT PARENT_DIRECTORY)
-if(HAS_PARENT)
+if (HAS_PARENT)
     set(BAYESMIX_INCLUDE_PATHS ${INCLUDE_PATHS} PARENT_SCOPE)
     set(BAYESMIX_LINK_LIBRARIES ${LINK_LIBRARIES} PARENT_SCOPE)
     set(BAYESMIX_COMPILE_OPTIONS ${COMPILE_OPTIONS} PARENT_SCOPE)
     set(PROTO_HEADERS ${PROTO_HDRS} PARENT_SCOPE)
     set(PROTO_SOURCES ${PROTO_SRCS} PARENT_SCOPE)
     set(ProtoFiles ${ProtoFiles} PARENT_SCOPE)
-endif()
+endif ()
 
 
 # Build library object
@@ -161,4 +161,4 @@ add_library(bayesmixlib $<TARGET_OBJECTS:bayesmix>)
 
 if (NOT DISABLE_EXAMPLES)
     add_subdirectory(examples)
-endif()
+endif ()

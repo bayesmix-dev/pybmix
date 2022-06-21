@@ -1,5 +1,6 @@
 #ifndef PYBMIX_AUXILIARY_FUNCTIONS_H
 #define PYBMIX_AUXILIARY_FUNCTIONS_H
+
 #include <random>
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>

@@ -10,9 +10,11 @@
 
 namespace py = pybind11;
 
-PYBIND11_MODULE(pybmixcpp, m) {
-  py::add_ostream_redirect(m, "ostream_redirect");
-  add_algorithm_wrapper(m);
-  add_serialized_collector(m);
-  m.def("_minbinder_cluster_estimate", &bayesmix::cluster_estimate);
+PYBIND11_MODULE(pybmixcpp, m
+) {
+py::add_ostream_redirect(m,
+"ostream_redirect");
+add_algorithm_wrapper(m);
+add_serialized_collector(m);
+m.def("_minbinder_cluster_estimate", &bayesmix::cluster_estimate);
 }
