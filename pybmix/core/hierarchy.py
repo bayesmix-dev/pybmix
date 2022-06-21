@@ -73,9 +73,10 @@ class PythonHierarchy(BaseHierarchy):
     ID = hierarchy_id.PythonHier
     NAME = hierarchy_id.HierarchyId.Name(ID)
 
-    def __init__(self, prior_params=None):
+    def __init__(self, hier_implementation, prior_params=None):
         self.prior_params = hprior.PythonHierPrior()
         self.check_prior_params(self.prior_params, prior_params)
+        self.hier_implementation = hier_implementation
 
     def make_default_fixed_params(self, y, exp_num_clusters=5):
         raise NotImplementedError("make_default_fixed_params not implemented for PythonHierarchy")

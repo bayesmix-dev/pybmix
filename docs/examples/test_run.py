@@ -29,7 +29,7 @@ plt.show()
 
 mixing = DirichletProcessMixing(total_mass=5)  # DP mixing
 
-hierarchy = PythonHierarchy()
+hierarchy = PythonHierarchy("NNIG_Hierarchy_1")
 
 # Checking that other classes work too
 # hierarchy = UnivariateNormal()
@@ -37,7 +37,7 @@ hierarchy = PythonHierarchy()
 
 mixture = MixtureModel(mixing, hierarchy)
 
-mixture.run_mcmc(y, algorithm="Neal2", niter=110, nburn=10, hier_implementation="NNIG_Hierarchy_2")
+mixture.run_mcmc(y, algorithm="Neal2", niter=110, nburn=10)
 
 from pybmix.estimators.density_estimator import DensityEstimator
 

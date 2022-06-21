@@ -31,7 +31,7 @@ class MixtureModel(object):
         self.mixing = mixing
         self.hierarchy = hierarchy
 
-    def run_mcmc(self, y, algorithm="Neal2", niter=1000, nburn=500, rng_seed=-1, hier_implementation="NNIG_Hierarchy"):
+    def run_mcmc(self, y, algorithm="Neal2", niter=1000, nburn=500, rng_seed=-1):
         if algorithm not in (MARGINAL_ALGORITHMS + CONDITIONAL_ALGORITHMS):
             raise ValueError(
                 "'algorithm' parameter must be one of [{0}], found {1} instead".format(
@@ -44,7 +44,7 @@ class MixtureModel(object):
             self.hierarchy.prior_params.SerializeToString(),
             self.mixing.prior_proto.SerializeToString())
         if self.hierarchy.NAME == 'PythonHier':
-            self._algo.change_module(hier_implementation)
+            self._algo.change_module(self.hierarchy.hier_implementation)
 
         with ostream_redirect(stdout=True, stderr=True):
             self._algo.run(y, niter, nburn, rng_seed)
