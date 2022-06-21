@@ -115,7 +115,7 @@ def update_hypers(states, hypers, rng):
     # print("States: ", states)
     # Set the hyperparameters(here set like in bayesmix/resources/tutorial/nnig_ngg.asciipb)
     # For mu0
-    mu00 = 5.5
+    mu00 = 1
     sig200 = 2.25
     # For lambda0
     alpha00 = 0.2

@@ -90,4 +90,4 @@ def is_conjugate():
 
 
 def update_hypers(states, hypers, rng):
-    return [hypers[0], hypers[1], hypers[2], hypers[3]]
+    return hypers
