@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13.0)
 project(pybmixcpp)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(COMPILE_OPTIONS -D_REENTRANT -fPIC)
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -funroll-loops -ftree-vectorize")
