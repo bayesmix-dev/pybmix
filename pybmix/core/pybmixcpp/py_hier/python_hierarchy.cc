@@ -109,17 +109,21 @@ void PythonHierarchy::set_module(const std::string &module_name) {
   clear_summary_statistics_evaluator =
       hier_implementation.attr("clear_summary_statistics");
   draw_evaluator = hier_implementation.attr("draw");
+  is_conjugate_evaluator = hier_implementation.attr("is_conjugate");
   initialize_state_evaluator = hier_implementation.attr("initialize_state");
   initialize_hypers_evaluator = hier_implementation.attr("initialize_hypers");
-  is_conjugate_evaluator = hier_implementation.attr("is_conjugate");
   like_lpdf_evaluator = hier_implementation.attr("like_lpdf");
-  marg_lpdf_evaluator = hier_implementation.attr("marg_lpdf");
-  posterior_hypers_evaluator =
-      hier_implementation.attr("compute_posterior_hypers");
-  sample_full_cond_evaluator = hier_implementation.attr("sample_full_cond");
+  update_hypers_evaluator = hier_implementation.attr("update_hypers");
   update_summary_statistics_evaluator =
       hier_implementation.attr("update_summary_statistics");
-  update_hypers_evaluator = hier_implementation.attr("update_hypers");
+
+  if (is_conjugate_evaluator().cast<bool>()) {
+    posterior_hypers_evaluator =
+        hier_implementation.attr("compute_posterior_hypers");
+    marg_lpdf_evaluator = hier_implementation.attr("marg_lpdf");
+  } else {
+    sample_full_cond_evaluator = hier_implementation.attr("sample_full_cond");
+  }
 }
 
 //! C++
@@ -331,17 +335,18 @@ void PythonHierarchy::update_hypers(
   std::vector<std::vector<double>> pass_states{};
   pass_states.reserve(size_states);
   unsigned int size;
-  for (auto &st : states){
+  for (auto &st : states) {
     size = st.general_state().size();
     std::vector<double> aux_v{};
     aux_v.reserve(size);
     for (int i = 0; i < size; ++i) {
-        aux_v.push_back((st.general_state().data())[i]);
+      aux_v.push_back((st.general_state().data())[i]);
     }
     pass_states.push_back(aux_v);
   }
   synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_gen);
-  py::list new_hypers = update_hypers_evaluator(pass_states, hypers->generic_hypers, py_gen);
+  py::list new_hypers =
+      update_hypers_evaluator(pass_states, hypers->generic_hypers, py_gen);
   synchronize_py_to_cpp_state(bayesmix::Rng::Instance().get(), py_gen);
   hypers->generic_hypers = list_to_vector(new_hypers);
 }

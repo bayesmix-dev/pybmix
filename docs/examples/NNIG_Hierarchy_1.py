@@ -85,15 +85,9 @@ def clear_summary_statistics(sum_stats):
     return [data_sum, data_sum_squares]
 
 
-def sample_full_cond(state, sum_stats, rng, curr_vals, hypers):
-    pass
-
-
 def is_conjugate():
     return True
 
 
 def update_hypers(states, hypers, rng):
     return [hypers[0], hypers[1], hypers[2], hypers[3]]
-
-

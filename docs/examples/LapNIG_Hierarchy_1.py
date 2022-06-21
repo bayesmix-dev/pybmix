@@ -45,7 +45,7 @@ def update_summary_statistics(x, add, sum_stats, state, cluster_data_values):
     else:
         sum_stats[0] -= abs(state[0] - x[0])
         ind = np.where(cluster_data_values == x)
-        cluster_data_values = np.delete(cluster_data_values,ind[0][0],ind[1][0])
+        cluster_data_values = np.delete(cluster_data_values, ind[0][0], ind[1][0])
     return [sum_stats, cluster_data_values]
 
 
@@ -120,18 +120,9 @@ def eval_like_lpdf_unconstrained(unconstrained_parameters, is_current, sum_stats
     return np.log(0.5 / scale) + (-0.5 / scale * diff_sum)
 
 
-def marg_lpdf(x, hypers):
-    pass
-
-
-def compute_posterior_hypers(card, hypers, sum_stats):
-    pass
-
-
 def is_conjugate():
     return False
 
 
 def update_hypers(states, hypers, rng):
     return [hypers[0], hypers[1], hypers[2], hypers[3], hypers[4], hypers[5]]
-
