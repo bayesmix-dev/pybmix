@@ -133,19 +133,18 @@ def update_hypers(states, hypers, rng):
         b_n += 1 / var
         num += mean / var
         beta_n += (hypers[0] - mean) * (hypers[0] - mean) / var
-    var = hypers[1] * b_n + 1/sig200
+    var = hypers[1] * b_n + 1 / sig200
     b_n += b00
-    num = hypers[1] * num + mu00/sig200
+    num = hypers[1] * num + mu00 / sig200
     beta_n = beta00 + 0.5 * beta_n
-    sig_n = 1/var
-    mu_n = num/var
-    alpha_n = alpha00 + 0.5*len(states)
-    a_n = a00 + len(states)*hypers[2]
+    sig_n = 1 / var
+    mu_n = num / var
+    alpha_n = alpha00 + 0.5 * len(states)
+    a_n = a00 + len(states) * hypers[2]
     # Update hyperparameters with posterior random Gibbs sampling
     new_mean = ss.norm.rvs(mu_n, sig_n, random_state=rng)
-    new_var_scaling = ss.gamma.rvs(a=alpha_n, loc=0, scale=1./beta_n, random_state=rng)
+    new_var_scaling = ss.gamma.rvs(a=alpha_n, loc=0, scale=1. / beta_n, random_state=rng)
     new_shape = hypers[2]
-    new_scale = ss.gamma.rvs(a=a_n, loc=0, scale=1./b_n, random_state=rng)
+    new_scale = ss.gamma.rvs(a=a_n, loc=0, scale=1. / b_n, random_state=rng)
     # print("New Hypers: ", [new_mean, new_var_scaling, new_shape, new_scale])
     return [new_mean, new_var_scaling, new_shape, new_scale]
-

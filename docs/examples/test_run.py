@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.realpath(CORE_DIR))
 import numpy as np
 import matplotlib.pyplot as plt
 from pybmix.core.mixing import DirichletProcessMixing
-from pybmix.core.hierarchy import PythonHierarchy, UnivariateNormal
+from pybmix.core.hierarchy import PythonHierarchy
 from pybmix.core.mixture_model import MixtureModel
 
 np.random.seed(2021)

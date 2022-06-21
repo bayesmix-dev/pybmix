@@ -23,7 +23,6 @@ class DensityEstimator(object):
         if intervals.ndim == 1:
             return np.linspace(intervals[0], intervals[1], npoints)
 
-        
         marginal_grids = []
         for i in range(intervals.shape[0]):
             marginal_grids.append(
@@ -48,4 +47,3 @@ class DensityEstimator(object):
             dens = np.mean(dens, axis=0)
 
         return dens
-

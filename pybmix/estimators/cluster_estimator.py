@@ -1,13 +1,15 @@
-import numpy as np
-
 import os
 import sys
+
+import numpy as np
+
 HERE = os.path.dirname(os.path.realpath(__file__))
 BUILD_DIR = os.path.join(HERE, "../../build/")
 sys.path.insert(0, os.path.realpath(BUILD_DIR))
 
 from pybmix.core.mixture_model import MixtureModel
 from pybmixcpp import _minbinder_cluster_estimate, ostream_redirect
+
 
 class ClusterEstimator(object):
     """
@@ -25,6 +27,7 @@ class ClusterEstimator(object):
         only the 'samples' method, that looks for the best partition among the
         ones visited by the MCMC sampler.
     """
+
     def __init__(self, mixture_model: MixtureModel, loss="binder_equal",
                  method="samples"):
         self.model = mixture_model
@@ -37,7 +40,7 @@ class ClusterEstimator(object):
             with ostream_redirect(stdout=True, stderr=True):
                 return _minbinder_cluster_estimate(
                     self.chain.extract("cluster_allocs"))
-        
+
         else:
             raise ValueError(
                 "cluster point estimate only supports method='samples' and "
@@ -50,6 +53,5 @@ class ClusterEstimator(object):
         out = []
         for l in labels:
             out.append(np.where(partition == l)[0])
-        
+
         return out
-    

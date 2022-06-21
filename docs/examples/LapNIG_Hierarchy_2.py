@@ -45,7 +45,7 @@ def update_summary_statistics(x, add, sum_stats, state, cluster_data_values):
     else:
         sum_stats[0] -= abs(state[0] - x[0])
         ind = np.where(cluster_data_values == x)
-        cluster_data_values = np.delete(cluster_data_values,ind[0][0],ind[1][0])
+        cluster_data_values = np.delete(cluster_data_values, ind[0][0], ind[1][0])
     return [sum_stats, cluster_data_values]
 
 

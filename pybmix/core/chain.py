@@ -1,9 +1,10 @@
 import logging
+
 import numpy as np
 from google.protobuf.pyext._message import RepeatedScalarContainer
 
-from pybmix.utils.proto_utils import get_field
 import pybmix.proto.matrix_pb2 as matrix_pb2
+from pybmix.utils.proto_utils import get_field
 
 
 class MCMCchain(object):
@@ -18,8 +19,9 @@ class MCMCchain(object):
         serialized protobuf messages representing the states of the MCMC
     objtype: 
     """
+
     def __init__(self, serialized_chain, objtype, deserialize=True):
-        if len(serialized_chain) == 0: 
+        if len(serialized_chain) == 0:
             logging.error("Supplied empty 'serialized_chain', aborting")
             return
 
@@ -72,7 +74,7 @@ class MCMCchain(object):
             out = self.to_arviz(param_name, chain)
 
         return out
-    
+
     def _extract_repeated(self, chain, extractor):
         first = extractor(chain[0])
         out = np.empty((len(chain), len(first)), dtype=type(first[0]))
@@ -83,7 +85,7 @@ class MCMCchain(object):
 
     def _extract_vector(self, chain, extractor):
         def to_numpy(msg):
-           return np.array(msg.data) 
+            return np.array(msg.data)
 
         first = extractor(chain[0])
         out = np.empty((len(chain), first.size))
@@ -95,22 +97,23 @@ class MCMCchain(object):
         def to_numpy(msg):
             order = "T" if msg.rowmajor else "F"
             return np.array(msg.data).reshape(msg.rows, msg.cols, order=order)
-        
+
         first = extractor(chain[0])
         out = np.empty((len(chain), first.rows, first.cols))
         for i in range(len(chain)):
             out[i, :, :] = to_numpy(extractor(chain[i]))
         return out
 
-
     def _get_extractor(self, param_name):
         if self.chain is None:
-            def extractor(x): return get_field(self._deserialize(x), param_name)
+            def extractor(x):
+                return get_field(self._deserialize(x), param_name)
         else:
-            def extractor(x): return get_field(x, param_name)
+            def extractor(x):
+                return get_field(x, param_name)
 
         return extractor
-    
+
     @staticmethod
     def to_arviz(name, chain):
         import arviz as az

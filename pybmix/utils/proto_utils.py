@@ -1,9 +1,9 @@
 import logging
 
-from google.protobuf.message import Message
 from google.protobuf.internal.containers import (
     MutableMapping, RepeatedCompositeFieldContainer,
     RepeatedScalarFieldContainer)
+from google.protobuf.message import Message
 from google.protobuf.pyext._message import RepeatedCompositeContainer
 
 
@@ -94,7 +94,7 @@ def get_oneof_names(oneof_name, msg):
 
 
 def get_oneof_types(oneof_name, msg):
-    return [x.message_type.name for x in 
+    return [x.message_type.name for x in
             msg.DESCRIPTOR.oneofs_by_name[oneof_name].fields]
 
 
@@ -106,7 +106,7 @@ def set_shallow_field(fieldname, msg, val):
         rep.append(val)
         success = True
     elif typ in {RepeatedCompositeFieldContainer,
-                RepeatedCompositeContainer}:
+                 RepeatedCompositeContainer}:
         rep = getattr(msg, fieldname)
         rep.add().CopyFrom(val)
         success = True
@@ -118,7 +118,5 @@ def set_shallow_field(fieldname, msg, val):
         else:
             setattr(msg, fieldname, val)
             success = True
-    
+
     return success
-
-

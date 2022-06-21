@@ -39,7 +39,7 @@ class TriangularMemoizer(object):
             self.memo[a][0] = 0
             for b in range(1, a + 1):
                 res = self.first_term_multiplier(a, b) * self.__call__(a - 1, b) + \
-                    self.second_term_multipier(a, b) * self.__call__(a - 1, b - 1)
+                      self.second_term_multipier(a, b) * self.__call__(a - 1, b - 1)
                 self.memo[a][b] = res
 
 
@@ -52,11 +52,11 @@ class generalized_factorial_memoizer(TriangularMemoizer):
     The generalized factorial with parameter sigma in [0, 1) satisfy the
     triangular recurrence relation
     s(n, k) = (n - 1 - sigma * k) s(n - 1, k) + sigma * s(n - 1, k-1)
-    """ 
+    """
 
     def __init__(self, sigma):
-        def first_arg(n, k): return n-1 - sigma * k
-        def second_arg(n, k): return sigma
-        super().__init__(first_arg, second_arg)
-    
+        def first_arg(n, k): return n - 1 - sigma * k
 
+        def second_arg(n, k): return sigma
+
+        super().__init__(first_arg, second_arg)

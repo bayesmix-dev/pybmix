@@ -1,13 +1,12 @@
 import abc
 import logging
-import numpy as np
 
-from joblib import Parallel, delayed
+import numpy as np
 from scipy.special import loggamma, gamma
 
 import pybmix.proto.mixing_id_pb2 as mixing_id
 from pybmix.proto.distribution_pb2 import BetaDistribution, GammaDistribution
-from pybmix.proto.mixing_prior_pb2 import DPPrior, PYPrior, TruncSBPrior, PythonMixPrior
+from pybmix.proto.mixing_prior_pb2 import DPPrior, PYPrior, TruncSBPrior
 from pybmix.utils.combinatorials import stirling, generalized_factorial_memoizer
 
 

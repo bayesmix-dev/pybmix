@@ -12,12 +12,11 @@
 #
 import os
 import sys
+
 sys.path.insert(0, os.path.abspath('.'))
 sys.path.insert(0, os.path.abspath('../'))
 sys.path.insert(0, os.path.join(os.path.abspath('../'),
                                 "pybmix/core/pybmixcpp/bayesmix_"))
-
-
 
 # -- Project information -----------------------------------------------------
 
@@ -27,7 +26,6 @@ author = 'Mario Beraha'
 
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -53,7 +51,7 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = [
-    '_build', 'Thumbs.db', '.DS_Store', '../lib', 
+    '_build', 'Thumbs.db', '.DS_Store', '../lib',
     '../pybmix/core/pybmixcpp']
 
 # html_extra_path = ["protos.html"]

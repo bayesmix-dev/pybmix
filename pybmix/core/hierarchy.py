@@ -1,4 +1,5 @@
 import abc
+
 import numpy as np
 
 import pybmix.proto.hierarchy_id_pb2 as hierarchy_id
