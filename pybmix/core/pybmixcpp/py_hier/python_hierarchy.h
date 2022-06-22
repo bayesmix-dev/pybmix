@@ -353,7 +353,6 @@ protected:
     py::module_ hier_implementation;
 
     //! Py methods implemented in hier_implementation
-    py::object clear_summary_statistics_evaluator;
     py::object draw_evaluator;
     py::object initialize_state_evaluator;
     py::object initialize_hypers_evaluator;

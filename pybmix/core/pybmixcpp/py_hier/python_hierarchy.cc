@@ -105,8 +105,6 @@ void PythonHierarchy::set_module(const std::string &module_name) {
 
     hier_implementation = py::module_::import(module_name.c_str());
 
-    clear_summary_statistics_evaluator =
-            hier_implementation.attr("clear_summary_statistics");
     draw_evaluator = hier_implementation.attr("draw");
     is_conjugate_evaluator = hier_implementation.attr("is_conjugate");
     initialize_state_evaluator = hier_implementation.attr("initialize_state");
@@ -244,8 +242,7 @@ bool PythonHierarchy::is_conjugate() const {
 void PythonHierarchy::clear_summary_statistics() {
     Eigen::MatrixXd empty;
     cluster_data_values = empty;
-    py::list sum_stats_py = clear_summary_statistics_evaluator(sum_stats);
-    sum_stats = list_to_vector(sum_stats_py);
+    sum_stats = std::vector<double>(0,sum_stats.size());
 }
 
 //! PYTHON
