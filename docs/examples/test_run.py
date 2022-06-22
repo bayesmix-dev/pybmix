@@ -12,6 +12,8 @@ import matplotlib.pyplot as plt
 from pybmix.core.mixing import DirichletProcessMixing
 from pybmix.core.hierarchy import PythonHierarchy
 from pybmix.core.mixture_model import MixtureModel
+from pybmix.estimators.density_estimator import DensityEstimator
+
 
 np.random.seed(2021)
 
@@ -29,7 +31,7 @@ plt.show()
 
 mixing = DirichletProcessMixing(total_mass=5)  # DP mixing
 
-hierarchy = PythonHierarchy("NNIG_Hierarchy_1")
+hierarchy = PythonHierarchy("LapNIG_Hierarchy")
 
 # Checking that other classes work too
 # hierarchy = UnivariateNormal()
@@ -37,10 +39,10 @@ hierarchy = PythonHierarchy("NNIG_Hierarchy_1")
 
 mixture = MixtureModel(mixing, hierarchy)
 
-niter = 330
-mixture.run_mcmc(y, algorithm="Neal2", niter=niter, nburn=30)
+niter = 110
+nburn = 10
+mixture.run_mcmc(y, algorithm="Neal8", niter=niter, nburn=nburn)
 
-from pybmix.estimators.density_estimator import DensityEstimator
 
 grid = np.linspace(-6, 6, 500)
 dens_est = DensityEstimator(mixture)
@@ -50,7 +52,7 @@ plt.hist(y, density=True, bins=20)
 plt.plot(grid, np.mean(densities, axis=0), lw=3, label="predictive density")
 plt.legend()
 plt.show()
-idxs = [int(niter*0.1), int(niter*0.2), int(niter*0.9)]
+idxs = [int((niter - nburn) * 0.1), int((niter - nburn) * 0.2), int((niter - nburn) * 0.9)]
 
 for idx in idxs:
     plt.plot(grid, densities[idx, :], "--", label="iteration: {0}".format(idx))
