@@ -31,7 +31,7 @@ plt.show()
 
 mixing = DirichletProcessMixing(total_mass=5)  # DP mixing
 
-hierarchy = PythonHierarchy("LapNIG_Hierarchy")
+hierarchy = PythonHierarchy("NNIG_Hierarchy_NGG")
 
 # Checking that other classes work too
 # hierarchy = UnivariateNormal()
@@ -41,7 +41,7 @@ mixture = MixtureModel(mixing, hierarchy)
 
 niter = 110
 nburn = 10
-mixture.run_mcmc(y, algorithm="Neal8", niter=niter, nburn=nburn)
+mixture.run_mcmc(y, algorithm="Neal2", niter=niter, nburn=nburn)
 
 
 grid = np.linspace(-6, 6, 500)

@@ -8,8 +8,7 @@ which have a Normal-InverseGamma centering distribution. That is:
        (mu,lam) ~ N-IG(mu0, sigma0, alpha0, beta0)
 This hierarchy is non conjugate, therefore the following methods have to be
 implemented: is_conjugate, like_lpdf, initialize_state, initialize_hypers,
-update_hypers, draw, update_summary_statistics, clear_summary_statistics,
-sample_full_cond.
+update_hypers, draw, update_summary_statistics, sample_full_cond.
 The state is a list passed from c++ as std::vector, composed of [mu, lam].
 Similarly, the hypers is a list composed of [mu_0, sigma0, alpha0, beta0,
 mean_var, log_scale_var], all scalar values.
@@ -101,7 +100,7 @@ def update_summary_statistics(x, add, sum_stats, state, cluster_data_values):
     In this model, the summary statistics are the current and proposed values of the sum of absolute differences,
 
     :param list x: datum (univariate)
-    :param bool add: True, if the datum has to be added to the cluster, False, if it has to be removed from the cluster
+    :param bool add: if True, the datum has to be added to the cluster, if False, it has to be removed from the cluster
     :param list sum_stats: list of summary statistics used
     :param list state: model parameters
     :param list cluster_data_values: data in the current cluster
@@ -109,7 +108,7 @@ def update_summary_statistics(x, add, sum_stats, state, cluster_data_values):
     """
     mu = state[0]
     if not len(sum_stats):
-        sum_stats = [0, 0]
+        sum_stats = [0, 0]  # initialize sum_stats to zeros
     if add:
         sum_stats[0] += abs(mu - x[0])
         cluster_data_values = np.append(cluster_data_values, x)
@@ -118,10 +117,6 @@ def update_summary_statistics(x, add, sum_stats, state, cluster_data_values):
         ind = np.where(cluster_data_values == x)
         cluster_data_values = np.delete(cluster_data_values, ind[0][0], ind[1][0])
     return [sum_stats, cluster_data_values]
-
-
-def clear_summary_statistics(sum_stats):
-    return [0, 0]
 
 
 def sample_full_cond(state, sum_stats, rng, cluster_data_values, hypers):
@@ -163,7 +158,8 @@ def _propose_rwmh(curr_unc_params, hypers, rng):
     mean_var = hypers[4]
     log_scale_var = hypers[5]
     candidate_mean = curr_unc_params[0] + ss.norm.rvs(loc=0, scale=np.sqrt(mean_var), size=1, random_state=rng)
-    candidate_log_scale = curr_unc_params[1] + ss.norm.rvs(loc=0, scale=np.sqrt(log_scale_var), size=1, random_state=rng)
+    candidate_log_scale = curr_unc_params[1] + ss.norm.rvs(loc=0, scale=np.sqrt(log_scale_var), size=1,
+                                                           random_state=rng)
     proposal = [candidate_mean, candidate_log_scale]
     return proposal
 
