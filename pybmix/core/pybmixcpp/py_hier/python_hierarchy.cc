@@ -231,7 +231,6 @@ void PythonHierarchy::initialize() {
     posterior_hypers = *hypers;
     clear_data();
     clear_summary_statistics();
-
 }
 
 //! PYTHON
@@ -241,8 +240,7 @@ bool PythonHierarchy::is_conjugate() const {
 
 //! PYTHON
 void PythonHierarchy::clear_summary_statistics() {
-    Eigen::MatrixXd empty;
-    cluster_data_values = empty;
+    cluster_data_values.resize(0,0);
     sum_stats = std::vector<double>(0,sum_stats.size());
 }
 
