@@ -63,10 +63,10 @@ def sample_full_cond(state, sum_stats, rng, curr_vals, hypers):
     # mh_mean_var = hypers[4]
     # mh_log_scale_var = hypers[5]
     curr_unc_params = [state[0], np.log(state[1])]
-    prop_unc_params = propose_rwmh(curr_unc_params, hypers, rng)
-    log_target_prop = eval_prior_lpdf_unconstrained(prop_unc_params, hypers) + eval_like_lpdf_unconstrained(
+    prop_unc_params = _propose_rwmh(curr_unc_params, hypers, rng)
+    log_target_prop = _eval_prior_lpdf_unconstrained(prop_unc_params, hypers) + _eval_like_lpdf_unconstrained(
         prop_unc_params, False, sum_stats, curr_vals)
-    log_target_curr = eval_prior_lpdf_unconstrained(curr_unc_params, hypers) + eval_like_lpdf_unconstrained(
+    log_target_curr = _eval_prior_lpdf_unconstrained(curr_unc_params, hypers) + _eval_like_lpdf_unconstrained(
         curr_unc_params, True, sum_stats, curr_vals)
     log_a_rate = log_target_prop - log_target_curr
     log_alpha = np.log(ss.uniform.rvs(0, 1, size=1, random_state=rng))
@@ -78,7 +78,7 @@ def sample_full_cond(state, sum_stats, rng, curr_vals, hypers):
     return [state, sum_stats]
 
 
-def propose_rwmh(curr_vals, hypers, rng):
+def _propose_rwmh(curr_vals, hypers, rng):
     # mean = hypers[0]
     # var = hypers[1]
     # shape = hypers[2]
@@ -91,7 +91,7 @@ def propose_rwmh(curr_vals, hypers, rng):
     return proposal
 
 
-def eval_prior_lpdf_unconstrained(unconstrained_parameters, hypers):
+def _eval_prior_lpdf_unconstrained(unconstrained_parameters, hypers):
     mean = hypers[0]
     # var = hypers[1]
     shape = hypers[2]
@@ -106,7 +106,7 @@ def eval_prior_lpdf_unconstrained(unconstrained_parameters, hypers):
            log_scale
 
 
-def eval_like_lpdf_unconstrained(unconstrained_parameters, is_current, sum_stats, cluster_data_values):
+def _eval_like_lpdf_unconstrained(unconstrained_parameters, is_current, sum_stats, cluster_data_values):
     mean = unconstrained_parameters[0]
     log_scale = unconstrained_parameters[1]
     scale = np.exp(log_scale)
