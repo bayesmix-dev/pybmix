@@ -231,6 +231,7 @@ void PythonHierarchy::initialize() {
     posterior_hypers = *hypers;
     clear_data();
     clear_summary_statistics();
+
 }
 
 //! PYTHON

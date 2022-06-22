@@ -47,7 +47,7 @@ public:
 
     const SerializedCollector &get_collector() const { return collector; }
 
-    void change_module(const std::string &module_name);//TODO change to change_hier
+    void change_hier(const std::string &module_name);
 };
 
 void add_algorithm_wrapper(pybind11::module &m);
