@@ -48,6 +48,12 @@ void AlgorithmWrapper::change_hier(const std::string &module_name) {
     }
 }
 
+void AlgorithmWrapper::change_mix(const std::string &module_name) {
+    if (dynamic_cast<PythonMixing *>(mixing.get()) != nullptr) {
+        static_cast<PythonMixing *>(mixing.get())->set_module(module_name.c_str());
+    }
+}
+
 void add_algorithm_wrapper(pybind11::module &m) {
     namespace py = pybind11;
     py::class_<AlgorithmWrapper>(m, "AlgorithmWrapper")
@@ -58,5 +64,6 @@ void add_algorithm_wrapper(pybind11::module &m) {
             .def("run", &AlgorithmWrapper::run)
             .def("eval_density", &AlgorithmWrapper::eval_density)
             .def("get_collector", &AlgorithmWrapper::get_collector)
-            .def("change_hier", &AlgorithmWrapper::change_hier);
+            .def("change_hier", &AlgorithmWrapper::change_hier)
+            .def("change_mix", &AlgorithmWrapper::change_mix);
 }
