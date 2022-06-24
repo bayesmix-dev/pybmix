@@ -28,9 +28,9 @@ using namespace py::literals;
 Python Hierarchy
 
 Deriving from AbstractHierarchy, the PythonHierarchy is a generic class for
-implementing models in Python. The methods marked with PYTHON are to be
-implemented in a .py file located in docs/examples. The state and hypers are
-generic, stored in std::vector containers.
+implementing models in Python. The methods marked with PYTHON in source are
+to be implemented in a .py file located in docs/examples. The state and hypers
+are generic, stored in std::vector containers.
 */
 
 namespace Python {
@@ -337,7 +337,6 @@ protected:
     const Eigen::MatrixXd *dataset_ptr = nullptr;
 
     //! Set of values of data points belonging to this cluster
-    // std::list<Eigen::RowVectorXd> cluster_data_values;
     Eigen::MatrixXd cluster_data_values;
 
     //! Vector of summary statistics

@@ -45,7 +45,6 @@ std::shared_ptr <AbstractHierarchy> PythonHierarchy::deep_clone() const {
     return out;
 }
 
-//! C++
 std::shared_ptr <bayesmix::AlgorithmState::HierarchyHypers>
 PythonHierarchy::get_hypers_proto() const {
     bayesmix::Vector hypers_;
@@ -75,7 +74,6 @@ google::protobuf::Message *PythonHierarchy::get_mutable_prior() {
     return prior.get();
 }
 
-//! C++
 std::shared_ptr <bayesmix::AlgorithmState::ClusterState>
 PythonHierarchy::get_state_proto() const {
     bayesmix::Vector state_;
@@ -88,7 +86,6 @@ PythonHierarchy::get_state_proto() const {
     return out;
 }
 
-//! C++
 void PythonHierarchy::set_hypers_from_proto(
         const google::protobuf::Message &hypers_) {
     auto &hyperscast = downcast_hypers(hypers_).general_state();
@@ -123,7 +120,6 @@ void PythonHierarchy::set_module(const std::string &module_name) {
     }
 }
 
-//! C++
 void PythonHierarchy::set_state_from_proto(
         const google::protobuf::Message &state_) {
     auto &statecast = downcast_state(state_);

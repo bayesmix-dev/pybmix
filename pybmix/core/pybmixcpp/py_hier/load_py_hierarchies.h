@@ -8,8 +8,8 @@
 #include "python_hierarchy.h"
 #include "bayesmix/src/runtime/factory.h"
 
-//! Loads all available `Hierarchy` objects into the appropriate factory, so
-//! that they are ready to be chosen and used at runtime.
+//! Loads PythonHierarchy object into the appropriate factory, so
+//! that it is ready to be chosen and used at runtime.
 
 template<class AbstractProduct>
 using Builder = std::function<std::shared_ptr<AbstractProduct>()>;

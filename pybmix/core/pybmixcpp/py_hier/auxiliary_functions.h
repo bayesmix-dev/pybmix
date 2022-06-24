@@ -5,6 +5,9 @@
 #include <pybind11/embed.h>
 #include <pybind11/pybind11.h>
 
+//! Collection of auxiliary functions which simplify passing data and
+//! the random engine between python and C++
+
 namespace py = pybind11;
 using namespace py::literals;
 
