@@ -80,3 +80,6 @@ class PythonHierarchy(BaseHierarchy):
     def __init__(self, hier_implementation):
         self.prior_params = hprior.PythonHierPrior()
         self.hier_implementation = hier_implementation
+
+    def make_default_fixed_params(self, y):
+        raise NotImplementedError("make_default_fixed_params not implemented for PythonHierarchy")

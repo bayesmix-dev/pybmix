@@ -27,12 +27,6 @@ import numpy as np
 import scipy.stats as ss
 
 
-Parameters
-----------
-
-Return
-------
-
 def is_conjugate():
     """
 

@@ -33,7 +33,7 @@ to be implemented in a .py file located in docs/examples. The state and hypers
 are generic, stored in std::vector containers.
 */
 
-namespace Python {
+namespace PyHier {
 //! Custom container for State values
     struct State {
         std::vector<double> generic_state;
@@ -64,7 +64,7 @@ public:
     std::set<int> get_data_idx() const override { return cluster_data_idx; };
 
     //! Returns the struct of the current prior hyperparameters
-    Python::Hyperparams get_hypers() const { return *hypers; };
+    PyHier::Hyperparams get_hypers() const { return *hypers; };
 
     //! Writes current value of hyperparameters to a Protobuf message and
     //! return a shared_ptr.
@@ -89,20 +89,20 @@ public:
 
     //! Public wrapper for `marg_lpdf()` methods
     double get_marg_lpdf(
-            const Python::Hyperparams &params, const Eigen::RowVectorXd &datum,
+            const PyHier::Hyperparams &params, const Eigen::RowVectorXd &datum,
             const Eigen::RowVectorXd &covariate = Eigen::RowVectorXd(0)) const;
 
     //! Returns a pointer to the Protobuf message of the prior of this cluster
     google::protobuf::Message *get_mutable_prior() override;
 
     //! Returns the struct of the current posterior hyperparameters
-    Python::Hyperparams get_posterior_hypers() const { return posterior_hypers; };
+    PyHier::Hyperparams get_posterior_hypers() const { return posterior_hypers; };
 
     //! Returns (a pointer to) the prior model for the current hierarchy
     std::shared_ptr <AbstractPriorModel> get_prior() override { return nullptr; };
 
     //! Returns the struct of the current state
-    Python::State get_state() const { return state; };
+    PyHier::State get_state() const { return state; };
 
     //! Writes current state to a Protobuf message and return a shared_ptr
     //! New hierarchies have to first modify the field 'oneof val' in the
@@ -199,10 +199,10 @@ public:
     void clear_summary_statistics();
 
     //! Computes and return posterior hypers given data currently in this cluster
-    Python::Hyperparams compute_posterior_hypers() const;
+    PyHier::Hyperparams compute_posterior_hypers() const;
 
     //! Updates state values using the given (prior or posterior) hyperparameters
-    Python::State draw(const Python::Hyperparams &params);
+    PyHier::State draw(const PyHier::Hyperparams &params);
 
     //! Generates new state values from the centering posterior distribution
     //! @param update_params  Save posterior hypers after the computation?
@@ -266,7 +266,7 @@ protected:
     //! @param params     Container of (prior or posterior) hyperparameter values
     //! @param datum      Point which is to be evaluated
     //! @return           The evaluation of the lpdf
-    double marg_lpdf(const Python::Hyperparams &params,
+    double marg_lpdf(const PyHier::Hyperparams &params,
                      const Eigen::RowVectorXd &datum) const;
 
     //! Evaluates the log-marginal distribution of data in a single point
@@ -274,7 +274,7 @@ protected:
     //! @param datum      Point which is to be evaluated
     //! @param covariate  Covariate vector associated to datum
     //! @return           The evaluation of the lpdf
-    virtual double marg_lpdf(const Python::Hyperparams &params,
+    virtual double marg_lpdf(const PyHier::Hyperparams &params,
                              const Eigen::RowVectorXd &datum,
                              const Eigen::RowVectorXd &covariate) const;
 
@@ -313,13 +313,13 @@ protected:
     };
 
     //! Container for state values
-    Python::State state;
+    PyHier::State state;
 
     //! Container for prior hyperparameters values
-    std::shared_ptr <Python::Hyperparams> hypers;
+    std::shared_ptr <PyHier::Hyperparams> hypers;
 
     //! Container for posterior hyperparameters values
-    Python::Hyperparams posterior_hypers;
+    PyHier::Hyperparams posterior_hypers;
 
     //! Pointer to a Protobuf prior object for this class
     std::shared_ptr <bayesmix::PythonHierPrior> prior;

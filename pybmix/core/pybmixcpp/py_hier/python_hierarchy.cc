@@ -58,7 +58,7 @@ PythonHierarchy::get_hypers_proto() const {
 }
 
 double PythonHierarchy::get_marg_lpdf(
-        const Python::Hyperparams &params, const Eigen::RowVectorXd &datum,
+        const PyHier::Hyperparams &params, const Eigen::RowVectorXd &datum,
         const Eigen::RowVectorXd &covariate /*= Eigen::RowVectorXd(0)*/) const {
     if (this->is_dependent()) {
         return marg_lpdf(params, datum, covariate);
@@ -220,7 +220,7 @@ Eigen::VectorXd PythonHierarchy::prior_pred_lpdf_grid(
 }
 
 void PythonHierarchy::initialize() {
-    hypers = std::make_shared<Python::Hyperparams>();
+    hypers = std::make_shared<PyHier::Hyperparams>();
     check_prior_is_set();
     initialize_hypers();
     initialize_state();
@@ -241,8 +241,8 @@ void PythonHierarchy::clear_summary_statistics() {
 }
 
 //! PYTHON
-Python::Hyperparams PythonHierarchy::compute_posterior_hypers() const {
-    Python::Hyperparams post_params;
+PyHier::Hyperparams PythonHierarchy::compute_posterior_hypers() const {
+    PyHier::Hyperparams post_params;
     py::list post_params_py =
             posterior_hypers_evaluator(card, hypers->generic_hypers, sum_stats);
     post_params.generic_hypers = list_to_vector(post_params_py);
@@ -250,8 +250,8 @@ Python::Hyperparams PythonHierarchy::compute_posterior_hypers() const {
 }
 
 //! PYTHON
-Python::State PythonHierarchy::draw(const Python::Hyperparams &params) {
-    Python::State out;
+PyHier::State PythonHierarchy::draw(const PyHier::Hyperparams &params) {
+    PyHier::State out;
     synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_gen);
     py::list draw_py =
             draw_evaluator(state.generic_state, params.generic_hypers, py_gen);
@@ -267,7 +267,7 @@ void PythonHierarchy::sample_full_cond(const bool update_params /* = false */) {
         this->sample_prior();
     } else {
         if (this->is_conjugate()) {
-            Python::Hyperparams params =
+            PyHier::Hyperparams params =
                     update_params ? this->compute_posterior_hypers() : posterior_hypers;
             state = this->draw(params);
         } else {
@@ -386,7 +386,7 @@ void PythonHierarchy::create_empty_prior() {
 };
 
 void PythonHierarchy::create_empty_hypers() {
-    hypers.reset(new Python::Hyperparams);
+    hypers.reset(new PyHier::Hyperparams);
 };
 
 //! PYTHON
@@ -414,14 +414,14 @@ double PythonHierarchy::like_lpdf(const Eigen::RowVectorXd &datum) const {
 }
 
 //! PYTHON
-double PythonHierarchy::marg_lpdf(const Python::Hyperparams &params,
+double PythonHierarchy::marg_lpdf(const PyHier::Hyperparams &params,
                                   const Eigen::RowVectorXd &datum) const {
     double result =
             marg_lpdf_evaluator(datum, params.generic_hypers).cast<double>();
     return result;
 }
 
-double PythonHierarchy::marg_lpdf(const Python::Hyperparams &params,
+double PythonHierarchy::marg_lpdf(const PyHier::Hyperparams &params,
                                   const Eigen::RowVectorXd &datum,
                                   const Eigen::RowVectorXd &covariate) const {
     if (!this->is_dependent()) {
