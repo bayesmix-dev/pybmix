@@ -41,7 +41,7 @@ class MixtureModel(object):
             self.hierarchy.prior_params.SerializeToString(),
             self.mixing.prior_proto.SerializeToString())
         if self.hierarchy.NAME == 'PythonHier':
-            self._algo.change_hier(self.hierarchy.hier_implementation)
+            self._algo.load_py_hier_implementation(self.hierarchy.hier_implementation)
 
         with ostream_redirect(stdout=True, stderr=True):
             self._algo.run(y, niter, nburn, rng_seed)

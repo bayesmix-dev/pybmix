@@ -42,7 +42,7 @@ void AlgorithmWrapper::say_hello() {
     std::cout << "Hello from AlgorithmWrapper" << std::endl;
 }
 
-void AlgorithmWrapper::change_hier(const std::string &module_name) {
+void AlgorithmWrapper::load_py_hier_implementation(const std::string &module_name) {
     if (dynamic_cast<PythonHierarchy *>(hier.get()) != nullptr) {
         static_cast<PythonHierarchy *>(hier.get())->set_module(module_name.c_str());
     }
@@ -58,5 +58,5 @@ void add_algorithm_wrapper(pybind11::module &m) {
             .def("run", &AlgorithmWrapper::run)
             .def("eval_density", &AlgorithmWrapper::eval_density)
             .def("get_collector", &AlgorithmWrapper::get_collector)
-            .def("change_hier", &AlgorithmWrapper::change_hier);
+            .def("load_py_hier_implementation", &AlgorithmWrapper::load_py_hier_implementation);
 }
