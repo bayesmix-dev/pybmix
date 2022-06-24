@@ -40,6 +40,8 @@ class MixtureModel(object):
             self.algo_name, self.hierarchy.NAME, self.mixing.NAME,
             self.hierarchy.prior_params.SerializeToString(),
             self.mixing.prior_proto.SerializeToString())
+
+        # If using PythonHierarchy as hier load the implementation from the corresponding file
         if self.hierarchy.NAME == 'PythonHier':
             self._algo.load_py_hier_implementation(self.hierarchy.hier_implementation)
 
