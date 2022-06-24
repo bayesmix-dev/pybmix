@@ -29,7 +29,7 @@ y = sample_from_mixture(np.array([0.5, 0.5]), np.array([-3, 3]), np.array([1, 1]
 plt.hist(y, bins=20)
 plt.show()
 
-mixing = PythonMixing(mix_implementation="DP",state=[5], prior=[0])  # Python implementation of DP mixing
+mixing = PythonMixing(mix_implementation="DP_mixing",state=[5], prior=[0])  # Python implementation of DP mixing
 # mixing = DirichletProcessMixing(total_mass=5)  # DP mixing
 
 hierarchy = PythonHierarchy("NNIG_Hierarchy_NGG")
