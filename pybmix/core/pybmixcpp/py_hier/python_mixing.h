@@ -19,14 +19,14 @@
 namespace py = pybind11;
 using namespace py::literals;
 
-namespace PYTHON {
+namespace PyMix {
     struct State {
         std::vector<double> generic_state;
     };
-};  // namespace Python
+};  // namespace PyMix
 
 class PythonMixing
-        : public BaseMixing<PythonMixing, PYTHON::State,bayesmix::PythonMixPrior> {
+        : public BaseMixing<PythonMixing, PyMix::State,bayesmix::PythonMixPrior> {
 public:
     PythonMixing() = default;
     ~PythonMixing() = default;
