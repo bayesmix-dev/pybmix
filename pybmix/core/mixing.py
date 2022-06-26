@@ -317,35 +317,15 @@ class StickBreakMixing(BaseMixing):
 
 
 class PythonMixing(BaseMixing):
-    """ This class represents a Dirichlet Process used for mixing in a mixture
-    model. The Drichlet process depends on a 'total_mass' parameter, which
-    could also be random.
-
-    Parameters
-    ----------
-    total_mass : float greater than 0 or None
-                 total_mass (or concentration) parameter of the Dirichlet Process
-                 if None, assumes that 'total_mass_prior' is passed
-    """
     ID = mixing_id.PythonMix
     NAME = mixing_id.MixingId.Name(ID)
 
-    def __init__(self, mix_implementation, state, prior):
-        self._build_prior_proto(state, prior)
-        self.mix_implementation=mix_implementation
-        self.state = state
-        self.prior = prior
+    def __init__(self, mix_implementation):
+        self._build_prior_proto()
+        self.mix_implementation = mix_implementation
 
     def prior_cluster_distribution(self, grid, nsamples):
-        total_mass = self.state[0]
-        out = np.zeros_like(grid, dtype=np.float)
-        for i, g in enumerate(grid):
-            out[i] = gamma(total_mass) / gamma(total_mass + nsamples) * \
-                     stirling(nsamples, g) * (total_mass) ** g
+        pass
 
-        return out
-
-    def _build_prior_proto(self, state, prior):
+    def _build_prior_proto(self):
         self.prior_proto = PythonMixPrior()
-        total_mass = state[0]
-        self.prior_proto.values.data.append(total_mass)

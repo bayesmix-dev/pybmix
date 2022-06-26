@@ -31,13 +31,18 @@ void PythonMixing::set_module(const std::string &module_name) {
     std::cout << "Using the mixing implementation in: " << module_name << ".py" << std::endl;
 
     mix_implementation = py::module_::import(module_name.c_str());
-    
-    update_state_evaluator = mix_implementation.attr("update_state");
-    mass_existing_cluster_evaluator = mix_implementation.attr("mass_existing_cluster");
-    mass_new_cluster_evaluator = mix_implementation.attr("mass_new_cluster");
-    initialize_state_evaluator = mix_implementation.attr("initialize_state");
+
     is_conditional_evaluator = mix_implementation.attr("is_conditional");
-    mixing_weights_evaluator = mix_implementation.attr("mixing_weights");
+
+    update_state_evaluator = mix_implementation.attr("update_state");
+    initialize_state_evaluator = mix_implementation.attr("initialize_state");
+
+    if (is_conditional_evaluator().cast<bool>()) {
+        mixing_weights_evaluator = mix_implementation.attr("mixing_weights");
+    } else {
+        mass_existing_cluster_evaluator = mix_implementation.attr("mass_existing_cluster");
+        mass_new_cluster_evaluator = mix_implementation.attr("mass_new_cluster");
+    }
 
 }
 
@@ -47,7 +52,7 @@ void PythonMixing::update_state(
     auto priorcast = cast_prior();
     unsigned int n = allocations.size();
     synchronize_cpp_to_py_state(bayesmix::Rng::Instance().get(), py_gen);
-    py::list py_updated_state = update_state_evaluator(bayesmix::to_eigen(priorcast->values()), n, unique_values.size());
+    py::list py_updated_state = update_state_evaluator(state.generic_state, bayesmix::to_eigen(priorcast->values()), n, unique_values.size());
     state.generic_state = list_to_vector(py_updated_state);
     synchronize_py_to_cpp_state(bayesmix::Rng::Instance().get(), py_gen);
 }

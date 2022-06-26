@@ -6,8 +6,8 @@ def initialize_state():
     return [total_mass]
 
 
-def update_state(prior_values, allocation_size, unique_values):
-    return [5]
+def update_state(state, prior_values, allocation_size, unique_values):
+    return state
 
 
 def mass_existing_cluster(n, n_clust, log, propto, hier_card, state):
@@ -40,5 +40,5 @@ def is_conditional():
     return False
 
 
-def mixing_weights(log, propto, state):
-    pass
+# def mixing_weights(log, propto, state):
+#     pass
