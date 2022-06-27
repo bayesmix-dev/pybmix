@@ -30,8 +30,9 @@ import scipy.stats as ss
 def is_conjugate():
     """
 
-    Return
-    ------
+    Returns
+    -------
+    bool
         True for conjugate, False for non-conjugate hierarchies
     """
     return False
@@ -42,9 +43,9 @@ def like_lpdf(x, state):
 
     Parameters
     ----------
-    x: list
+    x : :obj:`list` of :obj:`float`
         point in which lpdf is evaluated
-    state: list
+    state : :obj:`list` of :obj:`float`
         model parameters
     """
     mu = state[0]
@@ -56,11 +57,12 @@ def initialize_state(hypers):
     """
     Parameters
     ----------
-    hypers: list
+    hypers : :obj:`list` of :obj:`float`
         model hyperparameters
 
-    Return
-    ------
+    Returns
+    -------
+    :obj:`list` of :obj:`float`
         initial value of the state
     """
     mu0 = hypers[0]
@@ -72,8 +74,9 @@ def initialize_state(hypers):
 def initialize_hypers():
     """
 
-    Return
-    ------
+    Returns
+    -------
+    :obj:`list` of :obj:`float`
         initial value of the hyperparameters
     """
     return [0, 10, 2, 1, 10, 1]
@@ -85,15 +88,16 @@ def update_hypers(state, hypers, rng):
 
     Parameters
     ----------
-    state: list
+    state : :obj:`list` of :obj:`float`
         model parameters
-    hypers: list
+    hypers : :obj:`list` of :obj:`float`
         model hyperparameters
-    rng:
+    rng : numpy.random._generator.Generator'
         random number generator to be used when sampling
 
-    Return
-    ------
+    Returns
+    -------
+    :obj:`list` of :obj:`float`
         updated hypers
     """
     return hypers
@@ -104,15 +108,16 @@ def draw(state, hypers, rng):
 
     Parameters
     ----------
-    state: list
+    state : :obj:`list` of :obj:`float`
         model parameters
-    hypers: list
+    hypers : :obj:`list` of :obj:`float`
         model hyperparameters
-    rng:
+    rng : numpy.random._generator.Generator
         random number generator to be used when sampling
 
-    Return
-    ------
+    Returns
+    -------
+    :obj:`list` of :obj:`float`
         sampled state values
     """
     mu0 = hypers[0]
@@ -132,20 +137,20 @@ def update_summary_statistics(x, add, sum_stats, state, cluster_data_values):
 
     Parameters
     ----------
-    x: list
+    x : :obj:`list` of :obj:`float`
         datum (univariate)
-    add: bool
+    add : bool
         if True, the datum has to be added to the cluster, if False, it has to be removed from the cluster
-    sum_stats: list
+    sum_stats : :obj:`list` of :obj:`float`
         list of summary statistics used
-    state: list
+    state : :obj:`list` of :obj:`float`
         model parameters
-    cluster_data_values: list
+    cluster_data_values : :obj:`list` of :obj:`float`
         data in the current cluster
 
-    Return
-    ------
-    list[list]:
+    Returns
+    -------
+    :obj:`list` of :obj:`list` of :obj:`float`
         updated summary statistics and cluster data values
     """
     mu = state[0]
@@ -166,20 +171,20 @@ def sample_full_cond(state, sum_stats, rng, cluster_data_values, hypers):
 
     Parameters
     ----------
-    state: list
+    state : :obj:`list` of :obj:`float`
         model parameters
-    sum_stats: list
+    sum_stats : :obj:`list` of :obj:`float`
         list of summary statistics used
-    rng:
+    rng : numpy.random._generator.Generator
         random number generator to be used when sampling
-    cluster_data_values: list
+    cluster_data_values : :obj:`list` of :obj:`float`
         data in the current cluster
-    hypers: list
+    hypers : :obj:`list` of :obj:`float`
         model hyperparameters
 
-    Return
-    ------
-    list[list]:
+    Returns
+    -------
+    :obj:`list` of :obj:`list` of :obj:`float`
         sampled state and updated summary statistics
     """
     # only the case when card != 0, when card == 0 draw is called from c++
@@ -206,11 +211,11 @@ def _propose_rwmh(curr_unc_params, hypers, rng):
 
     Parameters
     ----------
-    curr_unc_params: list
+    curr_unc_params : :obj:`list` of :obj:`float`
         mu and log(lam)
-    hypers: list
+    hypers : :obj:`list` of :obj:`float`
         model hyperparameters
-    rng:
+    rng : numpy.random._generator.Generator
         random number generator to be used when sampling
     """
     mean_var = hypers[4]
@@ -227,9 +232,9 @@ def _eval_prior_lpdf_unconstrained(unc_params, hypers):
 
     Parameters
     ----------
-    curr_unc_params: list
+    curr_unc_params : :obj:`list` of :obj:`float`
         mu and log(lam)
-    hypers: list
+    hypers : :obj:`list` of :obj:`float`
         model hyperparameters
     """
     mu0 = hypers[0]
@@ -248,13 +253,13 @@ def _eval_like_lpdf_unconstrained(unc_params, is_current, sum_stats, cluster_dat
 
     Parameters
     ----------
-    curr_unc_params: list
+    curr_unc_params : :obj:`list` of :obj:`float`
         mu and log(lam)
-    is_current: bool
+    is_current : bool
         if True, sum_stats[0] is used, if False, sum_stats[1] is computed and used
-    sum_stats: list
+    sum_stats : :obj:`list` of :obj:`float`
         list of summary statistics used
-    cluster_data_values: list
+    cluster_data_values : :obj:`list` of :obj:`float`
         data in the current cluster
     """
     mu_ = unc_params[0]

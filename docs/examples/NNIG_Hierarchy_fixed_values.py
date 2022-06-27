@@ -24,8 +24,8 @@ import scipy.stats as ss
 def is_conjugate():
     """
 
-    Return
-    ------
+    Returns
+    -------
     bool
         True for conjugate, False for non-conjugate hierarchies
     """
@@ -37,9 +37,9 @@ def like_lpdf(x, state):
 
     Parameters
     ----------
-    x: list
+    x : :obj:`list` of :obj:`float`
         point in which lpdf is evaluated
-    state: list
+    state : :obj:`list` of :obj:`float`
         model parameters
     """
     mu = state[0]
@@ -52,9 +52,9 @@ def marg_lpdf(x, hypers):
 
     Parameters
     ----------
-    x: list
+    x : :obj:`list` of :obj:`float`
         point in which lpdf is evaluated
-    hypers: list
+    hypers : :obj:`list` of :obj:`float`
         model hyperparameters
     """
     mu0 = hypers[0]
@@ -70,12 +70,12 @@ def initialize_state(hypers):
 
     Parameters
     ----------
-    hypers: list
+    hypers : :obj:`list` of :obj:`float`
         model hyperparameters
 
-    Return
-    ------
-    list
+    Returns
+    -------
+    :obj:`list` of :obj:`float`
         initial value of the state
     """
     mu0 = hypers[0]
@@ -88,30 +88,30 @@ def initialize_hypers():
     """ In this example no prior is assumed on the hyperparameters,
     i.e. fixed values are assumed for the hyperparameters
 
-    Return
-    ------
-    list
+    Returns
+    -------
+    :obj:`list` of :obj:`float`
         initial value of the hyperparameters
     """
     return [1, 1, 1, 1]
 
 
-def update_hypers(states, hypers, rng):
+def update_hypers(state, hypers, rng):
     """Update hypers if a prior is assumed on the hyperparameters,
     otherwise if fixed values are assumed, return hypers
 
     Parameters
     ----------
-    state: list
+    state : :obj:`list` of :obj:`float`
         model parameters
-    list hypers: list
+    hypers : :obj:`list` of :obj:`float`
         model hyperparameters
-    state: list
-        model parameter
+    rng : numpy.random._generator.Generator
+        random number generator to be used when sampling
 
-    Return
-    ------
-    list[list]
+    Returns
+    -------
+    :obj:`list` of :obj:`float`
         updated hyperparameters
     """
     return hypers
@@ -122,15 +122,16 @@ def draw(state, hypers, rng):
 
     Parameters
     ----------
-    state: list
+    state : :obj:`list` of :obj:`float`
         model parameters
-    hypers: list
+    hypers : :obj:`list` of :obj:`float`
         model hyperparameters
-    rng:
+    rng : numpy.random._generator.Generator
         random number generator to be used when sampling
 
-    Return
-    ------
+    Returns
+    -------
+    :obj:`list` of :obj:`float`
         sampled state values
     """
     sig = state[1]
@@ -149,16 +150,16 @@ def compute_posterior_hypers(card, hypers, sum_stats):
 
     Parameters
     ----------
-    card: int
+    card : int
         cardinality of the cluster
-    hypers: list
+    hypers : :obj:`list` of :obj:`float`
         model hyperparameters
-    sum_stats: list
+    sum_stats : :obj:`list` of :obj:`float`
         list of summary statistics used
 
-    Return
-    ------
-    list:
+    Returns
+    -------
+    :obj:`list` of :obj:`float`
         posterior hyperparameters
     """
     data_sum = sum_stats[0]
@@ -190,20 +191,20 @@ def update_summary_statistics(x, add, sum_stats, state, cluster_data_values):
 
     Parameters
     ----------
-    x: list
+    x : :obj:`list` of :obj:`float`
         datum (univariate)
-    add: bool
+    add : bool
         if True, the datum has to be added to the cluster, if False, it has to be removed from the cluster
-    sum_stats: list
+    sum_stats : :obj:`list` of :obj:`float`
         list of summary statistics used
-    state: list
+    state : :obj:`list` of :obj:`float`
         model parameters
-    cluster_data_values: list
+    cluster_data_values : :obj:`list` of :obj:`float`
         data in the current cluster
 
-    Return
-    ------
-    list[list]
+    Returns
+    -------
+    :obj:`list` of :obj:`list` of :obj:`float`
         updated summary statistics and cluster data values
     """
     if not len(sum_stats):
