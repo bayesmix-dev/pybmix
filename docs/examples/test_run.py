@@ -33,10 +33,6 @@ mixing = DirichletProcessMixing(total_mass=5)  # DP mixing
 
 hierarchy = PythonHierarchy("LapNIG_Hierarchy")
 
-# Checking that other classes work too
-# hierarchy = UnivariateNormal()
-# hierarchy.make_default_fixed_params(y,2)
-
 mixture = MixtureModel(mixing, hierarchy)
 
 niter = 110
