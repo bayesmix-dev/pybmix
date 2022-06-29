@@ -32,7 +32,7 @@ def is_conjugate():
 
     Returns
     -------
-    bool
+    :bool:
         True for conjugate, False for non-conjugate hierarchies
     """
     return False
