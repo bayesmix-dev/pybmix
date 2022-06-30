@@ -23,16 +23,24 @@ import scipy.stats as ss
 
 def is_conjugate():
     """
-    :return: True for conjugate, False for non-conjugate hierarchies
+
+    Returns
+    -------
+    bool
+        True for conjugate, False for non-conjugate hierarchies
     """
     return True
 
 
 def like_lpdf(x, state):
-    """
-    Likelihood log-density
-    :param list x: point in which lpdf is evaluated
-    :param list state: model parameters
+    """ Likelihood log-density
+
+    Parameters
+    ----------
+    x : :obj:`list` of :obj:`float`
+        point in which lpdf is evaluated
+    state : :obj:`list` of :obj:`float`
+        model parameters
     """
     mu = state[0]
     sig = state[1]
@@ -40,10 +48,14 @@ def like_lpdf(x, state):
 
 
 def marg_lpdf(x, hypers):
-    """
-    Marginal log density
-    :param list x: point in which lpdf is evaluated
-    :param list state: model parameters
+    """ Marginal log density
+
+    Parameters
+    ----------
+    x : :obj:`list` of :obj:`float`
+        point in which lpdf is evaluated
+    hypers : :obj:`list` of :obj:`float`
+        model hyperparameters
     """
     mu0 = hypers[0]
     lambda0 = hypers[1]
@@ -55,8 +67,16 @@ def marg_lpdf(x, hypers):
 
 def initialize_state(hypers):
     """
-    :param list hypers: model hyperparameters
-    :return: initial value of the state
+
+    Parameters
+    ----------
+    hypers : :obj:`list` of :obj:`float`
+        model hyperparameters
+
+    Returns
+    -------
+    :obj:`list` of :obj:`float`
+        initial value of the state
     """
     mu0 = hypers[0]
     alpha0 = hypers[2]
@@ -65,31 +85,54 @@ def initialize_state(hypers):
 
 
 def initialize_hypers():
-    """
-    :return: initial value of the hyperparameters
+    """ In this example no prior is assumed on the hyperparameters,
+    i.e. fixed values are assumed for the hyperparameters
+
+    Returns
+    -------
+    :obj:`list` of :obj:`float`
+        initial value of the hyperparameters
     """
     return [1, 1, 1, 1]
 
 
-def update_hypers(states, hypers, rng):
-    """
-    Update hypers if a prior is assumed on the hyperparameters,
+def update_hypers(state, hypers, rng):
+    """Update hypers if a prior is assumed on the hyperparameters,
     otherwise if fixed values are assumed, return hypers
-    :param list state: model parameters
-    :param hypers: model hyperparameters
-    :param rng: random number generator to be used when sampling
-    :return: updated hypers
+
+    Parameters
+    ----------
+    state : :obj:`list` of :obj:`float`
+        model parameters
+    hypers : :obj:`list` of :obj:`float`
+        model hyperparameters
+    rng : numpy.random._generator.Generator
+        random number generator to be used when sampling
+
+    Returns
+    -------
+    :obj:`list` of :obj:`float`
+        updated hyperparameters
     """
     return hypers
 
 
 def draw(state, hypers, rng):
-    """
-    Samples values for the state parameters
-    :param list state: model parameters
-    :param hypers: model hyperparameters
-    :param rng: random number generator to be used when sampling
-    :return: sampled state values
+    """ Samples values for the state parameters
+
+    Parameters
+    ----------
+    state : :obj:`list` of :obj:`float`
+        model parameters
+    hypers : :obj:`list` of :obj:`float`
+        model hyperparameters
+    rng : numpy.random._generator.Generator
+        random number generator to be used when sampling
+
+    Returns
+    -------
+    :obj:`list` of :obj:`float`
+        sampled state values
     """
     sig = state[1]
     mu0 = hypers[0]
@@ -103,12 +146,21 @@ def draw(state, hypers, rng):
 
 
 def compute_posterior_hypers(card, hypers, sum_stats):
-    """
-    Computation of posterior hyperparameters
-    :param int card: cardinality of the cluster
-    :param hypers: model hyperparameters
-    :param list sum_stats: list of summary statistics used
-    :return: list: posterior hyperparameters
+    """Computation of the posterior hyperparameters
+
+    Parameters
+    ----------
+    card : int
+        cardinality of the cluster
+    hypers : :obj:`list` of :obj:`float`
+        model hyperparameters
+    sum_stats : :obj:`list` of :obj:`float`
+        list of summary statistics used
+
+    Returns
+    -------
+    :obj:`list` of :obj:`float`
+        posterior hyperparameters
     """
     data_sum = sum_stats[0]
     data_sum_squares = sum_stats[1]
@@ -131,18 +183,29 @@ def compute_posterior_hypers(card, hypers, sum_stats):
 
 
 def update_summary_statistics(x, add, sum_stats, state, cluster_data_values):
-    """
-    Updates cluster statistics when a datum is added or removed from it,
-    the statistics appears in the sampling of the full conditionals of the model for non-conjugate hierarchies and
-    in the computation of the posterior hyperparameters for conjugate hierarchies.
-    In this model, the summary statistics are the current and proposed values of the sum of absolute differences,
+    """ Updates cluster statistics when a datum is added or removed from it,
+    the statistics appears in the sampling of the full conditionals of the
+    model for non-conjugate hierarchies and in the computation of the posterior
+    hyperparameters for conjugate hierarchies. In this model, the summary statistics
+    are the current and proposed values of the sum of absolute differences.
 
-    :param list x: datum (univariate)
-    :param bool add: if True, the datum has to be added to the cluster, if False, it has to be removed from the cluster
-    :param list sum_stats: list of summary statistics used
-    :param list state: model parameters
-    :param list cluster_data_values: data in the current cluster
-    :return: list[list]: updated summary statistics and cluster data values
+    Parameters
+    ----------
+    x : :obj:`list` of :obj:`float`
+        datum (univariate)
+    add : bool
+        if True, the datum has to be added to the cluster, if False, it has to be removed from the cluster
+    sum_stats : :obj:`list` of :obj:`float`
+        list of summary statistics used
+    state : :obj:`list` of :obj:`float`
+        model parameters
+    cluster_data_values : :obj:`list` of :obj:`float`
+        data in the current cluster
+
+    Returns
+    -------
+    :obj:`list` of :obj:`list` of :obj:`float`
+        updated summary statistics and cluster data values
     """
     if not len(sum_stats):
         sum_stats = [0, 0]

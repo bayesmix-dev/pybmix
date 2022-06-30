@@ -28,7 +28,7 @@
 #include "auxiliary_functions.h"
 
 void PythonMixing::set_module(const std::string &module_name) {
-    std::cout << "Using the mixing implementation in: " << module_name << ".py" << std::endl;
+    std::cout << "Using mixing implementation in: " << module_name << ".py" << std::endl;
 
     mix_implementation = py::module_::import(module_name.c_str());
 

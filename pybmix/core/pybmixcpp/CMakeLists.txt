@@ -20,7 +20,6 @@ set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 # Require PkgConfig
 find_package(PkgConfig REQUIRED)
 find_package(OpenMP REQUIRED)
-find_package(pybind11 REQUIRED)
 
 # TBB CMake integration
 message(STATUS "Using math TBB")
@@ -110,7 +109,7 @@ set(LINK_LIBRARIES
         )
 
 
-set(COMPILE_OPTIONS -D_REENTRANT -fPIC -fvisibility=hidden -std=c++17)
+set(COMPILE_OPTIONS -D_REENTRANT -fPIC -fvisibility=hidden)
 
 file(GLOB ProtoFiles "${BASEPATH}/bayesmix/src/proto/*.proto")
 set(PROTO_DIR proto)
@@ -151,7 +150,7 @@ endif ()
 add_library(bayesmix OBJECT)
 target_sources(bayesmix PUBLIC ${PROTO_SRCS} ${PROTO_HDRS})
 add_subdirectory(bayesmix/src)
-add_subdirectory(py_hier)
+add_subdirectory(python_embedding)
 target_include_directories(bayesmix PUBLIC ${INCLUDE_PATHS})
 target_link_libraries(bayesmix PUBLIC ${LINK_LIBRARIES})
 target_compile_options(bayesmix PUBLIC ${COMPILE_OPTIONS})

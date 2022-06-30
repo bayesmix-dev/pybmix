@@ -34,10 +34,6 @@ mixing = PythonMixing(mix_implementation="DP_mixing")  # Python implementation o
 
 hierarchy = PythonHierarchy("NNIG_Hierarchy_NGG")
 
-# Checking that other classes work too
-# hierarchy = UnivariateNormal()
-# hierarchy.make_default_fixed_params(y,2)
-
 mixture = MixtureModel(mixing, hierarchy)
 
 niter = 110
