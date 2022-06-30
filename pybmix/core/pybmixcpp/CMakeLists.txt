@@ -20,7 +20,6 @@ set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 # Require PkgConfig
 find_package(PkgConfig REQUIRED)
 find_package(OpenMP REQUIRED)
-find_package(pybind11 REQUIRED)
 
 # TBB CMake integration
 message(STATUS "Using math TBB")
