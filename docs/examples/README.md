@@ -13,7 +13,7 @@ git clone --recurse-submodule git@github.com:bayesmix-dev/pybmix.git
 
 
 ## To implement a hierarchy in Python
-Create a ```.py``` file in ```pybmix/docs/examples``` implementing all the necessary methods of the hierarchy, 
+Create a ```.py``` file implementing all the necessary methods of the hierarchy, 
 you can find examples in  ```docs/examples```. Specifically: 
 - to implement a non-conjugate hierarchy you need to define the methods: ```is_conjugate, like_lpdf, initialize_state, initialize_hypers,
   update_hypers, draw, update_summary_statistics, sample_full_cond```. Please refer to the ```LapNIG_Hierarchy.py``` example for details.
