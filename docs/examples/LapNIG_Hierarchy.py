@@ -79,7 +79,7 @@ def initialize_hypers():
     :obj:`list` of :obj:`float`
         initial value of the hyperparameters
     """
-    return [0, 10, 2, 1, 10, 1]
+    return [0, 16, 3, 1, 5, 0.5]
 
 
 def update_hypers(state, hypers, rng):

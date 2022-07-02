@@ -13,11 +13,23 @@ update_summary_statistics.
 The state is composed of mean and variance. The state hyperparameters,
 contained in the Hypers object, are (mu0, lambda0, alpha0, beta0), all
 scalar values. In the following implementation we assume a prior on the
-hyperparameters.
+hyperparameters. In particular:
+    mu0 ~ N(PRIOR_MEAN, PRIOR_VAR)
+    lambda0 ~ Gamma(PRIOR_ALPHA, PRIOR_BETA)
+    alpha0 = PRIOR_SHAPE (fixed)
+    beta0 ~ Gamma(PRIOR_A, PRIOR_B)
 """
 
 import numpy as np
 import scipy.stats as ss
+
+PRIOR_MEAN = 1.0
+PRIOR_VAR = 2.25
+PRIOR_ALPHA = 0.2
+PRIOR_BETA = 0.6
+PRIOR_SHAPE = 1.5
+PRIOR_A = 4.0
+PRIOR_B = 2.0
 
 
 def is_conjugate():
@@ -85,28 +97,21 @@ def initialize_state(hypers):
 
 def initialize_hypers():
     """ In this example NGG prior is assumed on the hyperparameters
-    mu0 ~ Normal(mu00, sigma00)
-    lambda0 ~ Gamma(alpha00, beta00)
-    beta0 ~ Gamma(a00, b00)
-    alpha0 is fixed value
+    mu0 ~ N(PRIOR_MEAN, PRIOR_VAR)
+    lambda0 ~ Gamma(PRIOR_ALPHA, PRIOR_BETA)
+    alpha0 = PRIOR_SHAPE (fixed)
+    beta0 ~ Gamma(PRIOR_A, PRIOR_B)
 
     Returns
     -------
     :obj:`list` of :obj:`float`
         initial value of the hyperparameters
     """
-    mu00 = 1
-    sigma00 = 2.25
-    alpha00 = 0.2
-    beta00 = 0.6
-    a00 = 4.0
-    b00 = 2.0
-    alpha0 = 1.5
 
-    mean = mu00
-    var_scaling = alpha00 / beta00
-    shape = alpha0
-    scale = a00 / b00
+    mean = PRIOR_MEAN
+    var_scaling = PRIOR_ALPHA / PRIOR_BETA
+    shape = PRIOR_SHAPE
+    scale = PRIOR_A / PRIOR_B
     return [mean, var_scaling, shape, scale]
 
 
@@ -214,17 +219,17 @@ def update_summary_statistics(x, add, sum_stats, state, cluster_data_values):
     return [sum_stats, cluster_data_values]
 
 
-def update_hypers(state, hypers, rng):
+def update_hypers(states, hypers, rng):
     """Updates the hyperparameters according to the NGG prior assumption:
-    mu0 ~ Normal(mu00, sigma00)
-    lambda0 ~ Gamma(alpha00, beta00)
-    beta0 ~ Gamma(a00, b00)
-    alpha0 is a fixed value
+    mu0 ~ N(PRIOR_MEAN, PRIOR_VAR)
+    lambda0 ~ Gamma(PRIOR_ALPHA, PRIOR_BETA)
+    alpha0 = PRIOR_SHAPE (fixed)
+    beta0 ~ Gamma(PRIOR_A, PRIOR_B)
 
     Parameters
     ----------
-    state : :obj:`list` of :obj:`float`
-        model parameters
+    states : :obj:`list` of :obj:`list` of :obj:`float`
+        states of the clusters
     hypers : :obj:`list` of :obj:`float`
         model hyperparameters
     rng : numpy.random._generator.Generator
@@ -235,31 +240,18 @@ def update_hypers(state, hypers, rng):
     :obj:`list` of :obj:`float`
         updated hyperparameters
     """
-
-    mu00 = 1
-    sig200 = 2.25
-    alpha00 = 0.2
-    beta00 = 0.6
-    a00 = 4.0
-    b00 = 2.0
-
-    b_n = 0.0
-    num = 0.0
-    beta_n = 0.0
-    for st in state:
-        mean = st[0]
-        var = st[1]
-        b_n += 1 / var
-        num += mean / var
-        beta_n += (hypers[0] - mean) * (hypers[0] - mean) / var
-    var = hypers[1] * b_n + 1 / sig200
-    b_n += b00
-    num = hypers[1] * num + mu00 / sig200
-    beta_n = beta00 + 0.5 * beta_n
+    states = np.array(states)
+    num = np.sum(states[:, 0] / states[:, 1])
+    b_n = np.sum(1.0 / states[:, 1])
+    beta_n = np.sum(((hypers[0] - states[:, 0])**2)/states[:, 1])
+    var = hypers[1] * b_n + 1 / PRIOR_VAR
+    b_n += PRIOR_B
+    num = hypers[1] * num + PRIOR_MEAN / PRIOR_VAR
+    beta_n = PRIOR_BETA + 0.5 * beta_n
     sig_n = 1 / var
     mu_n = num / var
-    alpha_n = alpha00 + 0.5 * len(state)
-    a_n = a00 + len(state) * hypers[2]
+    alpha_n = PRIOR_ALPHA + 0.5 * len(states)
+    a_n = PRIOR_A + len(states) * hypers[2]
     # Update hyperparameters with posterior random Gibbs sampling
     new_mean = ss.norm.rvs(mu_n, sig_n, random_state=rng)
     new_var_scaling = ss.gamma.rvs(a=alpha_n, loc=0, scale=1. / beta_n, random_state=rng)

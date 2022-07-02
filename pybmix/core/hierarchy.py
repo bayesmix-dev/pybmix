@@ -15,6 +15,7 @@ class BaseHierarchy(metaclass=abc.ABCMeta):
     def check_prior_params(self, self_prior_params, prior_params):
         if prior_params is None:
             return
+
         success = set_oneof_field("prior", self_prior_params, prior_params)
         if not success:
             raise ValueError(
