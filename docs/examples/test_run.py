@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.realpath(CORE_DIR))
 
 import numpy as np
 import matplotlib.pyplot as plt
-from pybmix.core.mixing import DirichletProcessMixing, PythonMixing
+from pybmix.core.mixing import PythonMixing
 from pybmix.core.hierarchy import PythonHierarchy
 from pybmix.core.mixture_model import MixtureModel
 from pybmix.estimators.density_estimator import DensityEstimator
@@ -30,7 +30,6 @@ plt.hist(y, bins=20)
 plt.show()
 
 mixing = PythonMixing(mix_implementation="DP_mixing")  # Python implementation of DP mixing
-# mixing = DirichletProcessMixing(total_mass=5)  # DP mixing
 
 hierarchy = PythonHierarchy("NNIG_Hierarchy_NGG")
 
@@ -38,7 +37,7 @@ mixture = MixtureModel(mixing, hierarchy)
 
 niter = 110
 nburn = 10
-mixture.run_mcmc(y, algorithm="Neal8", niter=niter, nburn=nburn)
+mixture.run_mcmc(y, algorithm="Neal2", niter=niter, nburn=nburn)
 
 
 grid = np.linspace(-6, 6, 500)
