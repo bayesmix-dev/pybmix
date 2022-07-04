@@ -1,24 +1,46 @@
 ## Installation
-1) Clone the repository
-```shell
-git clone --recurse-submodule git@github.com:bayesmix-dev/pybmix.git
+
+1. install ```cmake>=3.21.0``` from source following the official documentation
+2. install ```libtbb-dev=2020.1-2``` (e.g. for Linux ```sudo apt install libtbb-dev=2020.1-2```)
+
+3. clone the repository
 ```
-2) Install the following:
-- ```2to3```, ```ninja```, ```numpy```, ```scipy``` with pip or conda
-- ```protobuf==3.14.0``` using conda or from source following the official documentation
-- ```cmake>=3.21.0``` following the official documentation
-3) Assign to the variable ```ENV_DIR``` in ```convert_proto.sh``` the local path to the current Python environment
+git clone --recurse-submodules git@github.com:bayesmix-dev/pybmix.git
+```
 
-4) Run ```./build_pybmix.sh```
+4. setup a python environment with ```python=3.9``` and install the following packages with ```pip```
+```
+pip3 install numpy==1.22.4 scipy==1.7.3 matplotlib==3.5.2 2to3==1.0
+```
 
+5. install ```protobuf==3.14.0``` and ```libprotobuf=3.14.0``` (e.g. ```conda install protobuf==3.14.0``` will install both)
+
+
+6. add the path for ```2to3``` to the ```PATH``` environment variable, e.g.
+```
+export PYTHONPATH="path/to/2to3/"
+```
+
+7. finally, to build the library
+```
+./build_pybmix.sh build
+```
+
+Note that, the argument ```build``` substitutes ```mkdir build```, thus you can skip it in subsequent builds if only the
+new changes need to be compiled.
 
 ## To implement a hierarchy in Python
-Create a ```.py``` file implementing all the necessary methods of the hierarchy, 
-you can find examples in  ```docs/examples```. Specifically: 
-- to implement a non-conjugate hierarchy you need to define the methods: ```is_conjugate, like_lpdf, initialize_state, initialize_hypers,
-  update_hypers, draw, update_summary_statistics, sample_full_cond```. Please refer to the ```LapNIG_Hierarchy.py``` example for details.
-- to implement a conjugate hierarchy you need to define the methods: ```is_conjugate, like_lpdf, marg_lpdf, initialize_state,
-   initialize_hypers, update_hypers, draw, compute_posterior_hypers,
-   update_summary_statistics```. Please refer to the ```NNIG_Hierarchy_NGG.py``` examples for details.
 
-For an example of how to run please refer to ```test_run.py```
+Create a ```.py``` file implementing all the necessary methods of the hierarchy,
+you can find examples in  ```docs/examples```. Specifically:
+
+- to implement a non-conjugate hierarchy you need to define the
+  methods: ```is_conjugate, like_lpdf, initialize_state, initialize_hypers,
+  update_hypers, draw, update_summary_statistics, sample_full_cond```. Please refer to the ```LapNIG_Hierarchy.py```
+  example for details.
+- to implement a conjugate hierarchy you need to define the
+  methods: ```is_conjugate, like_lpdf, marg_lpdf, initialize_state,
+  initialize_hypers, update_hypers, draw, compute_posterior_hypers,
+  update_summary_statistics```. Please refer to the ```NNIG_Hierarchy_NGG.py``` examples for details.
+
+For an example of how to run please refer to ```test_run.py```, ```estimate_pyhier_desnity.ipynb```.
