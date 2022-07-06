@@ -159,7 +159,8 @@ if __name__ == "__main__":
 
     folder = os.path.dirname(__file__)
 
-    install_requires = ["2to3", "ninja", "numpy", "scipy", "protobuf==3.14.0", "cmake>=3.21.0"]
+    install_requires = ["2to3", "ninja", "numpy", "scipy", "protobuf==3.14.0", 
+                        "cmake>=3.21.0"]
 
     # with open(os.path.join(folder, 'requirements.txt')) as fp:
     #     install_requires.extend([line.strip() for line in fp])
