@@ -1,6 +1,6 @@
-#ifndef BAYESMIX_INCLUDES_2_H_
-#define BAYESMIX_INCLUDES_2_H_
+#ifndef PYTHON_EMBEDDING_INCLUDES_H_
+#define PYTHON_EMBEDDING_INCLUDES_H_
 
 #include "load_py_hierarchies.h"
 
-#endif  // BAYESMIX_INCLUDES_2_H_
+#endif  // PYTHON_EMBEDDING_INCLUDES_H_
