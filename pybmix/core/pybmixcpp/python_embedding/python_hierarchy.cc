@@ -348,7 +348,6 @@ void PythonHierarchy::add_datum(
         const Eigen::RowVectorXd &covariate /*= Eigen::RowVectorXd(0)*/) {
     assert(cluster_data_idx.find(id) == cluster_data_idx.end());
     set_card(card + 1);
-    log_card = std::log(card);
     (this)->update_ss(datum, covariate, true);
     cluster_data_idx.insert(id);
     if (update_params) {
