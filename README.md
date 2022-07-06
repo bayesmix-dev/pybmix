@@ -5,20 +5,31 @@ A Python interface to [bayesmix](https://github.com/bayesmix-dev/bayesmix/)
 
 ## Installation
 
-First, clone this repository with its submodules
-```shell
-git clone --recurse-submodule git@github.com:bayesmix-dev/pybmix.git
+1. install ```cmake>=3.21.0``` from source following the official documentation
+2. install ```libtbb-dev=2020.1-2``` (e.g. for Linux ```sudo apt install libtbb-dev=2020.1-2```)
+
+3. clone the repository
 ```
-Ideally things should work by simply typing
-```shell
-pip3 install -e .
+git clone --recurse-submodules git@github.com:bayesmix-dev/pybmix.git
 ```
-from the root folder of this repo.
 
-## Getting Started
+4. setup a python environment with ```python=3.9``` and install the following packages with ```pip```
+```
+pip3 install numpy==1.22.4 scipy==1.7.3 matplotlib==3.5.2 2to3==1.0
+```
 
-See our [tutorials](https://pybmix.readthedocs.io/en/docs/)!
+5. install ```protobuf==3.14.0``` and ```libprotobuf=3.14.0``` (e.g. ```conda install protobuf==3.14.0``` will install both)
 
-## Contributing
 
-Just get in touch with us (email in setup.cfg), open a PR or an Issue! 
+6. add the path for ```2to3``` to the ```PATH``` environment variable, e.g.
+```
+export PYTHONPATH="path/to/2to3/"
+```
+
+7. finally, to build the library
+```
+./build_pybmix.sh build
+```
+
+Note that, the argument ```build``` substitutes ```mkdir build```, thus you can skip it in subsequent builds if only the
+new changes need to be compiled.
