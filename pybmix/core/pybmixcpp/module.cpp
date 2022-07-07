@@ -1,3 +1,4 @@
+#include <stan/math/rev.hpp>
 #include <pybind11/eigen.h>
 #include <pybind11/iostream.h>
 #include <pybind11/pybind11.h>

@@ -1,4 +1,5 @@
 import abc
+
 import numpy as np
 
 import pybmix.proto.hierarchy_id_pb2 as hierarchy_id
@@ -10,6 +11,18 @@ class BaseHierarchy(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def make_default_fixed_params(y):
         pass
+
+    def check_prior_params(self, self_prior_params, prior_params):
+        if prior_params is None:
+            return
+
+        success = set_oneof_field("prior", self_prior_params, prior_params)
+        if not success:
+            raise ValueError(
+                "expected 'prior_params' to be of instance [{0}]"
+                "found {1} instead".format(
+                    " ".join(get_oneof_types("prior", self_prior_params)),
+                    type(prior_params)))
 
 
 class UnivariateNormal(BaseHierarchy):
@@ -23,14 +36,7 @@ class UnivariateNormal(BaseHierarchy):
 
     def __init__(self, prior_params=None):
         self.prior_params = hprior.NNIGPrior()
-        if prior_params is not None:
-            success = set_oneof_field("prior", self.prior_params, prior_params)
-            if not success:
-                raise ValueError(
-                    "expected 'prior_params' to be of instance [{0}]"
-                    "found {1} instead".format(
-                        " ".join(get_oneof_types("prior", self.prior_params)), 
-                        type(prior_params)))
+        self.check_prior_params(self.prior_params, prior_params)
 
     def make_default_fixed_params(self, y, exp_num_clusters=5):
         """
@@ -63,3 +69,18 @@ class LinearModel(BaseHierarchy):
     ID = hierarchy_id.LinRegUni
     NAME = hierarchy_id.HierarchyId.Name(ID)
     pass
+
+
+class PythonHierarchy(BaseHierarchy):
+    """ This class represents a generic hierarchy to be implemented in a dedicated python file.
+    The name of the file must be passed as a string when initializing this class.
+    """
+    ID = hierarchy_id.PythonHier
+    NAME = hierarchy_id.HierarchyId.Name(ID)
+
+    def __init__(self, hier_implementation):
+        self.prior_params = hprior.PythonHierPrior()
+        self.hier_implementation = hier_implementation
+
+    def make_default_fixed_params(self, y):
+        raise NotImplementedError("make_default_fixed_params not implemented for PythonHierarchy")

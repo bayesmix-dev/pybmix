@@ -1,8 +1,7 @@
 import abc
 import logging
-import numpy as np
 
-from joblib import Parallel, delayed
+import numpy as np
 from scipy.special import loggamma, gamma
 
 import pybmix.proto.mixing_id_pb2 as mixing_id
@@ -70,7 +69,7 @@ class DirichletProcessMixing(BaseMixing):
         out = np.zeros_like(grid, dtype=np.float)
         for i, g in enumerate(grid):
             out[i] = gamma(total_mass) / gamma(total_mass + nsamples) * \
-                stirling(nsamples, g) * (total_mass) ** g
+                     stirling(nsamples, g) * (total_mass) ** g
 
         return out
 
@@ -161,7 +160,7 @@ class PitmanYorMixing(BaseMixing):
                 [np.log(strength + l * discount) for l in range(k)])
             vnk = vnk_num - vnk_den
             out_logscale = vnk + np.log(self.generalized_factorial(nsamples, k)) - \
-                k * np.log(discount)
+                           k * np.log(discount)
             out[i] = np.exp(out_logscale)
         return out
 
@@ -240,7 +239,7 @@ class StickBreakMixing(BaseMixing):
         r = np.random.uniform(size=(nsamples, niter, 1))
         clus_allocs = np.argmax(cum_prob > r, axis=-1)
         mc_samples = np.apply_along_axis(lambda x: len(np.unique(x)), axis=0,
-                                   arr=clus_allocs)
+                                         arr=clus_allocs)
         out = np.zeros_like(grid, dtype=np.float)
         for i, k in enumerate(grid):
             out[i] = np.sum(mc_samples == k)
@@ -286,7 +285,7 @@ class StickBreakMixing(BaseMixing):
                     "incompatible 'n_comp' and 'beta_params': "
                     "ncomp - 1={0} != 'len(beta_params)={1}'".format(
                         n_comp - 1, len(beta_params)))
-            
+
             self._a_coeffs = np.array([x[0] for x in beta_params])
             self._b_coeffs = np.array([x[1] for x in beta_params])
 
@@ -299,7 +298,7 @@ class StickBreakMixing(BaseMixing):
             if strength <= 0:
                 raise ValueError(
                     "Parameter 'strength' must be strictly greater than zero")
-            
+
             if discount is not None:
                 if discount >= 1 or discount <= 0:
                     raise ValueError(
@@ -311,8 +310,7 @@ class StickBreakMixing(BaseMixing):
 
             self._a_coeffs = np.ones(n_comp - 1) * (1 - discount)
             self._b_coeffs = np.array(
-                [strength + (h+1) * discount for h in range(n_comp - 1)])
+                [strength + (h + 1) * discount for h in range(n_comp - 1)])
 
         else:
             raise ValueError("Not enough parameters provided")
-            

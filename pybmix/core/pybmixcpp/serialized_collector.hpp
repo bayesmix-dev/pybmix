@@ -7,20 +7,21 @@
 #include "bayesmix/src/collectors/memory_collector.h"
 
 class SerializedCollector : public MemoryCollector {
- public:
-  ~SerializedCollector() = default;
-  SerializedCollector() = default;
+public:
+    ~SerializedCollector() = default;
 
-  pybind11::bytes get_serialized_state(unsigned int i) const {
-    return (pybind11::bytes)chain[i];
-  }
+    SerializedCollector() = default;
 
-  std::vector<pybind11::bytes> get_serialized_chain() const {
-    std::vector<pybind11::bytes> out(chain.size());
-    for (int i = 0; i < chain.size(); i++) out[i] = get_serialized_state(i);
+    pybind11::bytes get_serialized_state(unsigned int i) const {
+        return (pybind11::bytes) chain[i];
+    }
 
-    return out;
-  }
+    std::vector <pybind11::bytes> get_serialized_chain() const {
+        std::vector <pybind11::bytes> out(chain.size());
+        for (int i = 0; i < chain.size(); i++) out[i] = get_serialized_state(i);
+
+        return out;
+    }
 };
 
 void add_serialized_collector(pybind11::module &m);
