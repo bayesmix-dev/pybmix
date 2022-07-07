@@ -98,7 +98,6 @@ protected:
     py::object initialize_state_evaluator;
     py::object is_conditional_evaluator;
     py::object mixing_weights_evaluator;
-
 };
 
 

@@ -43,7 +43,6 @@ void PythonMixing::set_module(const std::string &module_name) {
         mass_existing_cluster_evaluator = mix_implementation.attr("mass_existing_cluster");
         mass_new_cluster_evaluator = mix_implementation.attr("mass_new_cluster");
     }
-
 }
 
 void PythonMixing::update_state(
@@ -95,7 +94,6 @@ const {
     auto out = std::make_shared<bayesmix::MixingState>();
     out->mutable_general_state()->CopyFrom(state_);
     return out;
-
 }
 
 //! PYTHON

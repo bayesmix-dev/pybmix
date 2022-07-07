@@ -66,5 +66,4 @@ void add_algorithm_wrapper(pybind11::module &m) {
             .def("get_collector", &AlgorithmWrapper::get_collector)
             .def("load_py_hier_implementation", &AlgorithmWrapper::load_py_hier_implementation)
             .def("load_py_mix_implementation", &AlgorithmWrapper::load_py_mix_implementation);
-
 }

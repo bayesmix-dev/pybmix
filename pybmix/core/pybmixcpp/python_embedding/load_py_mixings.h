@@ -18,7 +18,6 @@ using Builder = std::function<std::shared_ptr<AbstractProduct>()>;
 using MixingFactory = Factory<bayesmix::MixingId, AbstractMixing>;
 
 __attribute__((constructor)) static void load_py_mixings() {
-
     MixingFactory &factory = MixingFactory::Instance();
     // Initialize factory builders
     Builder<AbstractMixing> Pythonbuilder = []() {
