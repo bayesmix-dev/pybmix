@@ -43,7 +43,18 @@ class MixtureModel(object):
 
         # If using PythonHierarchy as hier load the implementation from the corresponding file
         if self.hierarchy.NAME == 'PythonHier':
-            self._algo.load_py_hier_implementation(self.hierarchy.hier_implementation)
+            try:
+                self._algo.load_py_hier_implementation(self.hierarchy.hier_implementation)
+            except ModuleNotFoundError as e:
+                e.msg += "\nThe hier_implementation file {0} does not exist".format(self.hierarchy.hier_implementation)
+                raise
+
+        if self.mixing.NAME == 'PythonMix':
+            try:
+                self._algo.load_py_mix_implementation(self.mixing.mix_implementation)
+            except ModuleNotFoundError as e:
+                e.msg += "\nThe mix_implementation file {0} does not exist".format(self.mixing.mix_implementation)
+                raise
 
         with ostream_redirect(stdout=True, stderr=True):
             self._algo.run(y, niter, nburn, rng_seed)

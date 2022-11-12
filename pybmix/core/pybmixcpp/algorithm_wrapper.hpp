@@ -48,6 +48,8 @@ public:
     const SerializedCollector &get_collector() const { return collector; }
 
     void load_py_hier_implementation(const std::string &module_name);
+
+    void load_py_mix_implementation(const std::string &module_name);
 };
 
 void add_algorithm_wrapper(pybind11::module &m);

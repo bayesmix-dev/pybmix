@@ -1,5 +1,5 @@
 import abc
-
+import logging
 import numpy as np
 
 import pybmix.proto.hierarchy_id_pb2 as hierarchy_id
@@ -10,7 +10,8 @@ from pybmix.utils.proto_utils import get_oneof_types, set_oneof_field
 class BaseHierarchy(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def make_default_fixed_params(y):
-        pass
+        return logging.error("This function cannot be implemented!")
+
 
     def check_prior_params(self, self_prior_params, prior_params):
         if prior_params is None:

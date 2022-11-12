@@ -6,7 +6,7 @@ from scipy.special import loggamma, gamma
 
 import pybmix.proto.mixing_id_pb2 as mixing_id
 from pybmix.proto.distribution_pb2 import BetaDistribution, GammaDistribution
-from pybmix.proto.mixing_prior_pb2 import DPPrior, PYPrior, TruncSBPrior
+from pybmix.proto.mixing_prior_pb2 import DPPrior, PYPrior, TruncSBPrior, PythonMixPrior
 from pybmix.utils.combinatorials import stirling, generalized_factorial_memoizer
 
 
@@ -20,7 +20,8 @@ class BaseMixing(metaclass=abc.ABCMeta):
         Evaluates the prior probability of the number of clusters on a
         grid
         """
-        pass
+        return logging.error("This function cannot be implemented!")
+
 
 
 class DirichletProcessMixing(BaseMixing):
@@ -314,3 +315,18 @@ class StickBreakMixing(BaseMixing):
 
         else:
             raise ValueError("Not enough parameters provided")
+
+
+class PythonMixing(BaseMixing):
+    ID = mixing_id.PythonMix
+    NAME = mixing_id.MixingId.Name(ID)
+
+    def __init__(self, mix_implementation):
+        self._build_prior_proto()
+        self.mix_implementation = mix_implementation
+
+    def prior_cluster_distribution(self, grid, nsamples):
+        pass
+
+    def _build_prior_proto(self):
+        self.prior_proto = PythonMixPrior()
