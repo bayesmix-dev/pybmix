@@ -21,4 +21,4 @@ you can find an example in  ```docs/examples```. Specifically:
 - to implement a conditional mixing you need to define the methods:
   ```is_conditional, update_state, initialize_state, mixing_weights```.
 
-For working examples please refer to ```test_run.py``` and ```estimate_pyhier_desnity.ipynb```.
+For working examples please refer to ```test_run.py``` and ```estimate_py_density.ipynb```.

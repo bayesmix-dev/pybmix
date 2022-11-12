@@ -25,6 +25,14 @@ namespace PyMix {
     };
 };  // namespace PyMix
 
+//! Python Mixing
+//!
+//! Deriving from BaseMixing, the PythonMixing is a generic class for
+//! implementing models in Python. This class allows to implement new mixings
+//! from a Python source file, while methods necessary for all mixings are
+//! implemented here. The methods marked with PYTHON in the source are to be implemented
+//! in a .py file. The state is generic, stored in a std::vector container.
+
 class PythonMixing
         : public BaseMixing<PythonMixing, PyMix::State,bayesmix::PythonMixPrior> {
 public:

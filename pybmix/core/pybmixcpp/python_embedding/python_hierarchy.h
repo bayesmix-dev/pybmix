@@ -24,14 +24,6 @@
 namespace py = pybind11;
 using namespace py::literals;
 
-/*
-Python Hierarchy
-
-Deriving from AbstractHierarchy, the PythonHierarchy is a generic class for
-implementing models in Python. The methods marked with PYTHON in source are
-to be implemented in a .py file located in docs/examples. The state and hypers
-are generic, stored in std::vector containers.
-*/
 
 namespace PyHier {
 //! Custom container for State values
@@ -44,6 +36,14 @@ namespace PyHier {
         std::vector<double> generic_hypers;
     };
 }; // namespace Python
+
+//! Python Hierarchy
+//!
+//! Deriving from AbstractHierarchy, the PythonHierarchy is a generic class for
+//! implementing models in Python. This class allows to implement new hierarchies
+//! from a Python source file, while methods necessary for all hierarchies are
+//! implemented here. The methods marked with PYTHON in the source are to be implemented
+//! in a .py file. The state and hypers are generic, stored in std::vector containers.
 
 class PythonHierarchy : public AbstractHierarchy {
 public:

@@ -71,7 +71,6 @@ double PythonMixing::mass_new_cluster(const unsigned int n,
     return out;
 }
 
-//! C++
 void PythonMixing::set_state_from_proto(
         const google::protobuf::Message &state_) {
     auto &statecast = downcast_state(state_);
@@ -83,7 +82,6 @@ void PythonMixing::set_state_from_proto(
     state.generic_state = aux_v;
 }
 
-//! C++
 std::shared_ptr<bayesmix::MixingState> PythonMixing::get_state_proto()
 const {
     bayesmix::Vector state_;

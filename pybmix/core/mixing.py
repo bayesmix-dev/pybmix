@@ -20,7 +20,8 @@ class BaseMixing(metaclass=abc.ABCMeta):
         Evaluates the prior probability of the number of clusters on a
         grid
         """
-        pass
+        return logging.error("This function cannot be implemented!")
+
 
 
 class DirichletProcessMixing(BaseMixing):
